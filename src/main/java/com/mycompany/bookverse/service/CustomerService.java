@@ -18,4 +18,11 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         return customerDAO.findAll();
     }
+    
+    public static void main(String[] args) {
+        CustomerService service = new CustomerService();
+        for (Customer c : service.getAllCustomers()) {
+            System.out.println(c.getUsername());
+        }
+    }
 }

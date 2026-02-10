@@ -4,16 +4,12 @@
  */
 package com.mycompany.bookverse.model;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -24,43 +20,26 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "stationery")
+@PrimaryKeyJoinColumn(name = "stationery_id", referencedColumnName = "product_id")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Stationery.findAll", query = "SELECT s FROM Stationery s"),
-    @NamedQuery(name = "Stationery.findByStationeryId", query = "SELECT s FROM Stationery s WHERE s.stationeryId = :stationeryId"),
-    @NamedQuery(name = "Stationery.findByColor", query = "SELECT s FROM Stationery s WHERE s.color = :color"),
-    @NamedQuery(name = "Stationery.findByMaterial", query = "SELECT s FROM Stationery s WHERE s.material = :material")})
-public class Stationery implements Serializable {
+    @NamedQuery(name = "Stationery.findByColor", query = "SELECT s FROM Stationery s WHERE s.color = :color")})
+public class Stationery extends Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "stationery_id")
-    private Integer stationeryId;
     @Size(max = 30)
     @Column(name = "color")
     private String color;
     @Size(max = 50)
     @Column(name = "material")
     private String material;
-    @JoinColumn(name = "stationery_id", referencedColumnName = "product_id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Product product;
 
     public Stationery() {
     }
 
     public Stationery(Integer stationeryId) {
-        this.stationeryId = stationeryId;
-    }
-
-    public Integer getStationeryId() {
-        return stationeryId;
-    }
-
-    public void setStationeryId(Integer stationeryId) {
-        this.stationeryId = stationeryId;
+        super(stationeryId);
     }
 
     public String getColor() {
@@ -79,18 +58,10 @@ public class Stationery implements Serializable {
         this.material = material;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (stationeryId != null ? stationeryId.hashCode() : 0);
+        hash += (getProductId() != null ? getProductId().hashCode() : 0);
         return hash;
     }
 
@@ -101,7 +72,7 @@ public class Stationery implements Serializable {
             return false;
         }
         Stationery other = (Stationery) object;
-        if ((this.stationeryId == null && other.stationeryId != null) || (this.stationeryId != null && !this.stationeryId.equals(other.stationeryId))) {
+        if ((this.getProductId() == null && other.getProductId() != null) || (this.getProductId() != null && !this.getProductId().equals(other.getProductId()))) {
             return false;
         }
         return true;
@@ -109,7 +80,7 @@ public class Stationery implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.bookverse.model.Stationery[ stationeryId=" + stationeryId + " ]";
+        return "com.mycompany.bookverse.model.Stationery[ productId=" + getProductId() + " ]";
     }
     
 }

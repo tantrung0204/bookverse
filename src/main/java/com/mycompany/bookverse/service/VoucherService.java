@@ -41,7 +41,7 @@ public class VoucherService {
 
     public String updateVoucher(Voucher voucher) {
 
-        Voucher old = voucherDAO.find(voucher.getVoucherId());
+        Voucher old = voucherDAO.findById(voucher.getVoucherId());
         if (old == null) {
             return "Voucher does not exist";
         }
@@ -60,7 +60,7 @@ public class VoucherService {
     }
 
     public String deleteVoucher(int id) {
-        Voucher v = voucherDAO.find(id);
+        Voucher v = voucherDAO.findById(id);
         if (v == null) {
             return "Voucher does not exist";
         }

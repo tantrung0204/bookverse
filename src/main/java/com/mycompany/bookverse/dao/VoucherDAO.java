@@ -56,6 +56,11 @@ public class VoucherDAO {
             em.getTransaction().begin();
             em.persist(voucher);
             em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e; // hoặc log
         } finally {
             em.close();
         }
@@ -89,21 +94,17 @@ public class VoucherDAO {
         }
     }
 
-    public Voucher find(int id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Voucher.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
     public void update(Voucher voucher) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
             em.merge(voucher);
             em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
         } finally {
             em.close();
         }
@@ -121,6 +122,12 @@ public class VoucherDAO {
             em.remove(v);
             em.getTransaction().commit();
             return true;
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
         } finally {
             em.close();
         }

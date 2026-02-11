@@ -4,10 +4,8 @@
  */
 package com.mycompany.bookverse.controller;
 
-import com.mycompany.bookverse.model.Customer;
-import com.mycompany.bookverse.service.CustomerService;
-import com.mycompany.bookverse.utils.JPAUtil;
-import jakarta.persistence.EntityManager;
+import com.mycompany.bookverse.model.Genre;
+import com.mycompany.bookverse.service.GenreService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -19,13 +17,11 @@ import java.util.List;
 
 /**
  *
- * @author TrungNT - CE200064
+ * @author LECOO
  */
-@WebServlet(name = "CustomerController", urlPatterns = {"/customer"})
-public class CustomerController extends HttpServlet {
-    
-    private CustomerService customerService = new CustomerService();
-
+@WebServlet(name = "GenreController", urlPatterns = {"/genre"})
+public class GenreController extends HttpServlet {
+        private GenreService genreServices = new GenreService();
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,10 +39,10 @@ public class CustomerController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SignupController</title>");
+            out.println("<title>Servlet GenreController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SignupController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet GenreController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,10 +60,10 @@ public class CustomerController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Customer> list = customerService.getAllCustomers();
-        request.setAttribute("customer_list", list);
-        request.getRequestDispatcher("/views/customer-list.jsp").forward(request, response);
-    }
+        List<Genre> list= genreServices.getAllgenres();
+        request.setAttribute("genre_list", list);
+        request.getRequestDispatcher("/views/genre-view.jsp").forward(request, response);
+   }
 
     /**
      * Handles the HTTP <code>POST</code> method.

@@ -62,16 +62,15 @@ public class HomeController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Product> list = productService.getAllProducts();
 
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";
         }
-
         switch (action) {
             case "list":
-                request.setAttribute("PRODUCT_LIST", list);
+                List<Product> products = productService.getAllProducts();
+                request.setAttribute("PRODUCT_LIST", products);
                 request.getRequestDispatcher("views/home.jsp").forward(request, response);
                 break;
             case "detail":
@@ -84,6 +83,14 @@ public class HomeController extends HttpServlet {
                     request.setAttribute("error", "Sản phẩm không tồn tại!");
                     request.getRequestDispatcher("/views/error-404.jsp").forward(request, response);
                 }
+                break;
+            case "search":
+                String keyword = request.getParameter("keyword");
+                List<Product> searchResult = productService.searchProducts(keyword);
+                request.setAttribute("PRODUCT_LIST", searchResult);
+                request.setAttribute("searchKeyword", keyword);
+                request.getRequestDispatcher("/views/home.jsp").forward(request, response);
+                break;
         }
     }
 

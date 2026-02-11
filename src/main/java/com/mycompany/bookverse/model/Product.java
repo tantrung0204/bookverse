@@ -37,7 +37,7 @@ import java.util.Collection;
 @NamedQueries({
     @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p"),
     @NamedQuery(name = "Product.findByProductId", query = "SELECT p FROM Product p WHERE p.productId = :productId"),
-    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE p.name = :name")})
+    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:keyword)")})
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -169,13 +169,54 @@ public class Product implements Serializable {
     public void setOrderItemCollection(Collection<OrderItem> orderItemCollection) {
         this.orderItemCollection = orderItemCollection;
     }
-    
+
     @Transient
     public String getType() {
         if (this instanceof Book) {
             return "Book";
         }
         return "Stationery";
+    }
+
+    @Transient
+    public double getAverageRating() {
+        if (this.feedbackCollection == null || this.feedbackCollection.isEmpty()) {
+            return 0.0;
+        }
+
+        double sum = 0;
+        int count = 0;
+        for (Feedback f : this.feedbackCollection) {
+            if (f.getRating() != null) {
+                sum += f.getRating();
+                count++;
+            }
+        }
+        return count == 0 ? 0.0 : (sum / count);
+    }
+
+    @Transient
+    public int getReviewCount() {
+        return (this.feedbackCollection == null) ? 0 : this.feedbackCollection.size();
+    }
+
+    @Transient
+    public int getSoldQuantity() {
+        if (this.orderItemCollection == null || this.orderItemCollection.isEmpty()) {
+            return 0;
+        }
+        
+        int totalSold = 0;
+
+        for (OrderItem item : this.orderItemCollection) {
+            // Check điều kiện chỉ cộng khi đơn hàng không bị HỦY
+            // if (item.getOrder().getStatus() != 3)
+            if (item.getOrderQuantity() != null) {
+                totalSold += item.getOrderQuantity();
+            }
+        }
+
+        return totalSold;
     }
 
     @Override

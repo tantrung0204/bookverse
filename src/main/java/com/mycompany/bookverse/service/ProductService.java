@@ -28,4 +28,11 @@ public class ProductService {
             return null;
         }
     }
+
+    public List<Product> searchProducts(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return productDao.findAll();
+        }
+        return productDao.findByName(keyword.trim());
+    }
 }

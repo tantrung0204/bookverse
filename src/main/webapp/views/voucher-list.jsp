@@ -17,11 +17,22 @@
     <button type="submit">Search</button>
 </form>
 
+
 <c:if test="${not empty sessionScope.message}">
-    <script>
-        alert("${sessionScope.message}");
-    </script>
+    <div style="padding:10px;margin:10px 0;
+         background:#d4edda;color:#155724;
+         border:1px solid #c3e6cb;border-radius:5px;">
+        ${sessionScope.message}
+    </div>
     <c:remove var="message" scope="session"/>
+</c:if>
+
+<c:if test="${not empty message}">
+    <div style="padding:10px;margin:10px 0;
+         background:#f8d7da;color:#721c24;
+         border:1px solid #f5c6cb;border-radius:5px;">
+        ${message}
+    </div>
 </c:if>
 
 
@@ -57,7 +68,7 @@
         </c:forEach>
     </table>
 </c:if>
-    
+
 <%-- Create --%>
 <div id="createModal" class="modal">
     <div class="modal-content">
@@ -87,9 +98,6 @@
                 <option value="0">Inactive</option>
             </select><br/>
 
-            Start Date:
-            <input type="date" name="startDate" required/><br/>
-
             Expiry Date:
             <input type="date" name="expiryDate" required/><br/>
 
@@ -98,37 +106,46 @@
     </div>
 </div>
 <script>
-function openPopup() {
-    document.getElementById("createModal").style.display = "block";
-}
+    function openPopup() {
+        document.getElementById("createModal").style.display = "block";
+    }
 
-function closePopup() {
-    document.getElementById("createModal").style.display = "none";
-}
+    function closePopup() {
+        document.getElementById("createModal").style.display = "none";
+    }
 </script>
 
-    
+<c:if test="${openCreate}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openPopup();
+        });
+    </script>
+</c:if>
+
 <style>
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.5);
-}
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
 
-.modal-content {
-    background: #fff;
-    width: 400px;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 8px;
-}
+    .modal-content {
+        background: #fff;
+        width: 400px;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+    }
 
-.close {
-    float: right;
-    font-size: 22px;
-    cursor: pointer;
-}
+    .close {
+        float: right;
+        font-size: 22px;
+        cursor: pointer;
+    }
 </style>

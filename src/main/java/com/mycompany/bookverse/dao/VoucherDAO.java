@@ -28,9 +28,12 @@ public class VoucherDAO {
     public Voucher findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createNamedQuery("Voucher.findByVoucherId", Voucher.class)
+            List<Voucher> list = em.createNamedQuery("Voucher.findByVoucherId", Voucher.class)
                     .setParameter("voucherId", id)
-                    .getSingleResult();
+                    .getResultList();
+            return list.isEmpty() ? null : list.get(0);
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding voucher by id", e);
         } finally {
             em.close();
         }

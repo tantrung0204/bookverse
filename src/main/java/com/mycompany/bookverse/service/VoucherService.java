@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.VoucherDAO;
 import com.mycompany.bookverse.model.Voucher;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -27,10 +28,35 @@ public class VoucherService {
 
     public String createVoucher(Voucher voucher) {
 
-        boolean exists = voucherDAO.existsByCode(voucher.getVoucherCode());
-        if (exists) {
+        if (voucher.getAvailableQuantity() < 0) {
+            return "Quantity cannot be less than 0";
+        }
+
+        if (voucher.getDiscountPercent() == null
+                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
+                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
+            return "Discount must be between 0 and 100";
+        }
+
+        if (voucher.getExpiryDate() == null) {
+            return "Expiry date is required";
+        }
+
+        if (voucher.getExpiryDate().before(voucher.getStartDate())) {
+            return "Expiry date must be after start date";
+        }
+
+        long diff = voucher.getExpiryDate().getTime() - voucher.getStartDate().getTime();
+        long hours = diff / (1000 * 60 * 60);
+
+        if (hours < 24) {
+            return "Voucher must be valid at least 24 hours";
+        }
+
+        if (voucherDAO.existsByCode(voucher.getVoucherCode())) {
             return "Voucher code already exists";
         }
+
         voucherDAO.create(voucher);
         return "Create voucher successfully";
     }
@@ -46,16 +72,36 @@ public class VoucherService {
             return "Voucher does not exist";
         }
 
-        boolean exists = voucherDAO.existsByCodeExceptId(
-                voucher.getVoucherCode(),
-                voucher.getVoucherId()
-        );
+        if (voucher.getAvailableQuantity() < 0) {
+            return "Quantity cannot be less than 0";
+        }
 
-        if (exists) {
+        if (voucher.getDiscountPercent() == null
+                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
+                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
+            return "Discount must be between 0 and 100";
+        }
+
+        if (voucher.getExpiryDate().before(old.getStartDate())) {
+            return "Expiry date must be after start date";
+        }
+
+        long diff = voucher.getExpiryDate().getTime() - old.getStartDate().getTime();
+        long hours = diff / (1000 * 60 * 60);
+
+        if (hours < 24) {
+            return "Voucher must be valid at least 24 hours";
+        }
+
+        if (voucherDAO.existsByCodeExceptId(
+                voucher.getVoucherCode(),
+                voucher.getVoucherId())) {
             return "Voucher code already exists";
         }
 
+        voucher.setStartDate(old.getStartDate());
         voucherDAO.update(voucher);
+
         return "Update voucher successfully";
     }
 

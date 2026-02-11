@@ -84,11 +84,32 @@ public class VoucherController extends HttpServlet {
                         .forward(request, response);
                 break;
             case "detail":
-                int id = Integer.parseInt(request.getParameter("id"));
-                Voucher voucher = voucherService.getVoucherById(id);
-                request.setAttribute("voucher", voucher);
-                request.getRequestDispatcher("/views/voucher-detail.jsp")
-                        .forward(request, response);
+                String idStr = request.getParameter("id");
+
+                if (idStr == null || idStr.trim().isEmpty()) {
+                    request.setAttribute("message", "Invalid voucher ID");
+                    request.getRequestDispatcher("/views/voucher-list.jsp")
+                            .forward(request, response);
+                    return;
+                }
+                try {
+                    int id = Integer.parseInt(idStr);
+                    Voucher voucher = voucherService.getVoucherById(id);
+
+                    if (voucher == null) {
+                        request.setAttribute("message", "Voucher not found");
+                        request.getRequestDispatcher("/views/voucher-list.jsp")
+                                .forward(request, response);
+                    } else {
+                        request.setAttribute("voucher", voucher);
+                        request.getRequestDispatcher("/views/voucher-detail.jsp")
+                                .forward(request, response);
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("message", "Voucher ID must be a number");
+                    request.getRequestDispatcher("/views/voucher-list.jsp")
+                            .forward(request, response);
+                }
                 break;
             case "search":
                 String keyword = request.getParameter("keyword");
@@ -99,6 +120,7 @@ public class VoucherController extends HttpServlet {
                 } else {
                     request.setAttribute("vouchers", searchList);
                 }
+
                 request.getRequestDispatcher("/views/voucher-list.jsp")
                         .forward(request, response);
                 break;
@@ -126,37 +148,85 @@ public class VoucherController extends HttpServlet {
         }
         switch (action) {
             case "create":
-                Voucher vCreate = new Voucher();
-                vCreate.setVoucherCode(request.getParameter("code"));
-                vCreate.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
-                vCreate.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
-                vCreate.setStatus(Integer.parseInt(request.getParameter("status")));
-                vCreate.setStartDate(Date.valueOf(request.getParameter("startDate")));
-                vCreate.setExpiryDate(Date.valueOf(request.getParameter("expiryDate")));
-                String createMsg = voucherService.createVoucher(vCreate);
-                request.getSession().setAttribute("message", createMsg);
-                response.sendRedirect(request.getContextPath() + "/voucher");
+                try {
+                    Voucher vCreate = new Voucher();
+                    vCreate.setVoucherCode(request.getParameter("code"));
+                    vCreate.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
+                    vCreate.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
+                    vCreate.setStatus(Integer.parseInt(request.getParameter("status")));
+
+                    vCreate.setStartDate(new java.util.Date());
+                    vCreate.setExpiryDate(Date.valueOf(request.getParameter("expiryDate")));
+
+                    String msg = voucherService.createVoucher(vCreate);
+
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("message", msg);
+                        request.setAttribute("openCreate", true);
+                        request.getRequestDispatcher("/views/voucher-list.jsp")
+                                .forward(request, response);
+                        return;
+                    }
+
+                    request.getSession().setAttribute("message", msg);
+                    response.sendRedirect(request.getContextPath() + "/voucher");
+
+                } catch (Exception e) {
+                    request.setAttribute("message", "Invalid input data");
+                    request.setAttribute("openCreate", true);
+                    request.getRequestDispatcher("/views/voucher-list.jsp")
+                            .forward(request, response);
+                }
                 break;
             case "edit":
-                Voucher vEdit = new Voucher();
-                vEdit.setVoucherId(Integer.parseInt(request.getParameter("id")));
-                vEdit.setVoucherCode(request.getParameter("code"));
-                vEdit.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
-                vEdit.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
-                vEdit.setStatus(Integer.parseInt(request.getParameter("status")));
-                vEdit.setStartDate(Date.valueOf(request.getParameter("startDate")));
-                vEdit.setExpiryDate(Date.valueOf(request.getParameter("expiryDate")));
-                String editMsg = voucherService.updateVoucher(vEdit);
-                request.getSession().setAttribute("message", editMsg);
-                response.sendRedirect("voucher?action=detail&id=" + vEdit.getVoucherId());
+                try {
+                    int id = Integer.parseInt(request.getParameter("id"));
+                    Voucher old = voucherService.getVoucherById(id);
+
+                    if (old == null) {
+                        request.getSession().setAttribute("message", "Voucher not found");
+                        response.sendRedirect(request.getContextPath() + "/voucher");
+                        return;
+                    }
+
+                    Voucher vEdit = new Voucher();
+                    vEdit.setVoucherId(id);
+                    vEdit.setVoucherCode(request.getParameter("code"));
+                    vEdit.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
+                    vEdit.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
+                    vEdit.setStatus(Integer.parseInt(request.getParameter("status")));
+                    vEdit.setStartDate(old.getStartDate());
+                    vEdit.setExpiryDate(Date.valueOf(request.getParameter("expiryDate")));
+
+                    String msg = voucherService.updateVoucher(vEdit);
+
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("message", msg);
+                        request.setAttribute("voucher", old);
+                        request.setAttribute("openEdit", true);
+                        request.getRequestDispatcher("/views/voucher-detail.jsp")
+                                .forward(request, response);
+                        return;
+                    }
+
+                    request.getSession().setAttribute("message", msg);
+                    response.sendRedirect(request.getContextPath() + "/voucher?action=detail&id=" + id);
+
+                } catch (Exception e) {
+                    request.getSession().setAttribute("message", "Invalid input data");
+                    response.sendRedirect(request.getContextPath() + "/voucher");
+                }
                 break;
+
             case "delete":
-                int id = Integer.parseInt(request.getParameter("id"));
-                String deleteMsg = voucherService.deleteVoucher(id);
-                request.getSession().setAttribute("message", deleteMsg);
-                response.sendRedirect(request.getContextPath() + "/voucher");
-                break;
-            default:
+                try {
+                    int idDelete = Integer.parseInt(request.getParameter("id"));
+                    String deleteMsg = voucherService.deleteVoucher(idDelete);
+                    request.getSession().setAttribute("message", deleteMsg);
+                } catch (Exception e) {
+                    request.getSession().setAttribute("message", "Invalid voucher ID");
+                }
+
                 response.sendRedirect(request.getContextPath() + "/voucher");
                 break;
         }

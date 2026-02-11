@@ -18,4 +18,5 @@ public class CustomerService {
     public List<Customer> getAllCustomers() {
         return customerDAO.findAll();
     }
+
 }

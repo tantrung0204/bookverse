@@ -31,9 +31,15 @@
                     <c:forEach var="g" items="${requestScope.genre_list}">
                         <tr>
                             <td>${g.genreId}</td>
-                            <td>${g.genreName}</td>
+                            <td>
+                                <form action="genre" method="Post">
+                                    <input type="hidden" name="id" value="${g.genreId}">
+                                    <button type="submit" style="border:none; background:none; color:blue; cursor:pointer;"> ${g.genreName}</button>
+                                </form>                              
+                            </td>
                             <td>${g.descriptionText}</td>
-                            <td>${g.status}</td>
+                             <c:if test="${g.status==1}"><td>ok</td></c:if>
+                             <c:if test="${g.status==0}"><td>ko</td></c:if>
                         </tr>
                     </c:forEach>
                 </tbody>

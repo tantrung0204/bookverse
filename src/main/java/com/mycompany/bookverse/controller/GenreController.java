@@ -76,7 +76,11 @@ public class GenreController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String idStr= request.getParameter("id");
+        int id= Integer.parseInt(idStr);
+        Genre genre=genreServices.findGenreById(id);
+        request.setAttribute("genre_detail", genre);
+        request.getRequestDispatcher("/views/genreDetail-view.jsp").forward(request, response);
     }
 
     /**

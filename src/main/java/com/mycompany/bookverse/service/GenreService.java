@@ -13,8 +13,14 @@ import java.util.List;
  * @author LECOO
  */
 public class GenreService {
-    private GenreDAO genreDAO= new GenreDAO();
-     public List <Genre> getAllgenres(){
-         return genreDAO.findAll();
-     }
+
+    private GenreDAO genreDAO = new GenreDAO();
+
+    public List<Genre> getAllgenres() {
+        return genreDAO.findAll();
+    }
+    
+    public Genre findGenreById(int id){
+        return genreDAO.findById(id);
+    }
 }

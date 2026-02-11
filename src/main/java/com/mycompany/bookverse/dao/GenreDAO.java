@@ -23,4 +23,15 @@ public class GenreDAO {
                     .getResultList();
         }
     }
+    
+    public Genre findById (int id){
+        try (      
+                EntityManager em = JPAUtil.getEntityManager()) {
+            return em.createNamedQuery("Genre.findByGenreId", Genre.class)
+                    .setParameter("genreId", id)
+                    .getSingleResult();
+            
+        }
+    }
+    
 }

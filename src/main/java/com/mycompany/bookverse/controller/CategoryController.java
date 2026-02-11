@@ -21,12 +21,9 @@ import java.util.List;
  */
 @WebServlet(name = "CategoryController", urlPatterns = {"/category"})
 public class CategoryController extends HttpServlet {
-    
+
     private CategoryService categoryService = new CategoryService();
 
-    
-
- 
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -38,9 +35,24 @@ public class CategoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       List<Category> list = categoryService.getAllcategorys();
-       request.setAttribute("category_list", list);
-       request.getRequestDispatcher("/views/category_list.jsp").forward(request, response);
+        String view = request.getParameter("view");
+        if (view == null) {
+            view = "list";
+        }
+
+        switch (view) {
+            case "list":
+                getListCategories(request, response);
+                break;
+            case "view_detail":
+                getViewDetail(request, response);
+                break;
+            case "add":
+                getAddCategory(request, response);
+                break;
+
+        }
+
     }
 
     /**
@@ -54,17 +66,27 @@ public class CategoryController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    private void getListCategories(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Category> list = categoryService.getAllcategorys();
+        request.setAttribute("category_list", list);
+        request.getRequestDispatcher("/views/category_list.jsp").forward(request, response);
+    }
+
+    private void getViewDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+        Category category = categoryService.getCategoryById(categoryId);
+        request.setAttribute("view_detail", category);
+        request.getRequestDispatcher("/views/view_detail_category.jsp").forward(request, response);
+    }
+
+    private void getAddCategory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
 
 }

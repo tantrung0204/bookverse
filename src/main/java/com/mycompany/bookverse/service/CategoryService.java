@@ -13,9 +13,15 @@ import java.util.List;
  * @author NganTTK-CE190411
  */
 public class CategoryService {
+
     private CategoryDAO categoryDAO = new CategoryDAO();
-    
-    public List<Category> getAllcategorys(){
-        return  categoryDAO.findAll();
+
+    public List<Category> getAllcategorys() {
+        return categoryDAO.findAll();
     }
+
+    public Category getCategoryById(int categoryId) {
+        return categoryDAO.findByCategoryId(categoryId);
+    }
+
 }

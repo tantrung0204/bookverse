@@ -8,6 +8,7 @@ import com.mycompany.bookverse.model.Category;
 import com.mycompany.bookverse.model.Customer;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -25,4 +26,19 @@ public class CategoryDAO {
             em.close();
         }
     }
+    
+    public Category findByCategoryId(int categoryId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Category.findByCategoryId", Category.class)
+                    .setParameter("categoryId", categoryId)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+    
+    
 }

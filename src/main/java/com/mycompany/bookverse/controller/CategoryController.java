@@ -47,8 +47,8 @@ public class CategoryController extends HttpServlet {
             case "view_detail":
                 getViewDetail(request, response);
                 break;
-            case "add":
-                getAddCategory(request, response);
+            case "create":
+                getCreateCategory(request, response);
                 break;
 
         }
@@ -67,26 +67,72 @@ public class CategoryController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String action = request.getParameter("action");
+        if (action == null) {
+            getListCategories(request, response);
+            return;
+        }
+
+        switch (action) {
+            case "create":
+                handleCreateAction(request, response);
+                break;
+        }
     }
 
     private void getListCategories(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Category> list = categoryService.getAllcategorys();
+
+        String keyword = request.getParameter("keyword");
+        List<Category> list;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            list = categoryService.getsearchByName(keyword);
+
+            if (list == null || list.isEmpty()) {
+                request.setAttribute("message", "No category found for: " + keyword);
+            }
+            request.setAttribute("keyword", keyword);
+        } else {
+            list = categoryService.getAllcategorys();
+        }
         request.setAttribute("category_list", list);
         request.getRequestDispatcher("/views/category_list.jsp").forward(request, response);
     }
 
     private void getViewDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+
+        String idParam = request.getParameter("id");
+
+        if (idParam == null) {
+            response.sendRedirect("category");
+            return;
+        }
+
+        int categoryId = Integer.parseInt(idParam);
         Category category = categoryService.getCategoryById(categoryId);
+
         request.setAttribute("view_detail", category);
-        request.getRequestDispatcher("/views/view_detail_category.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/view_detail_category.jsp")
+                .forward(request, response);
     }
 
-    private void getAddCategory(HttpServletRequest request, HttpServletResponse response)
+    private void getCreateCategory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        request.getRequestDispatcher("/views/create_category.jsp").forward(request, response);
     }
 
+    private void handleCreateAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String name = request.getParameter("categoryName");
+        String desc = request.getParameter("descriptionText");
+
+        Category category = new Category();
+        category.setCategoryName(name);
+        category.setDescriptionText(desc);
+
+        categoryService.createCategory(category);
+
+        response.sendRedirect(request.getContextPath() + "/category");
+    }
 }

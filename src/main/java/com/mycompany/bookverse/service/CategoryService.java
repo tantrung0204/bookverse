@@ -20,8 +20,16 @@ public class CategoryService {
         return categoryDAO.findAll();
     }
 
+    public List<Category> getsearchByName(String keyword) {
+        return categoryDAO.searchByName(keyword);
+    }
+
     public Category getCategoryById(int categoryId) {
         return categoryDAO.findByCategoryId(categoryId);
+    }
+
+    public void createCategory(Category category) {
+        categoryDAO.create(category);
     }
 
 }

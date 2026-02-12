@@ -32,7 +32,11 @@ import java.util.Collection;
     @NamedQuery(name = "Category.findByCategoryId", query = "SELECT c FROM Category c WHERE c.categoryId = :categoryId"),
     @NamedQuery(name = "Category.findByCategoryName", query = "SELECT c FROM Category c WHERE c.categoryName = :categoryName"),
     @NamedQuery(name = "Category.findByDescriptionText", query = "SELECT c FROM Category c WHERE c.descriptionText = :descriptionText"),
-    @NamedQuery(name = "Category.findByStatus", query = "SELECT c FROM Category c WHERE c.status = :status")})
+    @NamedQuery(name = "Category.findByStatus", query = "SELECT c FROM Category c WHERE c.status = :status"),
+    @NamedQuery(name = "Category.searchByName", query = "SELECT c FROM Category c WHERE LOWER(c.categoryName) LIKE LOWER(:keyword)")
+}
+)
+
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -124,5 +128,5 @@ public class Category implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Category[ categoryId=" + categoryId + " ]";
     }
-    
+
 }

@@ -6,28 +6,44 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Category list</title>
+        <meta charset="UTF-8">
+        <title>Category List</title>
     </head>
+
     <body>
-        <c:if test="${empty requestScope.category_list}">
-            <p class="empty-msg">Empty List</p>
-        </c:if>
-        <c:if test="${not empty requestScope.category_list}">
-            <table>
-                <thead>
-                <a class="text-decoration-none btn btn-primary" href="${pageContext.request.contextPath}/category?view=add">Add category
-                    <tr>
-                        <th>ID</th>
-                        <th>Category Name</th>
-                        <th>Description</th>
-                    </tr>
+
+        <h2>Category List</h2>
+        <a class="text-decoration-none btn btn-primary" href="${pageContext.request.contextPath}/category?view=create">Thêm thể loại
+        </a>
+        <form method="get" action="category">
+            <input type="text"
+                   name="keyword"
+                   placeholder="Search category..."
+                   value="${keyword}">
+            <button type="submit">Tìm kiếm</button>
+        </form>
+
+        <c:choose>        
+            <c:when test="${not empty message}">
+                <p style="color:red; font-weight:bold;">
+                    ${message}
+                </p>
+            </c:when>
+            <c:when test="${not empty category_list}">
+                <table >
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Category Name</th>
+                            <th>Description</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="c" items="${requestScope.category_list}">
+                        <c:forEach var="c" items="${category_list}">
                             <tr>
                                 <td>${c.categoryId}</td>
                                 <td>${c.categoryName}</td>
@@ -45,10 +61,15 @@
                                     </a>
                                 </td>
                             </tr>
-
                         </c:forEach>
                     </tbody>
-            </table>
-        </c:if>
+                </table>
+            </c:when>
+            <c:otherwise>
+                <p style="color:gray;">Empty List</p>
+            </c:otherwise>
+
+        </c:choose>
+
     </body>
 </html>

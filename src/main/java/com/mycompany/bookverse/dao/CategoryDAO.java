@@ -16,9 +16,9 @@ import java.util.List;
  * @author NganTTK-CE190411
  */
 public class CategoryDAO {
-    
-    public List<Category> findAll(){
-         EntityManager em = JPAUtil.getEntityManager();
+
+    public List<Category> findAll() {
+        EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createNamedQuery("Category.findAll", Category.class)
                     .getResultList();
@@ -26,7 +26,18 @@ public class CategoryDAO {
             em.close();
         }
     }
-    
+
+    public List<Category> searchByName(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Category.searchByName", Category.class)
+                    .setParameter("keyword", "%" + keyword + "%")
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public Category findByCategoryId(int categoryId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -40,5 +51,19 @@ public class CategoryDAO {
         }
     }
     
-    
+    public void create(Category category) {
+    EntityManager em = JPAUtil.getEntityManager();
+    try {
+        em.getTransaction().begin();
+        em.persist(category);   // INSERT
+        em.getTransaction().commit();
+    } catch (Exception e) {
+        em.getTransaction().rollback();
+        e.printStackTrace();
+    } finally {
+        em.close();
+    }
+}
+
+
 }

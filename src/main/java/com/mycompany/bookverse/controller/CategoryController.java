@@ -77,6 +77,10 @@ public class CategoryController extends HttpServlet {
             case "create":
                 handleCreateAction(request, response);
                 break;
+
+            case "edit":
+                handleEditAction(request, response);
+                break;
         }
     }
 
@@ -93,7 +97,7 @@ public class CategoryController extends HttpServlet {
             }
             request.setAttribute("keyword", keyword);
         } else {
-            list = categoryService.getAllcategorys();
+            list = categoryService.getAllcategories();
         }
         request.setAttribute("category_list", list);
         request.getRequestDispatcher("/views/category_list.jsp").forward(request, response);
@@ -126,13 +130,82 @@ public class CategoryController extends HttpServlet {
             throws ServletException, IOException {
         String name = request.getParameter("categoryName");
         String desc = request.getParameter("descriptionText");
+        int status = Integer.parseInt(request.getParameter("status"));
+
+        boolean hasError = false;
+
+        if (name == null || name.trim().isEmpty()) {
+            request.setAttribute("nameError", "Thể loại không được để trống");
+            hasError = true;
+        } else if (categoryService.existCategoryName(name.trim())) {
+            request.setAttribute("nameError", "Thể loại đã tồn tại");
+            hasError = true;
+        }
+
+        if (hasError) {
+            request.setAttribute("CategoryName", name);
+            request.setAttribute("descriptionText", desc);
+            request.setAttribute("status", status);
+
+            request.getRequestDispatcher("/views/create_category.jsp").forward(request, response);
+            return;
+        }
 
         Category category = new Category();
         category.setCategoryName(name);
         category.setDescriptionText(desc);
+        category.setStatus(status);
 
         categoryService.createCategory(category);
 
         response.sendRedirect(request.getContextPath() + "/category");
     }
+
+    public void handleEditAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("categoryId"));
+        String name = request.getParameter("categoryName");
+        String desc = request.getParameter("descriptionText");
+        String statusRaw = request.getParameter("status");
+
+        boolean hasError = false;
+
+        if (name == null || name.trim().isEmpty()) {
+            request.setAttribute("nameError", "Thể loại không được để trống");
+            hasError = true;
+        } else if (categoryService.existCategory(name.trim(), id)) {
+            request.setAttribute("editError", "Thể loại đã tồn tại");
+            request.setAttribute("openEditPopup", true);
+            request.setAttribute("editId", id);
+            request.setAttribute("editName", name);
+            request.setAttribute("editDesc", desc);
+            request.setAttribute("editStatus", statusRaw);
+
+            request.setAttribute("category_list", categoryService.getAllcategories());
+            request.getRequestDispatcher("views/category_list.jsp").forward(request, response);
+            return;
+        }
+        int status = 1;
+        if (statusRaw != null && !statusRaw.isEmpty()) {
+            status = Integer.parseInt(statusRaw);
+        }
+
+        if (hasError) {
+            request.setAttribute("category_list", categoryService.getAllcategories());
+            request.getRequestDispatcher("views/category_list.jsp")
+                    .forward(request, response);
+            return;
+        }
+
+        Category category = new Category();
+        category.setCategoryId(id);
+        category.setCategoryName(name);
+        category.setDescriptionText(desc);
+        category.setStatus(status);
+
+        categoryService.editCategory(category);
+        response.sendRedirect(request.getContextPath() + "/category");
+       
+    }
+
 }

@@ -33,7 +33,9 @@ import java.util.Collection;
     @NamedQuery(name = "Category.findByCategoryName", query = "SELECT c FROM Category c WHERE c.categoryName = :categoryName"),
     @NamedQuery(name = "Category.findByDescriptionText", query = "SELECT c FROM Category c WHERE c.descriptionText = :descriptionText"),
     @NamedQuery(name = "Category.findByStatus", query = "SELECT c FROM Category c WHERE c.status = :status"),
-    @NamedQuery(name = "Category.searchByName", query = "SELECT c FROM Category c WHERE LOWER(c.categoryName) LIKE LOWER(:keyword)")
+    @NamedQuery(name = "Category.searchByName", query = "SELECT c FROM Category c WHERE LOWER(c.categoryName) LIKE LOWER(:keyword)"),
+    @NamedQuery(name = "Category.existsByName", query = "SELECT COUNT(c) FROM Category c WHERE LOWER(c.categoryName) = LOWER(:name)"),
+    @NamedQuery(name = "Category.existsCategory", query = "SELECT COUNT(c) FROM Category c WHERE LOWER(c.categoryName) = LOWER(:name) AND c.categoryId <> :id")
 }
 )
 

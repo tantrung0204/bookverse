@@ -16,7 +16,7 @@ public class CategoryService {
 
     private CategoryDAO categoryDAO = new CategoryDAO();
 
-    public List<Category> getAllcategorys() {
+    public List<Category> getAllcategories() {
         return categoryDAO.findAll();
     }
 
@@ -30,6 +30,18 @@ public class CategoryService {
 
     public void createCategory(Category category) {
         categoryDAO.create(category);
+    }
+    
+    public boolean existCategoryName(String categoryname){
+       return categoryDAO.existCategoryName(categoryname);
+    }
+    
+    public boolean existCategory(String categoryname, int id){
+       return categoryDAO.existCategory(categoryname, id);
+    }
+    
+    public void editCategory(Category category) {
+        categoryDAO.edit(category);
     }
 
 }

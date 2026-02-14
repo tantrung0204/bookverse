@@ -50,20 +50,57 @@ public class CategoryDAO {
             em.close();
         }
     }
-    
+
     public void create(Category category) {
-    EntityManager em = JPAUtil.getEntityManager();
-    try {
-        em.getTransaction().begin();
-        em.persist(category);   // INSERT
-        em.getTransaction().commit();
-    } catch (Exception e) {
-        em.getTransaction().rollback();
-        e.printStackTrace();
-    } finally {
-        em.close();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(category);   // INSERT
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
     }
-}
 
+    public boolean existCategoryName(String categoryname) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createNamedQuery("Category.existsByName", Long.class)
+                    .setParameter("name", categoryname.trim())
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
 
+    public boolean existCategory(String categoryname, int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createNamedQuery("Category.existsCategory", Long.class)
+                    .setParameter("name", categoryname.trim())
+                    .setParameter("id", id)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void edit(Category category) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(category);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
 }

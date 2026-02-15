@@ -50,7 +50,9 @@ public class CategoryController extends HttpServlet {
             case "create":
                 getCreateCategory(request, response);
                 break;
-
+//            case "delete":
+//                getDeleteCategory(request, response);
+//                break;
         }
 
     }
@@ -77,9 +79,11 @@ public class CategoryController extends HttpServlet {
             case "create":
                 handleCreateAction(request, response);
                 break;
-
             case "edit":
                 handleEditAction(request, response);
+                break;
+            case "delete":
+                handleDeleteAction(request, response);
                 break;
         }
     }
@@ -130,18 +134,33 @@ public class CategoryController extends HttpServlet {
             throws ServletException, IOException {
         String name = request.getParameter("categoryName");
         String desc = request.getParameter("descriptionText");
-        int status = Integer.parseInt(request.getParameter("status"));
+        String statusRaw = request.getParameter("status");
 
         boolean hasError = false;
+
+        int status = 1;
+        if (statusRaw != null && !statusRaw.isEmpty()) {
+            status = Integer.parseInt(statusRaw);
+        }
 
         if (name == null || name.trim().isEmpty()) {
             request.setAttribute("nameError", "Thể loại không được để trống");
             hasError = true;
-        } else if (categoryService.existCategoryName(name.trim())) {
+        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            request.setAttribute("nameError", "Thể loại chứa các kí tự không hợp lệ");
+            hasError = true;
+        }
+        if (desc == null || desc.trim().isEmpty()) {
+            request.setAttribute("descError", "Mô tả không được để trống");
+            hasError = true;
+        } else if (!desc.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            request.setAttribute("descError", "Mô tả chứa các kí tự không hợp lệ");
+            hasError = true;
+        }
+        if (categoryService.existCategoryName(name.trim())) {
             request.setAttribute("nameError", "Thể loại đã tồn tại");
             hasError = true;
         }
-
         if (hasError) {
             request.setAttribute("CategoryName", name);
             request.setAttribute("descriptionText", desc);
@@ -170,10 +189,38 @@ public class CategoryController extends HttpServlet {
 
         boolean hasError = false;
 
+        int status = 1;
+        if (statusRaw != null && !statusRaw.isEmpty()) {
+            status = Integer.parseInt(statusRaw);
+        }
+
         if (name == null || name.trim().isEmpty()) {
-            request.setAttribute("nameError", "Thể loại không được để trống");
+            request.setAttribute("editError", "Thể loại không được để trống");
             hasError = true;
-        } else if (categoryService.existCategory(name.trim(), id)) {
+        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            request.setAttribute("editError", "Thể loại chứa các kí tự không hợp lệ");
+            hasError = true;
+        }
+
+        if (desc == null || desc.trim().isEmpty()) {
+            request.setAttribute("editError", "Mô tả không được để trống");
+            hasError = true;
+        } else if (!desc.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            request.setAttribute("editError", "Mô tả chứa các kí tự không hợp lệ");
+            hasError = true;
+        }
+
+        if (hasError) {
+            request.setAttribute("openEditPopup", true);
+            request.setAttribute("editId", id);
+            request.setAttribute("editName", name);
+            request.setAttribute("editDesc", desc);
+            request.setAttribute("editStatus", statusRaw);
+            request.setAttribute("category_list", categoryService.getAllcategories());
+            request.getRequestDispatcher("views/category_list.jsp").forward(request, response);
+            return;
+        }
+        if (categoryService.existCategory(name.trim(), id)) {
             request.setAttribute("editError", "Thể loại đã tồn tại");
             request.setAttribute("openEditPopup", true);
             request.setAttribute("editId", id);
@@ -185,17 +232,6 @@ public class CategoryController extends HttpServlet {
             request.getRequestDispatcher("views/category_list.jsp").forward(request, response);
             return;
         }
-        int status = 1;
-        if (statusRaw != null && !statusRaw.isEmpty()) {
-            status = Integer.parseInt(statusRaw);
-        }
-
-        if (hasError) {
-            request.setAttribute("category_list", categoryService.getAllcategories());
-            request.getRequestDispatcher("views/category_list.jsp")
-                    .forward(request, response);
-            return;
-        }
 
         Category category = new Category();
         category.setCategoryId(id);
@@ -205,7 +241,31 @@ public class CategoryController extends HttpServlet {
 
         categoryService.editCategory(category);
         response.sendRedirect(request.getContextPath() + "/category");
-       
+
+    }
+
+    private void handleDeleteAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String idParam = request.getParameter("id");
+
+        if (idParam == null) {
+            response.sendRedirect("category");
+            return;
+        }
+
+        int id = Integer.parseInt(idParam);
+
+        boolean success = categoryService.deleteCategory(id);
+
+        if (!success) {
+            request.getSession().setAttribute(
+                    "deleteError",
+                    "Không thể xóa thể loại vì đang được sử dụng"
+            );
+        }
+
+        response.sendRedirect("category");
     }
 
 }

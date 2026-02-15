@@ -31,17 +31,24 @@ public class CategoryService {
     public void createCategory(Category category) {
         categoryDAO.create(category);
     }
-    
-    public boolean existCategoryName(String categoryname){
-       return categoryDAO.existCategoryName(categoryname);
+
+    public boolean existCategoryName(String categoryname) {
+        return categoryDAO.existCategoryName(categoryname);
     }
-    
-    public boolean existCategory(String categoryname, int id){
-       return categoryDAO.existCategory(categoryname, id);
+
+    public boolean existCategory(String categoryname, int id) {
+        return categoryDAO.existCategory(categoryname, id);
     }
-    
+
     public void editCategory(Category category) {
         categoryDAO.edit(category);
+    }
+
+    public boolean deleteCategory(int id) {
+        if (!categoryDAO.canDeleteCategory(id)) {
+            return false;
+        }
+        return categoryDAO.deleteCategoryById(id);
     }
 
 }

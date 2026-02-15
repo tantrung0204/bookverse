@@ -103,4 +103,62 @@ public class CategoryDAO {
             em.close();
         }
     }
+
+    public boolean existCategoryById(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(c) FROM Category c WHERE c.categoryId = :id",
+                    Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean canDeleteCategory(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long bookCount = em.createQuery(
+                    "SELECT COUNT(b) FROM Book b WHERE b.category.categoryId = :id",
+                    Long.class
+            ).setParameter("id", id)
+                    .getSingleResult();
+
+            Long stationeryCount = em.createQuery(
+                    "SELECT COUNT(s) FROM Stationery s WHERE s.category.categoryId = :id",
+                    Long.class
+            ).setParameter("id", id)
+                    .getSingleResult();
+
+            return bookCount == 0 && stationeryCount == 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean deleteCategoryById(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            Category category = em.find(Category.class, id);
+            if (category == null) {
+                return false;
+            }
+
+            em.remove(category);
+            em.getTransaction().commit();
+            return true;
+
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
 }

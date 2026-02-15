@@ -19,14 +19,24 @@
                 <tr>
                     <td>Category Name</td>
                     <td>
-                        <input type="text" name="categoryName" required>
+                        <textarea name="categoryName">${CategoryName}</textarea>
+                        <c:if test="${not empty nameError}">
+                            <p style="color:red; font-weight:bold;">
+                                ${nameError}
+                            </p>
+                        </c:if>
                     </td>
                 </tr>
 
                 <tr>
                     <td>Description</td>
                     <td>
-                        <textarea name="descriptionText"></textarea>
+                        <textarea name="descriptionText">${descriptionText}</textarea>
+                        <c:if test="${not empty descError}">
+                            <p style="color:red; font-weight:bold;">
+                                ${descError}
+                            </p>
+                        </c:if>
                     </td>
                 </tr>
 
@@ -34,8 +44,8 @@
                     <td>Status</td>
                     <td>
                         <select name="status">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
+                            <option value="1" ${status == 1 ? "selected" : ""}>Active</option>
+                            <option value="0" ${status == 0 ? "selected" : ""}>Inactive</option>
                         </select>
                     </td>
                 </tr>

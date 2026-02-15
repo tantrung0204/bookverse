@@ -67,6 +67,9 @@ public class Book implements Serializable {
     @JoinColumn(name = "book_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Product product;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public Book() {
     }
@@ -172,5 +175,5 @@ public class Book implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Book[ bookId=" + bookId + " ]";
     }
-    
+
 }

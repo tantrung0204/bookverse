@@ -77,6 +77,27 @@
                                         Edit
                                     </button>
                                 </td>
+                                <td>
+                                    <form action="${pageContext.request.contextPath}/category"
+                                          method="post"
+                                          onsubmit="return confirm(
+                                                          'Bạn có chắc chắn muốn xóa thể loại:\n\n'
+                                                          + 'ID: ${c.categoryId}\n'
+                                                          + 'Tên: ${c.categoryName}'
+                                                          )">
+
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="${c.categoryId}">
+
+                                        <button type="submit">Delete</button>
+                                    </form>
+
+                                    <c:if test="${not empty deleteError}">
+                                        <p style="color:red">${deleteError}</p>
+                                        <c:remove var="deleteError" scope="session"/>
+                                    </c:if>
+                                </td>
+
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -121,16 +142,16 @@
                             <td>
                                 <input type="text"
                                        name="categoryName"
-                                       id="editCategoryName"
-                                       required>
+                                       id="editCategoryName">
                             </td>
                         </tr>
 
                         <tr>
                             <td>Description</td>
                             <td>
-                                <textarea name="descriptionText"
-                                          id="editDescription"></textarea>
+                                <input type="text"
+                                       name="descriptionText"
+                                       id="editDescription">                           
                             </td>
                         </tr>
 
@@ -150,6 +171,7 @@
                                 <button type="button" onclick="closeEditPopup()">Cancel</button>
                             </td>
                         </tr>
+
                     </table>
                 </form>
             </div>
@@ -191,6 +213,18 @@
                 };
             </script>
         </c:if>
+        <script>
+            function confirmDelete(id, name) {
+                const message = "Bạn có chắc chắn muốn xóa thể loại:\n\n"
+                        + "ID: " + id + "\n"
+                        + "Tên: " + name + " ?";
+
+                if (confirm(message)) {
+                    window.location.href =
+                            "${pageContext.request.contextPath}/category?action=delete&id=" + id;
+                }
+            }
+        </script>
 
     </body>
 </html>

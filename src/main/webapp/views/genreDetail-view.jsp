@@ -14,34 +14,34 @@
         <title>Genre Detail</title>
     </head>
     <body>
-    <c:if test="${empty requestScope.genre_detail}">
-        <p class="empty-msg"> Empty List </p>
-    </c:if>
-    <c:if test="${not empty requestScope.genre_detail}">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Genre name</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-            
-                <tr>
-                    <td>${genre_detail.genreId}</td>
-                    <td>
-                        ${genre_detail.genreName}
+        <c:if test="${empty requestScope.genre_detail}">
+            <p class="empty-msg"> Empty List </p>
+        </c:if>
+        <c:if test="${not empty requestScope.genre_detail}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Genre name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-                    </td>
-                    <td>${genre_detail.descriptionText}</td>
-                    <c:if test="${genre_detail.status==1}"><td>ok</td></c:if>
-                    <c:if test="${genre_detail.status==0}"><td>ko</td></c:if>
-                </tr>
-            
-            </tbody>
-        </table>
-    </c:if>
-</body>
+                    <tr>
+                        <td>${genre_detail.genreId}</td>
+                        <td>
+                            ${genre_detail.genreName}
+
+                        </td>
+                        <td>${genre_detail.descriptionText}</td>
+                        <c:if test="${genre_detail.status==1}"><td>ok</td></c:if>
+                        <c:if test="${genre_detail.status==0}"><td>ko</td></c:if>
+                        </tr>
+
+                    </tbody>
+                </table>
+        </c:if>
+    </body>
 </html>

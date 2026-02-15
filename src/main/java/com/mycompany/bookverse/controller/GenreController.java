@@ -21,7 +21,9 @@ import java.util.List;
  */
 @WebServlet(name = "GenreController", urlPatterns = {"/genre"})
 public class GenreController extends HttpServlet {
-        private GenreService genreServices = new GenreService();
+
+    private GenreService genreServices = new GenreService();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -60,10 +62,28 @@ public class GenreController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Genre> list= genreServices.getAllgenres();
-        request.setAttribute("genre_list", list);
-        request.getRequestDispatcher("/views/genre-view.jsp").forward(request, response);
-   }
+        String idStr = request.getParameter("id");
+        if (idStr != null && !idStr.trim().isEmpty()) {
+            try {
+                int id = Integer.parseInt(idStr);
+                Genre genre = genreServices.findGenreById(id);
+                request.setAttribute("genre_detail", genre);
+                request.getRequestDispatcher("/views/genreDetail-view.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                System.out.println("id error, reload page");
+            }
+        }
+        String keyword = request.getParameter("keyword");
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            Genre genre = genreServices.findGenreByName(keyword);
+            request.setAttribute("genre", genre);
+            request.getRequestDispatcher("/views/genre-view.jsp").forward(request, response);
+        } else {
+            List<Genre> list = genreServices.getAllGenres();
+            request.setAttribute("genre_list", list);
+            request.getRequestDispatcher("/views/genre-view.jsp").forward(request, response);
+        }
+    }
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -76,11 +96,36 @@ public class GenreController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String idStr= request.getParameter("id");
-        int id= Integer.parseInt(idStr);
-        Genre genre=genreServices.findGenreById(id);
-        request.setAttribute("genre_detail", genre);
-        request.getRequestDispatcher("/views/genreDetail-view.jsp").forward(request, response);
+        String genreName = request.getParameter("genreName");
+        String description = request.getParameter("description");
+        int result = genreServices.insertGenre(genreName, description);
+        switch (result) {
+            case 0:
+                request.setAttribute("result", "success");
+                break;
+            case 1:
+                request.setAttribute("result", "false");
+                break;
+            case 2:
+                request.setAttribute("result", "genre is aready exist");
+                break;
+            case 3:
+                request.setAttribute("errorName", "Name is empty");
+                request.setAttribute("result", "false");
+                break;
+            case 4:
+                request.setAttribute("errorDes", "Description is empty");
+                request.setAttribute("result", "false");
+                break;
+            case 5:
+                request.setAttribute("errorName", "Name is empty");
+                request.setAttribute("errorDes", "Description is empty");
+                request.setAttribute("result", "false");
+                break;
+            default:
+                break;
+        }
+        request.getRequestDispatcher("/views/createGenre-view.jsp").forward(request, response);
     }
 
     /**

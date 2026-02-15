@@ -14,8 +14,45 @@
         <title>View genre</title>
     </head>
     <body>
+        <form action="genre" method="get">
+            <input type="text" name="keyword" placeholder="Search genre name...">
+            <button type="submit">Search</button>
+        </form>
+
+        <a href="${pageContext.request.contextPath}/views/createGenre-view.jsp">Create Genre</a>
         <c:if test="${empty requestScope.genre_list}">
-            <p class="empty-msg"> Empty List </p>
+
+            <c:if test="${empty requestScope.genre}">
+                <p class="empty-msg"> No genre found </p>
+            </c:if>
+            <c:if test="${not empty requestScope.genre}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Genre name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>${genre.genreId}</td>
+                            <td>
+                                <form action="genre" method="Get">
+                                    <input type="hidden" name="id" value="${genre.genreId}">
+                                    <button type="submit" style="border:none; background:none; color:blue; cursor:pointer;"> ${genre.genreName}</button>
+                                </form>                              
+                            </td>
+                            <td>${genre.descriptionText}</td>
+                            <c:if test="${genre.status==1}"><td>active</td></c:if>
+                            <c:if test="${genre.status==0}"><td>inactive</td></c:if>
+                            </tr>
+
+                        </tbody>
+                    </table>
+            </c:if>
         </c:if>
         <c:if test="${not empty requestScope.genre_list}">
             <table>
@@ -32,15 +69,15 @@
                         <tr>
                             <td>${g.genreId}</td>
                             <td>
-                                <form action="genre" method="Post">
+                                <form action="genre" method="Get">
                                     <input type="hidden" name="id" value="${g.genreId}">
                                     <button type="submit" style="border:none; background:none; color:blue; cursor:pointer;"> ${g.genreName}</button>
                                 </form>                              
                             </td>
                             <td>${g.descriptionText}</td>
-                             <c:if test="${g.status==1}"><td>ok</td></c:if>
-                             <c:if test="${g.status==0}"><td>ko</td></c:if>
-                        </tr>
+                            <c:if test="${g.status==1}"><td>active</td></c:if>
+                            <c:if test="${g.status==0}"><td>inactive</td></c:if>
+                            </tr>
                     </c:forEach>
                 </tbody>
             </table>

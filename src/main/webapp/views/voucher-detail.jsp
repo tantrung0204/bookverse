@@ -9,21 +9,13 @@
 <!DOCTYPE html>
 <h2>Voucher Detail</h2>
 
-<c:if test="${not empty sessionScope.message}">
+<c:if test="${not empty sessionScope.successMessage}">
     <div style="padding:10px;margin:10px 0;
          background:#d4edda;color:#155724;
          border:1px solid #c3e6cb;border-radius:5px;">
-        ${sessionScope.message}
+        ${sessionScope.successMessage}
     </div>
-    <c:remove var="message" scope="session"/>
-</c:if>
-
-<c:if test="${not empty message}">
-    <div style="padding:10px;margin:10px 0;
-         background:#f8d7da;color:#721c24;
-         border:1px solid #f5c6cb;border-radius:5px;">
-        ${message}
-    </div>
+    <c:remove var="successMessage" scope="session"/>
 </c:if>
 
 <c:if test="${not empty voucher}">
@@ -62,30 +54,33 @@
         <span class="close" onclick="closeEdit()">&times;</span>
 
         <h3>Edit Voucher</h3>
+        
+        <c:if test="${not empty editError}">
+            <p style="color:red">${editError}</p>
+        </c:if>
 
         <form action="${pageContext.request.contextPath}/voucher" method="post">
             <input type="hidden" name="action" value="edit"/>
             <input type="hidden" name="id" value="${voucher.voucherId}"/>
+            <input type="hidden" id="page" name="page" value="detailPage"/>
 
             Code:
-            <input type="text" name="code" value="${voucher.voucherCode}" required/><br/>
+            <input type="text" name="code" value="${voucher.voucherCode}" required/><br/><br/>
 
             Discount:
             <input type="number" step="0.1" name="discount"
-                   value="${voucher.discountPercent}" required/><br/>
-
+                   value="${voucher.discountPercent}" required/><br/><br/>
             Quantity:
             <input type="number" name="quantity"
-                   value="${voucher.availableQuantity}" required/><br/>
+                   value="${voucher.availableQuantity}" required/><br/><br/>
 
             Status:
             <select name="status">
                 <option value="1" ${voucher.status==1?'selected':''}>Active</option>
                 <option value="0" ${voucher.status==0?'selected':''}>Inactive</option>
-            </select><br/>
-
+            </select><br/><br/>
             Expiry Date:
-            <input type="date" name="expiryDate" required/><br/>
+            <input type="date" name="expiryDate" required/><br/><br/>
 
             <button type="submit">Save</button>
         </form>

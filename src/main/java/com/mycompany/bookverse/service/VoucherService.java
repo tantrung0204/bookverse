@@ -72,8 +72,8 @@ public class VoucherService {
             return "Voucher does not exist";
         }
 
-        if (voucher.getAvailableQuantity() < 0) {
-            return "Quantity cannot be less than 0";
+        if (voucher.getAvailableQuantity() <= 0) {
+            return "Quantity cannot be less than or equal to 0";
         }
 
         if (voucher.getDiscountPercent() == null

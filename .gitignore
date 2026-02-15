@@ -62,6 +62,3 @@ Desktop.ini
 # --- Java Web / JSP Specifics ---
 tomcat/
 work/
-
-# --- Sensitive Information ---
-DBContext.java

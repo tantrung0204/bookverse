@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    <!-- Define Persistence Unit -->
-    <persistence-unit name="my_persistence_unit">
-        
-    </persistence-unit>
+  <!-- Define Persistence Unit -->
+  <persistence-unit name="BookManagementWebsite">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <class>com.mycompany.bookverse.model.Voucher</class>
+    <class>com.mycompany.bookverse.model.Product</class>
+    <class>com.mycompany.bookverse.model.CustomerNotification</class>
+    <class>com.mycompany.bookverse.model.Author</class>
+    <class>com.mycompany.bookverse.model.Supplier</class>
+    <class>com.mycompany.bookverse.model.Category</class>
+    <class>com.mycompany.bookverse.model.Feedback</class>
+    <class>com.mycompany.bookverse.model.Cart</class>
+    <class>com.mycompany.bookverse.model.Customer</class>
+    <class>com.mycompany.bookverse.model.Genre</class>
+    <class>com.mycompany.bookverse.model.ImportStock</class>
+    <class>com.mycompany.bookverse.model.Book</class>
+    <class>com.mycompany.bookverse.model.OrderItem</class>
+    <class>com.mycompany.bookverse.model.ImportStockDetail</class>
+    <class>com.mycompany.bookverse.model.Notification</class>
+    <class>com.mycompany.bookverse.model.Staff</class>
+    <class>com.mycompany.bookverse.model.Stationery</class>
+    <class>com.mycompany.bookverse.model.Order</class>
+    <properties>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=BookverseDB;encrypt=true;trustServerCertificate=true"/>
+      <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="jakarta.persistence.jdbc.user" value="sa"/>
+      <property name="jakarta.persistence.jdbc.password" value="123"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.show_sql" value="true"/>
+    </properties>
+  </persistence-unit>
 </persistence>

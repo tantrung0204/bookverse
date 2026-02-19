@@ -29,8 +29,8 @@ import java.util.Collection;
 @PrimaryKeyJoinColumn(name = "book_id", referencedColumnName = "product_id")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
-    @NamedQuery(name = "Book.findByIsbn", query = "SELECT b FROM Book b WHERE b.isbn = :isbn")})
+        @NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
+        @NamedQuery(name = "Book.findByIsbn", query = "SELECT b FROM Book b WHERE b.isbn = :isbn") })
 public class Book extends Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -133,7 +133,8 @@ public class Book extends Product implements Serializable {
         }
         Book other = (Book) object;
         // So sánh dựa trên ID kế thừa từ cha
-        if ((this.getProductId() == null && other.getProductId() != null) || (this.getProductId() != null && !this.getProductId().equals(other.getProductId()))) {
+        if ((this.getProductId() == null && other.getProductId() != null)
+                || (this.getProductId() != null && !this.getProductId().equals(other.getProductId()))) {
             return false;
         }
         return true;
@@ -143,5 +144,5 @@ public class Book extends Product implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Book[ productId=" + getProductId() + " ]";
     }
-    
+
 }

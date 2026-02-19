@@ -23,8 +23,8 @@ import java.io.Serializable;
 @PrimaryKeyJoinColumn(name = "stationery_id", referencedColumnName = "product_id")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Stationery.findAll", query = "SELECT s FROM Stationery s"),
-    @NamedQuery(name = "Stationery.findByColor", query = "SELECT s FROM Stationery s WHERE s.color = :color")})
+        @NamedQuery(name = "Stationery.findAll", query = "SELECT s FROM Stationery s"),
+        @NamedQuery(name = "Stationery.findByColor", query = "SELECT s FROM Stationery s WHERE s.color = :color") })
 public class Stationery extends Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,7 +72,8 @@ public class Stationery extends Product implements Serializable {
             return false;
         }
         Stationery other = (Stationery) object;
-        if ((this.getProductId() == null && other.getProductId() != null) || (this.getProductId() != null && !this.getProductId().equals(other.getProductId()))) {
+        if ((this.getProductId() == null && other.getProductId() != null)
+                || (this.getProductId() != null && !this.getProductId().equals(other.getProductId()))) {
             return false;
         }
         return true;
@@ -82,5 +83,5 @@ public class Stationery extends Product implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Stationery[ productId=" + getProductId() + " ]";
     }
-    
+
 }

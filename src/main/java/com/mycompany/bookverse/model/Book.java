@@ -4,18 +4,15 @@
  */
 package com.mycompany.bookverse.model;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -28,23 +25,14 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "book")
+@PrimaryKeyJoinColumn(name = "book_id", referencedColumnName = "product_id")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
-    @NamedQuery(name = "Book.findByBookId", query = "SELECT b FROM Book b WHERE b.bookId = :bookId"),
-    @NamedQuery(name = "Book.findByIsbn", query = "SELECT b FROM Book b WHERE b.isbn = :isbn"),
-    @NamedQuery(name = "Book.findByPublisher", query = "SELECT b FROM Book b WHERE b.publisher = :publisher"),
-    @NamedQuery(name = "Book.findByTranslator", query = "SELECT b FROM Book b WHERE b.translator = :translator"),
-    @NamedQuery(name = "Book.findByPublishedYear", query = "SELECT b FROM Book b WHERE b.publishedYear = :publishedYear"),
-    @NamedQuery(name = "Book.findByDescriptionText", query = "SELECT b FROM Book b WHERE b.descriptionText = :descriptionText")})
-public class Book implements Serializable {
+        @NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
+        @NamedQuery(name = "Book.findByIsbn", query = "SELECT b FROM Book b WHERE b.isbn = :isbn") })
+public class Book extends Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "book_id")
-    private Integer bookId;
     @Size(max = 20)
     @Column(name = "isbn")
     private String isbn;
@@ -64,23 +52,12 @@ public class Book implements Serializable {
     @JoinColumn(name = "genre_id", referencedColumnName = "genre_id")
     @ManyToOne
     private Genre genreId;
-    @JoinColumn(name = "book_id", referencedColumnName = "product_id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Product product;
 
     public Book() {
     }
 
-    public Book(Integer bookId) {
-        this.bookId = bookId;
-    }
-
-    public Integer getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
+    public Book(Integer productId) {
+        super(productId);
     }
 
     public String getIsbn() {
@@ -140,18 +117,10 @@ public class Book implements Serializable {
         this.genreId = genreId;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (bookId != null ? bookId.hashCode() : 0);
+        hash += (getProductId() != null ? getProductId().hashCode() : 0);
         return hash;
     }
 
@@ -162,7 +131,9 @@ public class Book implements Serializable {
             return false;
         }
         Book other = (Book) object;
-        if ((this.bookId == null && other.bookId != null) || (this.bookId != null && !this.bookId.equals(other.bookId))) {
+        // So sánh dựa trên ID kế thừa từ cha
+        if ((this.getProductId() == null && other.getProductId() != null)
+                || (this.getProductId() != null && !this.getProductId().equals(other.getProductId()))) {
             return false;
         }
         return true;
@@ -170,7 +141,7 @@ public class Book implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.bookverse.model.Book[ bookId=" + bookId + " ]";
+        return "com.mycompany.bookverse.model.Book[ productId=" + getProductId() + " ]";
     }
-    
+
 }

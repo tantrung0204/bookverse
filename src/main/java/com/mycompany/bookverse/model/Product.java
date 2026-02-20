@@ -5,19 +5,20 @@
 package com.mycompany.bookverse.model;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -31,15 +32,12 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "product")
+@Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p"),
     @NamedQuery(name = "Product.findByProductId", query = "SELECT p FROM Product p WHERE p.productId = :productId"),
-    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE p.name = :name"),
-    @NamedQuery(name = "Product.findByPrice", query = "SELECT p FROM Product p WHERE p.price = :price"),
-    @NamedQuery(name = "Product.findByStockQuantity", query = "SELECT p FROM Product p WHERE p.stockQuantity = :stockQuantity"),
-    @NamedQuery(name = "Product.findByImageUrl", query = "SELECT p FROM Product p WHERE p.imageUrl = :imageUrl"),
-    @NamedQuery(name = "Product.findByStatus", query = "SELECT p FROM Product p WHERE p.status = :status")})
+    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:keyword)")})
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +45,7 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "product_id")
-    private Integer productId;
+    protected Integer productId;
     @Size(max = 255)
     @Column(name = "name")
     private String name;
@@ -64,8 +62,6 @@ public class Product implements Serializable {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     @ManyToOne
     private Category categoryId;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "product")
-    private Book book;
     @OneToMany(mappedBy = "productId")
     private Collection<ImportStockDetail> importStockDetailCollection;
     @OneToMany(mappedBy = "productId")
@@ -74,8 +70,6 @@ public class Product implements Serializable {
     private Collection<Feedback> feedbackCollection;
     @OneToMany(mappedBy = "productId")
     private Collection<OrderItem> orderItemCollection;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "product")
-    private Stationery stationery;
 
     public Product() {
     }
@@ -140,14 +134,6 @@ public class Product implements Serializable {
         this.categoryId = categoryId;
     }
 
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
     @XmlTransient
     public Collection<ImportStockDetail> getImportStockDetailCollection() {
         return importStockDetailCollection;
@@ -184,12 +170,53 @@ public class Product implements Serializable {
         this.orderItemCollection = orderItemCollection;
     }
 
-    public Stationery getStationery() {
-        return stationery;
+    @Transient
+    public String getType() {
+        if (this instanceof Book) {
+            return "Book";
+        }
+        return "Stationery";
     }
 
-    public void setStationery(Stationery stationery) {
-        this.stationery = stationery;
+    @Transient
+    public double getAverageRating() {
+        if (this.feedbackCollection == null || this.feedbackCollection.isEmpty()) {
+            return 0.0;
+        }
+
+        double sum = 0;
+        int count = 0;
+        for (Feedback f : this.feedbackCollection) {
+            if (f.getRating() != null) {
+                sum += f.getRating();
+                count++;
+            }
+        }
+        return count == 0 ? 0.0 : (sum / count);
+    }
+
+    @Transient
+    public int getReviewCount() {
+        return (this.feedbackCollection == null) ? 0 : this.feedbackCollection.size();
+    }
+
+    @Transient
+    public int getSoldQuantity() {
+        if (this.orderItemCollection == null || this.orderItemCollection.isEmpty()) {
+            return 0;
+        }
+        
+        int totalSold = 0;
+
+        for (OrderItem item : this.orderItemCollection) {
+            // Check điều kiện chỉ cộng khi đơn hàng không bị HỦY
+            // if (item.getOrder().getStatus() != 3)
+            if (item.getOrderQuantity() != null) {
+                totalSold += item.getOrderQuantity();
+            }
+        }
+
+        return totalSold;
     }
 
     @Override
@@ -216,5 +243,5 @@ public class Product implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Product[ productId=" + productId + " ]";
     }
-    
+
 }

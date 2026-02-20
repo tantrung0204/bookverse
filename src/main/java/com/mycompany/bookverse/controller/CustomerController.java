@@ -63,8 +63,12 @@ public class CustomerController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Customer> list = customerService.getAllCustomers();
-        request.setAttribute("customer_list", list);
-        request.getRequestDispatcher("/views/customer-list.jsp").forward(request, response);
+        request.setAttribute("customers", list);
+        // Định nghĩa file nội dung
+        request.setAttribute("contentPage", "customer-list.jsp");
+        // Đánh dấu menu active
+        request.setAttribute("activeMenu", "customer");
+        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
     }
 
     /**

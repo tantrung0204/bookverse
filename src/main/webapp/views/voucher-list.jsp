@@ -75,20 +75,20 @@
                 </td>
                 <td>
                     <button type="button"
-                            onclick="${pageContext.request.contextPath} / voucher?action = detail & id =${v.voucherId}">
+                            onclick="location.href = '${pageContext.request.contextPath}/voucher?action=detail&id=${v.voucherId}'">
                         View Detail
                     </button>
 
                     <!-- EDIT BUTTON -->
                     <button type="button"
                             onclick="openEditModal(
-                    '${v.voucherId}',
-                    '${v.voucherCode}',
-                    '${v.discountPercent}',
-                    '${v.availableQuantity}',
-                    '${v.status}',
-                    '${v.expiryDate}'
-                    )">
+                                            '${v.voucherId}',
+                                            '${v.voucherCode}',
+                                            '${v.discountPercent}',
+                                            '${v.availableQuantity}',
+                                            '${v.status}',
+                                            '${v.expiryDate}'
+                                            )">
                         Edit
                     </button>
 

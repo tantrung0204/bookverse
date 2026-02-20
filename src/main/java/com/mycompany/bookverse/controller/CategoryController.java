@@ -101,10 +101,10 @@ public class CategoryController extends HttpServlet {
             }
             request.setAttribute("keyword", keyword);
         } else {
-            list = categoryService.getAllcategories();
+            list = categoryService.getAllCategories();
         }
-        request.setAttribute("category_list", list);
-        request.getRequestDispatcher("/views/category_list.jsp").forward(request, response);
+        request.setAttribute("categories", list);
+        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
     }
 
     private void getViewDetail(HttpServletRequest request, HttpServletResponse response)
@@ -121,13 +121,13 @@ public class CategoryController extends HttpServlet {
         Category category = categoryService.getCategoryById(categoryId);
 
         request.setAttribute("view_detail", category);
-        request.getRequestDispatcher("/views/view_detail_category.jsp")
+        request.getRequestDispatcher("/views/dashboard/view_detail_category.jsp")
                 .forward(request, response);
     }
 
     private void getCreateCategory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/views/create_category.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/dashboard/create_category.jsp").forward(request, response);
     }
 
     private void handleCreateAction(HttpServletRequest request, HttpServletResponse response)
@@ -166,7 +166,7 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("descriptionText", desc);
             request.setAttribute("status", status);
 
-            request.getRequestDispatcher("/views/create_category.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/dashboard/create_category.jsp").forward(request, response);
             return;
         }
 
@@ -216,8 +216,8 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editName", name);
             request.setAttribute("editDesc", desc);
             request.setAttribute("editStatus", statusRaw);
-            request.setAttribute("category_list", categoryService.getAllcategories());
-            request.getRequestDispatcher("views/category_list.jsp").forward(request, response);
+            request.setAttribute("category_list", categoryService.getAllCategories());
+            request.getRequestDispatcher("/views/dashboard/category-list.jsp").forward(request, response);
             return;
         }
         if (categoryService.existCategory(name.trim(), id)) {
@@ -228,8 +228,8 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editDesc", desc);
             request.setAttribute("editStatus", statusRaw);
 
-            request.setAttribute("category_list", categoryService.getAllcategories());
-            request.getRequestDispatcher("views/category_list.jsp").forward(request, response);
+            request.setAttribute("category_list", categoryService.getAllCategories());
+            request.getRequestDispatcher("/views/dashboard/category-list.jsp").forward(request, response);
             return;
         }
 

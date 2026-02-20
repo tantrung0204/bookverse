@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -23,7 +24,14 @@
                 <jsp:include page="header.jsp" />
 
                 <main class="main-content">
-                    <jsp:include page="category-list.jsp" />
+                    <c:if test="${not empty requestScope.contentPage}">
+                        <jsp:include page="${requestScope.contentPage}" />
+                    </c:if>
+
+                    <%-- Trang mặc định khi mới vào dashboard --%>
+                    <c:if test="${empty requestScope.contentPage}">
+                        <h3>Welcome to Dashboard</h3>
+                    </c:if>
                 </main>
             </div>
         </div>

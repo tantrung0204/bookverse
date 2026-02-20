@@ -104,6 +104,8 @@ public class CategoryController extends HttpServlet {
             list = categoryService.getAllCategories();
         }
         request.setAttribute("categories", list);
+        request.setAttribute("contentPage", "category-list.jsp");
+        request.setAttribute("activeMenu", "category");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
     }
 

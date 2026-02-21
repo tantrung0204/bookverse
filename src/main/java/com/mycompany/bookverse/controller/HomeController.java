@@ -4,8 +4,6 @@
  */
 package com.mycompany.bookverse.controller;
 
-import com.mycompany.bookverse.model.Customer;
-import com.mycompany.bookverse.service.CustomerService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,15 +12,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.service.ProductService;
 
 /**
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CustomerController", urlPatterns = {"/customer"})
-public class CustomerController extends HttpServlet {
-    
-    private CustomerService customerService = new CustomerService();
+@WebServlet(name = "HomeController", urlPatterns = {"/home"})
+public class HomeController extends HttpServlet {
+
+    private ProductService productService = new ProductService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class CustomerController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SignupController</title>");
+            out.println("<title>Servlet HomeController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SignupController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet HomeController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,13 +62,36 @@ public class CustomerController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Customer> list = customerService.getAllCustomers();
-        request.setAttribute("customers", list);
-        // Định nghĩa file nội dung
-        request.setAttribute("contentPage", "customer-list.jsp");
-        // Đánh dấu menu active
-        request.setAttribute("activeMenu", "customer");
-        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+
+        String action = request.getParameter("action");
+        if (action == null) {
+            action = "list";
+        }
+        switch (action) {
+            case "list":
+                List<Product> products = productService.getAllProducts();
+                request.setAttribute("PRODUCT_LIST", products);
+                request.getRequestDispatcher("views/home.jsp").forward(request, response);
+                break;
+            case "detail":
+                String id = request.getParameter("id");
+                Product product = productService.getProductById(id);
+                if (product != null) {
+                    request.setAttribute("p", product);
+                    request.getRequestDispatcher("views/product-detail.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("error", "Sản phẩm không tồn tại!");
+                    request.getRequestDispatcher("/views/error-404.jsp").forward(request, response);
+                }
+                break;
+            case "search":
+                String keyword = request.getParameter("keyword");
+                List<Product> searchResult = productService.searchProducts(keyword);
+                request.setAttribute("PRODUCT_LIST", searchResult);
+                request.setAttribute("searchKeyword", keyword);
+                request.getRequestDispatcher("/views/home.jsp").forward(request, response);
+                break;
+        }
     }
 
     /**

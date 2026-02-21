@@ -13,7 +13,7 @@
         <title>Notification Detail</title>
     </head>
 
-    <body style="background:#eee; font-family: Arial; padding:20px;">
+    <body style="background:#eee; padding:20px;">
 
         <h2>Notification Detail</h2>
 

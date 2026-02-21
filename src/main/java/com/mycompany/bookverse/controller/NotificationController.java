@@ -75,7 +75,9 @@ public class NotificationController extends HttpServlet {
 
             case "list":
                 request.setAttribute("notifications", service.getAll());
-                request.getRequestDispatcher("/views/notification-list.jsp")
+                request.setAttribute("contentPage", "notification-list.jsp");
+                request.setAttribute("activeMenu", "notification");
+                request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
 
@@ -83,14 +85,24 @@ public class NotificationController extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 Notification n = service.getById(id);
                 request.setAttribute("notification", n);
-                request.getRequestDispatcher("/views/notification-detail.jsp")
+                request.setAttribute("contentPage", "notification-list.jsp");
+                request.setAttribute("activeMenu", "notification");
+                request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
 
             case "search":
                 String keyword = request.getParameter("keyword");
-                request.setAttribute("notifications", service.search(keyword));
-                request.getRequestDispatcher("/views/notification-list.jsp")
+                List<Notification> searchList = service.search(keyword);
+
+                if (searchList == null || searchList.isEmpty()) {
+                    request.setAttribute("searchMessage", "No notification found");
+                } else {
+                    request.setAttribute("notifications", searchList);
+                }
+                request.setAttribute("contentPage", "notification-list.jsp");
+                request.setAttribute("activeMenu", "notification");
+                request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
         }
@@ -123,7 +135,9 @@ public class NotificationController extends HttpServlet {
                     request.setAttribute("createError", msgCreate);
                     request.setAttribute("openCreate", true);
                     request.setAttribute("notifications", service.getAll());
-                    request.getRequestDispatcher("/views/notification-list.jsp")
+                    request.setAttribute("contentPage", "notification-list.jsp");
+                    request.setAttribute("activeMenu", "notification");
+                    request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                             .forward(request, response);
                     return;
                 }
@@ -133,42 +147,64 @@ public class NotificationController extends HttpServlet {
                 break;
 
             case "edit":
+
                 int id = Integer.parseInt(request.getParameter("id"));
-                String page = request.getParameter("page");
+
+                Notification old = service.getById(id);
+
+                if (old == null) {
+                    request.getSession().setAttribute("successMessage", "Notification not found");
+                    response.sendRedirect(request.getContextPath() + "/notification");
+                    return;
+                }
+
+                String newTitle = request.getParameter("title");
+                String newContent = request.getParameter("content");
+                String newImage = request.getParameter("image");
+
+                if (old.getTitle().equals(newTitle)
+                        && old.getContentText().equals(newContent)
+                        && ((old.getImageUrl() == null && newImage == null)
+                        || (old.getImageUrl() != null && old.getImageUrl().equals(newImage)))) {
+
+                    request.setAttribute("editError", "No changes detected");
+                    request.setAttribute("editNotification", old);
+                    request.setAttribute("openEdit", true);
+
+                    request.setAttribute("notifications", service.getAll());
+                    request.setAttribute("contentPage", "notification-list.jsp");
+                    request.setAttribute("activeMenu", "notification");
+
+                    request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
+                            .forward(request, response);
+                    return;
+                }
 
                 Notification nEdit = new Notification();
                 nEdit.setNotificationId(id);
-                nEdit.setTitle(request.getParameter("title"));
-                nEdit.setContentText(request.getParameter("content"));
-                nEdit.setImageUrl(request.getParameter("image"));
+                nEdit.setTitle(newTitle);
+                nEdit.setContentText(newContent);
+                nEdit.setImageUrl(newImage);
 
                 String msgEdit = service.update(nEdit);
-                boolean isListPage = page.equals("listPage");
 
                 if (!msgEdit.contains("successfully")) {
 
                     request.setAttribute("editError", msgEdit);
+                    request.setAttribute("editNotification", old);
                     request.setAttribute("openEdit", true);
 
-                    if (isListPage) {
-                        request.setAttribute("notifications", service.getAll());
-                        request.getRequestDispatcher("/views/notification-list.jsp")
-                                .forward(request, response);
-                    } else {
-                        request.setAttribute("notification", service.getById(id));
-                        request.getRequestDispatcher("/views/notification-detail.jsp")
-                                .forward(request, response);
-                    }
+                    request.setAttribute("notifications", service.getAll());
+                    request.setAttribute("contentPage", "notification-list.jsp");
+                    request.setAttribute("activeMenu", "notification");
+
+                    request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
+                            .forward(request, response);
                     return;
                 }
 
                 request.getSession().setAttribute("successMessage", msgEdit);
-
-                if (isListPage) {
-                    response.sendRedirect(request.getContextPath() + "/notification?action=list");
-                } else {
-                    response.sendRedirect(request.getContextPath() + "/notification?action=detail&id=" + id);
-                }
+                response.sendRedirect(request.getContextPath() + "/notification?action=list");
                 break;
 
             case "delete":

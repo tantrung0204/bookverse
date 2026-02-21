@@ -5,7 +5,6 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@include file="sidebar.jsp" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
@@ -33,6 +32,13 @@
                     <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
                 </div>
             </form>
+        </div>
+
+        <div id="messagePopup" class="popup-overlay">
+            <div class="popup-box">
+                <h4 id="popupTitle"></h4>
+                <p id="popupMessage"></p>
+            </div>
         </div>
 
         <c:choose>
@@ -126,7 +132,7 @@
         </div>
 
         <c:if test="${not empty createError}">
-            <div class="alert alert-danger" id="createErrorMsg">
+            <div class="alert alert-danger" id="createErrorMsg" >
                 ${createError}
             </div>
         </c:if>
@@ -136,19 +142,19 @@
 
             <div class="form-group">
                 <label>Category Name</label>
-                <input type="text" name="categoryName" class="form-control" required>
+                <input type="text" name="categoryName" class="form-control" value="${createName}">
             </div>
 
             <div class="form-group">
                 <label>Description</label>
-                <input type="text" name="descriptionText" class="form-control">
+                <input type="text" name="descriptionText" class="form-control" value="${createDes}" >
             </div>
 
             <div class="form-group">
                 <label>Status</label>
                 <select name="status" class="form-control">
-                    <option value="1">Active</option>
-                    <option value="0">Inactive</option>
+                    <option value="1" ${createStatus == 1 ? "selected" : ""} >Active</option>
+                    <option value="0" ${createStatus == 0 ? "selected" : ""} >Inactive</option>
                 </select>
             </div>
 
@@ -238,6 +244,9 @@
 <script>
     function openCreatePopup() {
         document.getElementById("createPopup").style.display = "flex";
+        const err = document.getElementById("createErrorMsg");
+        if (err)
+            err.style.display = 'none';
     }
     function closeCreatePopup() {
         document.getElementById("createPopup").style.display = "none";
@@ -279,6 +288,35 @@
         return confirm("Are you sure you want to delete category:\n" + name + " (ID: " + id + ")");
     }
 
+    let popupTimer = null;
+
+    function showMessage(type, title, msg) {
+        const popup = document.getElementById("messagePopup");
+        const box = popup.querySelector(".popup-box");
+
+        popupTitle.innerText = title;
+        popupMessage.innerText = msg;
+
+        //DÙ LÀ error HAY success → ĐỀU DÙNG SUCCESS STYLE
+        box.classList.remove("popup-success", "popup-error");
+        box.classList.add("popup-success");
+
+        popup.style.display = "flex";
+
+        // TỰ ĐỘNG TẮT SAU 4 GIÂY
+        clearTimeout(popupTimer);
+        popupTimer = setTimeout(() => {
+            popup.style.display = "none";
+        }, 3000);
+
+        // 🔴 CLICK RA NGOÀI → TẮT
+        popup.onclick = function (event) {
+            if (event.target === popup) {
+                popup.style.display = "none";
+            }
+        };
+    }
+
     // Đóng Popup khi click ra ngoài vùng trắng
     window.onclick = function (event) {
         var modal = document.getElementById("editPopup");
@@ -287,8 +325,23 @@
         }
     }
 </script>
+
 <c:if test="${openCreatePopup}">
-    <script>openCreatePopup();</script>
+    <script>
+        window.onload = function () {
+            setTimeout(function () {
+                openCreatePopup(
+                        '${createName}',
+                        '${createDesc}',
+                        '${createStatus}'
+                        );
+                // Hiển thị lại lỗi
+                const err = document.getElementById("createErrorMsg");
+                if (err)
+                    err.style.display = 'block';
+            }, 100);
+        };
+    </script>
 </c:if>
 
 <c:if test="${openEditPopup}">
@@ -309,4 +362,16 @@
             }, 100);
         };
     </script>
+</c:if>
+<c:if test="${not empty successMsg}">
+    <script>
+        showMessage("success", "Success", "${successMsg}");
+    </script>
+    <c:remove var="successMsg" scope="session"/>
+</c:if>
+    <c:if test="${not empty errorMsg}">
+    <script>
+        showMessage("error", "Error", "${errorMsg}");
+    </script>
+    <c:remove var="errorMsg" scope="session"/>
 </c:if>

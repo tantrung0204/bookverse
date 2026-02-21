@@ -6,17 +6,31 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Customer list</title>
-    </head>
-    <body>
-        <c:if test="${empty requestScope.customer_list}">
-            <p class="empty-msg">Empty List</p>
-        </c:if>
-        <c:if test="${not empty requestScope.customer_list}">
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/customer-list.css">
+
+<div class="container-fluid">
+    <div class="page-header">
+        <p class="title">Manage Customers</p>
+        <p class="subtitle">Manage and monitor all customer accounts</p>
+    </div>
+
+    <div class="content-card">
+        <div class="toolbar">
+            <a class="btn-add" href="#">
+                <i class="bi bi-plus-lg me-1"></i> Add New Customer
+            </a>
+
+            <form method="get" action="" class="search-form">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="keyword" placeholder="Search customer" value="">
+                </div>
+            </form>
+        </div>
+
+
+        <c:if test="${not empty requestScope.customers}">
             <table>
                 <thead>
                     <tr>
@@ -28,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="c" items="${requestScope.customer_list}">
+                    <c:forEach var="c" items="${requestScope.customers}">
                         <tr>
                             <td>${c.customerId}</td>
                             <td>${c.username}</td>
@@ -40,5 +54,9 @@
                 </tbody>
             </table>
         </c:if>
-    </body>
-</html>
+
+    </div>
+</div>
+
+
+

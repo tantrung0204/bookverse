@@ -44,14 +44,11 @@ public class CategoryController extends HttpServlet {
             case "list":
                 getListCategories(request, response);
                 break;
-            case "view_detail":
-                getViewDetail(request, response);
-                break;
-            case "create":
-                getCreateCategory(request, response);
-                break;
-//            case "delete":
-//                getDeleteCategory(request, response);
+//            case "view_detail":
+//                getViewDetail(request, response);
+//                break;
+//            case "create":
+//                getCreateCategory(request, response);
 //                break;
         }
 
@@ -167,8 +164,7 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("CategoryName", name);
             request.setAttribute("descriptionText", desc);
             request.setAttribute("status", status);
-
-            request.getRequestDispatcher("/views/dashboard/create_category.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/dashboard/category-list.jsp").forward(request, response);
             return;
         }
 
@@ -218,7 +214,7 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editName", name);
             request.setAttribute("editDesc", desc);
             request.setAttribute("editStatus", statusRaw);
-            request.setAttribute("category_list", categoryService.getAllCategories());
+            request.setAttribute("categories", categoryService.getAllCategories());
             request.getRequestDispatcher("/views/dashboard/category-list.jsp").forward(request, response);
             return;
         }
@@ -228,9 +224,9 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editId", id);
             request.setAttribute("editName", name);
             request.setAttribute("editDesc", desc);
-            request.setAttribute("editStatus", statusRaw);
+            request.setAttribute("editStatus", status);
 
-            request.setAttribute("category_list", categoryService.getAllCategories());
+            request.setAttribute("categories", categoryService.getAllCategories());
             request.getRequestDispatcher("/views/dashboard/category-list.jsp").forward(request, response);
             return;
         }

@@ -58,7 +58,7 @@
 }
 
 .btn-add {
-    background-color: #a6dcec; 
+    background-color: #a6dcec;
     color: #2c3e50;
     font-weight: 600;
     padding: 10px 20px;
@@ -184,8 +184,14 @@
 }
 
 @keyframes slideDown {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .modal-header h3 {
@@ -236,4 +242,14 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+.alert-error {
+    background-color: #fdecea;
+    color: #b71c1c;
+    border: 1px solid #f5c6cb;
+    border-left: 5px solid #dc3545;
+    padding: 10px 14px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    border-radius: 4px;
 }

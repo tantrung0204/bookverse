@@ -5,24 +5,28 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@include file="sidebar.jsp" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 <div class="container-fluid">
-    
+
     <div class="page-header">
         <p class="title">Manage Categories</p>
         <p class="subtitle">Create and manage book categories for your library</p>
     </div>
 
-    <div class="content-card">
-        
+    <div class="content-card" >
+
         <div class="toolbar">
-            <a class="btn-add" href="${pageContext.request.contextPath}/category?view=create">
+            <button type="button"
+                    class="btn-add"
+                    onclick="openCreatePopup()">
                 <i class="bi bi-plus-lg me-1"></i> Add New Category
-            </a>
-            
+            </button>
+
             <form method="get" action="category" class="search-form">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -59,21 +63,28 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                
+
                                 <td>
                                     <div class="action-buttons">
-                                        <a href="${pageContext.request.contextPath}/category?view=view_detail&id=${c.categoryId}" 
-                                           class="btn-action btn-detail" title="View Detail">
+                                        <button type="button"
+                                                class="btn-action btn-detail"
+                                                title="View Detail"
+                                                onclick="openDetailPopup(
+                                                                '${c.categoryId}',
+                                                                '${c.categoryName}',
+                                                                '${c.descriptionText}',
+                                                                '${c.status}'
+                                                                )">
                                             <i class="bi bi-eye"></i>
-                                        </a>
+                                        </button>
 
                                         <button type="button" class="btn-action btn-edit" title="Edit"
-                                            onclick="openEditPopup(
-                                                '${c.categoryId}',
-                                                '${c.categoryName}',
-                                                '${c.descriptionText}',
-                                                '${c.status}'
-                                            )">
+                                                onclick="openEditPopup(
+                                                                '${c.categoryId}',
+                                                                '${c.categoryName}',
+                                                                '${c.descriptionText}',
+                                                                '${c.status}'
+                                                                )">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
@@ -99,22 +110,97 @@
                 </div>
             </c:otherwise>
         </c:choose>
-        
+
         <c:if test="${not empty deleteError}">
-            <div class="alert alert-danger mt-3">${deleteError}</div>
+            <div class="alert alert-danger mt-3 ">${deleteError}</div>
             <c:remove var="deleteError" scope="session"/>
         </c:if>
     </div>
 </div>
 
-<div id="editPopup" class="modal-overlay">
+<!-- ================= CREATE POPUP ================= -->
+<div id="createPopup" class="modal-overlay">
     <div class="modal-content">
+        <div class="modal-header">
+            <h3>Create Category</h3>
+        </div>
+
+        <c:if test="${not empty createError}">
+            <div class="alert alert-danger" id="createErrorMsg">
+                ${createError}
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/category" method="post">
+            <input type="hidden" name="action" value="create">
+
+            <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" name="categoryName" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" name="descriptionText" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
+                <button type="submit" class="btn-save">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= DETAIL POPUP ================= -->
+<div id="detailPopup" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Category Detail</h3>
+        </div>
+
+        <div class="form-group">
+            <label>ID</label>
+            <input type="text" id="detailId" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="detailName" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="detailDesc" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Status</label>
+            <input type="text" id="detailStatus" class="form-control" readonly>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="editPopup" class="modal-overlay">
+    <div class="modal-content ">
         <div class="modal-header">
             <h3>Edit Category</h3>
         </div>
-        
+
         <c:if test="${not empty editError}">
-            <div class="alert alert-danger p-2 mb-3" id="editErrorMsg" style="font-size: 13px;">
+            <div class="alert alert-danger p-2 mb-3 alert-error" id="editErrorMsg" style="font-size: 13px;">
                 ${editError}
             </div>
         </c:if>
@@ -125,7 +211,7 @@
 
             <div class="form-group">
                 <label>Category Name</label>
-                <input type="text" name="categoryName" id="editCategoryName" class="form-control" required>
+                <input type="text" name="categoryName" id="editCategoryName" class="form-control">
             </div>
 
             <div class="form-group">
@@ -150,19 +236,37 @@
 </div>
 
 <script>
+    function openCreatePopup() {
+        document.getElementById("createPopup").style.display = "flex";
+    }
+    function closeCreatePopup() {
+        document.getElementById("createPopup").style.display = "none";
+    }
+
+    function openDetailPopup(id, name, desc, status) {
+        document.getElementById("detailId").value = id;
+        document.getElementById("detailName").value = name;
+        document.getElementById("detailDesc").value = desc;
+        document.getElementById("detailStatus").value = status == 1 ? "Active" : "Inactive";
+        document.getElementById("detailPopup").style.display = "flex";
+    }
+    function closeDetailPopup() {
+        document.getElementById("detailPopup").style.display = "none";
+    }
     // Hàm mở Popup và điền dữ liệu
     function openEditPopup(id, name, description, status) {
         document.getElementById("editCategoryId").value = id;
         document.getElementById("editCategoryName").value = name;
         document.getElementById("editDescription").value = description;
         document.getElementById("editStatus").value = status;
-        
+
         // Ẩn thông báo lỗi cũ nếu có
         const err = document.getElementById("editErrorMsg");
-        if (err) err.style.display = 'none';
+        if (err)
+            err.style.display = 'none';
 
         // Hiển thị modal (sử dụng Flex để căn giữa)
-        document.getElementById("editPopup").style.display = "flex"; 
+        document.getElementById("editPopup").style.display = "flex";
     }
 
     // Hàm đóng Popup
@@ -172,32 +276,36 @@
 
     // Xử lý confirm xóa
     function confirmDelete(id, name) {
-        return confirm("Are you sure you want to delete category:\n" + name + " (ID: " + id + ")?");
+        return confirm("Are you sure you want to delete category:\n" + name + " (ID: " + id + ")");
     }
 
     // Đóng Popup khi click ra ngoài vùng trắng
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         var modal = document.getElementById("editPopup");
         if (event.target == modal) {
             closeEditPopup();
         }
     }
 </script>
+<c:if test="${openCreatePopup}">
+    <script>openCreatePopup();</script>
+</c:if>
 
 <c:if test="${openEditPopup}">
     <script>
         window.onload = function () {
             // Đảm bảo DOM đã load xong
-            setTimeout(function() {
+            setTimeout(function () {
                 openEditPopup(
-                    '${editId}',
-                    '${editName}',
-                    '${editDesc}',
-                    '${editStatus}'
-                );
+                        '${editId}',
+                        '${editName}',
+                        '${editDesc}',
+                        '${editStatus}'
+                        );
                 // Hiển thị lại lỗi
                 const err = document.getElementById("editErrorMsg");
-                if (err) err.style.display = 'block';
+                if (err)
+                    err.style.display = 'block';
             }, 100);
         };
     </script>

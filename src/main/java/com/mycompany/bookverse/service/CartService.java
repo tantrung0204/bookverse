@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.CartDAO;
 import com.mycompany.bookverse.model.*;
+import java.lang.classfile.CustomAttribute;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -32,5 +33,42 @@ public class CartService {
             }
         }
         return total;
+    }
+
+    public void addToCart(int customerId, int productId, int quantity) {
+        Cart existingCartItem = cartDAO.findByCustomerAndProduct(customerId, productId);
+
+        if (existingCartItem != null) {
+            int currentQuantity = existingCartItem.getCartQuantity();
+            existingCartItem.setCartQuantity(currentQuantity + quantity);
+            cartDAO.save(existingCartItem);
+        } else {
+            Cart newItem = new Cart();
+            newItem.setCartQuantity(quantity);
+            newItem.setCustomerId(new Customer(customerId));
+            newItem.setProductId(new Product(productId));
+
+            cartDAO.save(newItem);
+        }
+    }
+
+    public void updateCartQuantity(int cartId, int newQuantity) {
+        Cart item = cartDAO.findById(cartId);
+        if (item != null) {
+            item.setCartQuantity(newQuantity);
+            cartDAO.save(item);
+        }
+    }
+
+    public void removeCartItem(int cartId) {
+        cartDAO.delete(cartId);
+    }
+
+    public static void main(String[] args) {
+        CartService service = new CartService();
+        service.addToCart(1, 1, 2);
+        for (Cart item : service.getCustomerCart(1)) {
+            System.out.println(item.getCartQuantity());
+        }
     }
 }

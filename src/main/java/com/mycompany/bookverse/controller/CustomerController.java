@@ -6,6 +6,8 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Customer;
 import com.mycompany.bookverse.service.CustomerService;
+import com.mycompany.bookverse.utils.JPAUtil;
+import jakarta.persistence.EntityManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;

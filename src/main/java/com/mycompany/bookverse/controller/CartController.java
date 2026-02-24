@@ -64,18 +64,20 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
+        String action = request.getParameter("action");
 
-//        int customerId = session.getAttribute("customerId");
-        int customerId = 1;
+        if (action == null) {
+            action = "list";
+        }
 
-        List<Cart> cartItems = cartService.getCustomerCart(customerId);
-        BigDecimal cartTotal = cartService.calculateCartTotal(cartItems);
-
-        request.setAttribute("cartList", cartItems);
-        request.setAttribute("cartTotal", cartTotal);
-        
-        request.getRequestDispatcher("/views/customer/cart.jsp").forward(request, response);
+        switch (action) {
+            case "list":
+                viewCart(request, response);
+                break;
+            default:
+                viewCart(request, response);
+                break;
+        }
     }
 
     /**
@@ -89,7 +91,138 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+
+        if (action == null) {
+            // Nếu POST mà không có action, chuyển về trang xem giỏ
+            response.sendRedirect("cart");
+            return;
+        }
+
+        switch (action) {
+            case "add":
+                addToCart(request, response);
+                break;
+            case "update":
+                updateQuantity(request, response);
+                break;
+            case "delete":
+                deleteFromCart(request, response);
+                break;
+            default:
+                response.sendRedirect("cart");
+                break;
+        }
+    }
+
+    private void viewCart(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        //HttpSession session = request.getSession();
+        //int customerId = session.getAttribute("customerId");
+        int customerId = 1;
+
+        List<Cart> cartItems = cartService.getCustomerCart(customerId);
+        BigDecimal cartTotal = cartService.calculateCartTotal(cartItems);
+
+        request.setAttribute("cartList", cartItems);
+        request.setAttribute("cartTotal", cartTotal);
+
+        request.getRequestDispatcher("/views/customer/cart.jsp").forward(request, response);
+    }
+
+    private void addToCart(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+
+        String referer = request.getHeader("referer");
+
+        try {
+            //HttpSession session = request.getSession();
+            //int customerId = session.getAttribute("customerId");
+            int customerId = 1;
+            int productId = Integer.parseInt(request.getParameter("productId"));
+
+            String quantityRaw = request.getParameter("quantity");
+            int quantity = (quantityRaw == null || quantityRaw.isEmpty()) ? 1 : Integer.parseInt(quantityRaw);
+
+            cartService.addToCart(customerId, productId, quantity);
+
+            session.setAttribute("cartMessage", "Product added to cart successfully!");
+            session.setAttribute("messageType", "success");
+
+        } catch (NumberFormatException e) {
+            session.setAttribute("cartMessage", "Failed to add product! Invalid quantity.");
+            session.setAttribute("messageType", "error");
+        } catch (Exception e) {
+
+            session.setAttribute("cartMessage", "An error occurred. Please try again.");
+            session.setAttribute("messageType", "error");
+        }
+
+        if (referer != null && !referer.isEmpty()) {
+            response.sendRedirect(referer);
+        } else {
+            response.sendRedirect("cart");
+        }
+    }
+
+    private void updateQuantity(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        response.setContentType("application/json");
+
+        try {
+            int cartId = Integer.parseInt(request.getParameter("cartId"));
+            int newQuantity = Integer.parseInt(request.getParameter("quantity"));
+
+            cartService.updateCartQuantity(cartId, newQuantity);
+
+            int customerId = 1;
+            List<Cart> cartItems = cartService.getCustomerCart(customerId);
+            BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);
+
+            BigDecimal itemTotal = BigDecimal.ZERO;
+            for (Cart c : cartItems) {
+                if (c.getCartId() == cartId) {
+                    BigDecimal price = c.getProductId().getPrice();
+                    itemTotal = price.multiply(new BigDecimal(newQuantity));
+                    break;
+                }
+            }
+
+            //Trả về JSON thủ công: {"status":"success", "itemTotal": 100000, "grandTotal": 500000}
+            PrintWriter out = response.getWriter();
+            out.print("{");
+            out.print("\"status\": \"success\",");
+            out.print("\"itemTotal\": " + itemTotal + ",");
+            out.print("\"grandTotal\": " + grandTotal);
+            out.print("}");
+            out.flush();
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void deleteFromCart(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        HttpSession session = request.getSession();
+        try {
+            int cartId = Integer.parseInt(request.getParameter("cartId"));
+
+            cartService.removeCartItem(cartId);
+
+            session.setAttribute("cartMessage", "Item removed from cart successfully!");
+            session.setAttribute("messageType", "success");
+
+        } catch (Exception e) {
+            session.setAttribute("cartMessage", "Failed to remove item.");
+            session.setAttribute("messageType", "error");
+        }
+
+        // 4. Load lại trang giỏ hàng
+        response.sendRedirect("cart");
     }
 
     /**

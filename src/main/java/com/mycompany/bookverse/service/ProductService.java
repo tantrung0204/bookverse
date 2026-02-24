@@ -1,6 +1,8 @@
 package com.mycompany.bookverse.service;
 
+import com.mycompany.bookverse.dao.BookDAO;
 import com.mycompany.bookverse.dao.ProductDAO;
+import com.mycompany.bookverse.dao.StationeryDAO;
 import java.util.List;
 import com.mycompany.bookverse.model.*;
 
@@ -15,6 +17,8 @@ import com.mycompany.bookverse.model.*;
 public class ProductService {
 
     private ProductDAO productDao = new ProductDAO();
+    private BookDAO bookDao = new BookDAO();
+    private StationeryDAO stationeryDao = new StationeryDAO();
 
     public List<Product> getAllProducts() {
         return productDao.findAll();
@@ -38,5 +42,12 @@ public class ProductService {
     
     public long countProductByCategoryId(int categoryId) {
         return productDao.countProductByCategory(categoryId);
+    }
+    public List<Product> getAllBooks() {
+        return productDao.findProductsHaveBook();
+    }
+
+    public List<Product> getAllStationery() {
+        return productDao.findProductsHaveStationery();
     }
 }

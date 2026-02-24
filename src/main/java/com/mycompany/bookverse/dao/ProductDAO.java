@@ -82,5 +82,30 @@ public class ProductDAO {
         } finally {
             em.close();
         }
+
+    }
+
+    public List<Product> findProductsHaveBook() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT p FROM Product p WHERE TYPE(p) = Book",
+                    Product.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Product> findProductsHaveStationery() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT p FROM Stationery p WHERE TYPE(p) = Stationery",
+                    Product.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
     }
 }

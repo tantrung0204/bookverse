@@ -174,33 +174,7 @@
         document.getElementById("createPopup").style.display = "none";
     }
 
-    function openDetailPopup(id, name, desc, status) {
-    document.getElementById("detailId").innerText = id;
-    document.getElementById("detailName").innerText = name;
-    document.getElementById("detailDesc").innerText = desc;
-    document.getElementById("detailStatus").innerText =
-        status == 1 ? "Active" : "Inactive";
 
-    document.getElementById("detailQuantity").innerText = "Loading...";
-
-    fetch('${pageContext.request.contextPath}/genre?action=detail&id=' + id)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("HTTP error");
-            }
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById("detailQuantity").innerText =
-                data.quantity + " products";
-        })
-        .catch(error => {
-            console.error(error);
-            document.getElementById("detailQuantity").innerText = "Error";
-        });
-
-    document.getElementById("detailPopup").style.display = "flex";
-}
     function closeDetailPopup() {
         document.getElementById("detailPopup").style.display = "none";
     }
@@ -224,6 +198,21 @@
 
         document.getElementById("detailPopup").style.display = "flex";
     }
+    // Hàm mở Popup và điền dữ liệu
+    function openEditPopup(id, name, description, status) {
+        document.getElementById("editGenreId").value = id;
+        document.getElementById("editGenreName").value = name;
+        document.getElementById("editDescription").value = description;
+        document.getElementById("editStatus").value = status;
+
+        // Ẩn thông báo lỗi cũ nếu có
+        const err = document.getElementById("editErrorMsg");
+        if (err)
+            err.style.display = 'none';
+
+        // Hiển thị modal (sử dụng Flex để căn giữa)
+        document.getElementById("editPopup").style.display = "flex";
+    }
 
     // Hàm đóng Popup
     function closeEditPopup() {
@@ -232,7 +221,7 @@
 
     // Xử lý confirm xóa
     function confirmDelete(id, name) {
-        return confirm("Are you sure you want to delete category:\n" + name + " (ID: " + id + ")");
+        return confirm("Are you sure you want to delete Genre:\n" + name + " (ID: " + id + ")");
     }
 
     let popupTimer = null;

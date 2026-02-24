@@ -24,52 +24,65 @@
 
                 <div class="menu-section">Management</div>
 
-                <li class="sidebar-item">
-                    <a href="${pageContext.request.contextPath}/customer"
-                        class="sidebar-link ${activeMenu == 'customer'? 'active':''}">
-                        <i class="bi bi-people"></i> Customers
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'staff'? 'active':''}">
-                        <i class="bi bi-person-badge"></i> Staff
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'product'? 'active':''}">
-                        <i class="bi bi-book"></i> Products
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="${pageContext.request.contextPath}/category"
-                        class="sidebar-link ${activeMenu == 'category'? 'active':''}">
-                        <i class="bi bi-tags"></i> Categories
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'order'? 'active':''}">
-                        <i class="bi bi-cart2"></i> Orders
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
-                        <i class="bi bi-star"></i> Feedback
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'voucher'? 'active':''}">
-                        <i class="bi bi-percent"></i> Vouchers
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'notification'? 'active':''}">
-                        <i class="bi bi-bell"></i> Notifications
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'statistic'? 'active':''}">
-                        <i class="bi bi-bar-chart-steps"></i> Statistics
-                    </a>
-                </li>
-            </ul>
-        </aside>
+        <li class="sidebar-item">
+            <a href="${pageContext.request.contextPath}/customer" 
+               class="sidebar-link ${activeMenu == 'customer'? 'active':''}">
+                <i class="bi bi-people"></i> Customers
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'staff'? 'active':''}">
+                <i class="bi bi-person-badge"></i> Staff
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'product'? 'active':''}">
+                <i class="bi bi-book"></i> Products
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="${pageContext.request.contextPath}/category" 
+               class="sidebar-link ${activeMenu == 'category'? 'active':''}">
+                <i class="bi bi-tags"></i> Categories
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'order'? 'active':''}">
+                <i class="bi bi-cart2"></i> Orders
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
+                <i class="bi bi-star"></i> Feedback
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'voucher'? 'active':''}">
+                <i class="bi bi-percent"></i> Vouchers
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'notification'? 'active':''}">
+                <i class="bi bi-bell"></i> Notifications
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'statistic'? 'active':''}">
+                <i class="bi bi-bar-chart-steps"></i> Statistics
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'genre'? 'active':''}">
+                <i class="bi bi-bar-chart-steps"></i> Genre
+            </a>
+        </li>
+    </ul>
+</aside>

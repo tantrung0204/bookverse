@@ -62,54 +62,54 @@ public class GenreController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
+        String view = request.getParameter("view");
+        if (view == null) {
+            view = "list";
         }
-        switch (action) {
+        switch (view) {
             case "list":
                 List<Genre> genres = genreServices.getAllGenres();
                 if (genres == null || genres.isEmpty()) {
                     request.setAttribute("message", "No vouchers found");
                 } else {
                     request.setAttribute("genres", genres);
+                    request.setAttribute("contentPage", "genre-list.jsp");
+                    request.setAttribute("activeMenu", "genre");
                 }
-                request.getRequestDispatcher("/views/genre-list.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "search":
                 String keyword = request.getParameter("keyword");
                 List<Genre> searchList = genreServices.searchGenres(keyword);
                 if (searchList == null || searchList.isEmpty()) {
-                    request.setAttribute("message", "No genre found");
+                    request.setAttribute("message", "No genre found for:" + keyword);
                 } else {
                     request.setAttribute("genres", searchList);
                 }
-                request.getRequestDispatcher("/views/genre-list.jsp").forward(request, response);
+                request.setAttribute("contentPage", "genre-list.jsp");
+                request.setAttribute("activeMenu", "genre");
+                request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "detail":
                 String idStr = request.getParameter("id");
                 if (idStr == null || idStr.trim().isEmpty()) {
-                    request.setAttribute("message", "Invalid genre ID");
-                    request.getRequestDispatcher("/views/genre-list.jsp")
-                            .forward(request, response);
+                    response.sendRedirect("genre");                  
                     return;
                 }
                 try {
                     int id = Integer.parseInt(idStr);
                     Genre genre = genreServices.findGenreById(id);
                     if (genre == null) {
-                        request.setAttribute("message", "Genre not found");
-                        request.getRequestDispatcher("/views/genre-list.jsp")
-                                .forward(request, response);
+                        response.sendRedirect("genre");                  
+                    return;
                     } else {
                         request.setAttribute("genre", genre);
-                        request.getRequestDispatcher("/views/genre-detail.jsp")
+                        request.getRequestDispatcher("/views/dashboard/genre-detail.jsp")
                                 .forward(request, response);
                     }
                 } catch (NumberFormatException e) {
-                    request.setAttribute("message", "Genre ID must be a number");
-                    request.getRequestDispatcher("/views/genre-list.jsp")
-                            .forward(request, response);
+                    response.sendRedirect("genre");                  
+                    return;
                 }
                 break;
             default:
@@ -182,14 +182,14 @@ public class GenreController extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 String msg = genreServices.deleteGenre(id);
                 if (!msg.contains("successfully")) {
-                     request.setAttribute("message", msg);
-                     request.getRequestDispatcher("/views/genre-list.jsp")
-                        .forward(request, response);
-                     return;
+                    request.setAttribute("message", msg);
+                    request.getRequestDispatcher("/views/genre-list.jsp")
+                            .forward(request, response);
+                    return;
                 }
                 request.getSession().setAttribute("message", msg);
             } catch (Exception e) {
-                     e.printStackTrace();
+                e.printStackTrace();
                 request.getSession().setAttribute("message", "Invalid voucher ID");
             }
             response.sendRedirect(request.getContextPath() + "/genre");

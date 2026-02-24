@@ -82,5 +82,11 @@
                 <i class="bi bi-bar-chart-steps"></i> Statistics
             </a>
         </li>
+        <li class="sidebar-item">
+            <a href="#" 
+               class="sidebar-link ${activeMenu == 'genre'? 'active':''}">
+                <i class="bi bi-bar-chart-steps"></i> Statistics
+            </a>
+        </li>
     </ul>
 </aside>

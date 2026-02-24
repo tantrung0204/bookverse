@@ -16,9 +16,9 @@ import java.util.List;
 public class CustomerDAO {
 
     public List<Customer> findAll() {
-        try (
-                // Khởi tạo entity manager
-                EntityManager em = JPAUtil.getEntityManager()) {
+        // Khởi tạo entity manager
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
             // Câu lệnh JPQL (Lấy đối tượng Customer)
 //            String jpql = "SELECT c FROM Customer c";
 //            TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
@@ -27,6 +27,8 @@ public class CustomerDAO {
             // Chỉ cần gọi tên định danh đã khai báo trong Model
             return em.createNamedQuery("Customer.findAll", Customer.class)
                     .getResultList();
+        } finally {
+            em.close();
         }
     }
 }

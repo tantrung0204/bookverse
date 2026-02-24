@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    background-color: #fffdf6;
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    min-width: 0;
+}
+.main-content {
+    padding: 30px;
+}

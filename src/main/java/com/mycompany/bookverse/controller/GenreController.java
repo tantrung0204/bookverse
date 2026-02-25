@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Genre;
 import com.mycompany.bookverse.service.GenreService;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -66,8 +67,33 @@ public class GenreController extends HttpServlet {
         if (view == null) {
             view = "list";
         }
+       int page = 1;
+      String pageParam = request.getParameter("page");
+
+       if (pageParam != null) {
+           try {
+               page = Integer.parseInt(pageParam);
+                if (page < 1) {
+                   page = 1;
+                }
+            } catch (NumberFormatException e) {
+                page = 1;
+           }
+        }
+        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+//        List<Genre> genres = genreServices.getGenresByPage(page, pageSize);
+//        int totalPages = genreServices.getTotalPages(pageSize);
+//
+//        request.setAttribute("genres", genres);
+//        request.setAttribute("currentPage", page);
+//        request.setAttribute("totalPages", totalPages);
         switch (view) {
             case "list":
+                String success = (String) request.getSession().getAttribute("success");
+                if (success != null) {
+                    request.setAttribute("success", success);
+                    request.getSession().removeAttribute("success");
+                }
                 List<Genre> genres = genreServices.getAllGenres();
                 if (genres == null || genres.isEmpty()) {
                     request.setAttribute("message", "No vouchers found");
@@ -92,10 +118,6 @@ public class GenreController extends HttpServlet {
                 break;
             case "detail":
                 String idStr = request.getParameter("id");
-                if (idStr == null || idStr.trim().isEmpty()) {
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return;
-                }
                 try {
                     int id = Integer.parseInt(idStr);
                     Genre genre = genreServices.findGenreById(id);
@@ -110,12 +132,10 @@ public class GenreController extends HttpServlet {
                         return;
                     }
                 } catch (NumberFormatException e) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return;
+                    response.sendRedirect("genre");
                 }
-                
             default:
-                response.sendRedirect(request.getContextPath() + "/genre");
+                response.sendRedirect("genre");
                 break;
         }
     }
@@ -133,82 +153,93 @@ public class GenreController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect(request.getContextPath() + "/genre");
+            response.sendRedirect("genre");
             return;
         }
-        if (action.equals("edit")) {
-            try {
+        switch (action) {
+            case "edit":
+                try {
+                    int id = Integer.parseInt(request.getParameter("genreId"));
+                    Genre oldGenre = genreServices.findGenreById(id);
+                    if (oldGenre == null) {
+                        request.setAttribute("editError", "Genre not found");
+                        request.getRequestDispatcher("/views/dashboard/genre-list.jsp")
+                                .forward(request, response);
+                        return;
+                    }
+                    String name = request.getParameter("genreName");
+                    String des = request.getParameter("descriptionText");
+                    int status = Integer.parseInt(request.getParameter("status"));
+                    String msg = genreServices.editGenre(id, name, des, status);
 
-                int id = Integer.parseInt(request.getParameter("genreId"));
-                Genre oldGenre = genreServices.findGenreById(id);
-                if (oldGenre == null) {
-                    request.setAttribute("edditError", "Genre not found");
-                    request.getRequestDispatcher("/views/dashboard/genre-list.jsp")
-                            .forward(request, response);
-                    return;
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("editError", msg);
+                        request.setAttribute("openEditPopup", true);
+                        request.setAttribute("editId", id);
+                        request.setAttribute("editName", name);
+                        request.setAttribute("editDesc", des);
+                        request.setAttribute("editStatus", status);
+                        List<Genre> genres = genreServices.getAllGenres();
+                        request.setAttribute("genres", genres);
+                        request.setAttribute("contentPage", "genre-list.jsp");
+                        request.setAttribute("activeMenu", "genre");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
+                    }
+                    request.getSession().setAttribute("success", "Edit successfully");
+                    response.sendRedirect("genre");
+                } catch (ServletException | IOException | NumberFormatException e) {
+                    response.sendRedirect("genre");
                 }
-                String name = request.getParameter("genreName");
-                String des = request.getParameter("descriptionText");
-                int status = Integer.parseInt(request.getParameter("status"));
-                String msg = genreServices.editGenre(id, name, des, status);
-
-                if (!msg.contains("successfully")) {
-                    request.setAttribute("editError", msg);
-                    request.setAttribute("openEditPopup", true);
-                    request.setAttribute("editId", id);
-                    request.setAttribute("editName", name);
-                    request.setAttribute("editDesc", des);
-                    request.setAttribute("editStatus", status);
-                    request.setAttribute("contentPage", "genre-list.jsp");
-                    request.setAttribute("activeMenu", "genre");
-                    request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
-                    return;
+                break;
+            case "create":
+                try {
+                    String name = request.getParameter("name");
+                    String description = request.getParameter("description");
+                    int status = Integer.parseInt(request.getParameter("status"));
+                    String msg = genreServices.insertGenre(name, description, status);
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("createError", msg);
+                        request.setAttribute("openCreatePopup", true);
+                        request.setAttribute("createName", name);
+                        request.setAttribute("createDesc", description);
+                        request.setAttribute("createStatus", status);
+                        List<Genre> genres = genreServices.getAllGenres();
+                        request.setAttribute("genres", genres);
+                        request.setAttribute("contentPage", "genre-list.jsp");
+                        request.setAttribute("activeMenu", "genre");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
+                    }
+                    request.getSession().setAttribute("success", "Create successfully");
+                    response.sendRedirect("genre");
+                } catch (ServletException | IOException | NumberFormatException e) {
+                    response.sendRedirect("genre");
                 }
-                request.setAttribute("success", "Edit successfully");
-                request.setAttribute("contentPage", "genre-list.jsp");
-                request.setAttribute("activeMenu", "genre");
-                request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
-            } catch (Exception e) {
-                response.sendRedirect("genre");
-            }
-        } else if (action.equals("create")) {
-
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            int status = Integer.parseInt(request.getParameter("status"));
-            String msg = genreServices.insertGenre(name, description, status);
-            if (!msg.contains("successfully")) {
-                request.setAttribute("createError", msg);
-                request.setAttribute("openCreatePopup", true);
-                request.setAttribute("createName", name);
-                request.setAttribute("createDesc", description);
-                request.setAttribute("createStatus", status);
-                request.setAttribute("contentPage", "genre-list.jsp");
-                request.setAttribute("activeMenu", "genre");
-                request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
-            }
-            request.setAttribute("success", "create successfully");
-            request.setAttribute("contentPage", "genre-list.jsp");
-            request.setAttribute("activeMenu", "genre");
-            request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
-
-//            response.sendRedirect(request.getContextPath() + "/genre");
-        } else if (action.equals("delete")) {
-            try {
-                int id = Integer.parseInt(request.getParameter("id"));
-                String msg = genreServices.deleteGenre(id);
-                if (!msg.contains("successfully")) {
+                break;
+            case "delete":
+                try {
+                    int id = Integer.parseInt(request.getParameter("id"));
+                    String msg = genreServices.deleteGenre(id);
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("deleteError", msg);
+                        List<Genre> genres = genreServices.getAllGenres();
+                        request.setAttribute("genres", genres);
+                        request.setAttribute("contentPage", "genre-list.jsp");
+                        request.setAttribute("activeMenu", "genre");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
+                    }
                     request.setAttribute("deleteError", msg);
-                    request.getRequestDispatcher("/views/genre-list.jsp")
-                            .forward(request, response);
-                    return;
+                } catch (ServletException | IOException | NumberFormatException e) {
+                    response.sendRedirect("genre");
                 }
-                request.setAttribute("deleteError", msg);
-            } catch (Exception e) {
-
-                request.setAttribute("deleteError", "Invalid genre ID");
-            }
-            response.sendRedirect(request.getContextPath() + "/genre");
+                request.getSession().setAttribute("success", "Deletech successfully");
+                response.sendRedirect("genre");
+                break;
+            default:
+                response.sendRedirect("genre");
+                break;
         }
     }
 

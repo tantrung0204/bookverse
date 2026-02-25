@@ -9,7 +9,24 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 <div class="container-fluid">
-
+    <c:if test="${not empty message}">
+        <div style="padding:10px;margin:10px 0;
+             background:#f8d7da;color:#721c24;
+             border:1px solid #f5c6cb;border-radius:5px;">
+            ${message}
+        </div>
+    </c:if>
+    <c:if test="${not empty success}">
+        <div style="padding:10px;margin:10px 0;
+             background:#28a745;color:#721c24;
+             border:1px solid #f5c6cb;border-radius:5px;">
+            ${success}
+        </div>
+    </c:if>
+    <c:if test="${not empty deleteError}">
+        <div class="alert alert-danger mt-3">${deleteError}</div>
+        <c:remove var="deleteError" scope="session"/>
+    </c:if>
     <div class="page-header">
         <p class="title">Manage Genre</p>
         <p class="subtitle">Create and manage book Genre for your library</p>
@@ -100,24 +117,7 @@
 
 
         </c:choose>
-        <c:if test="${not empty message}">
-            <div style="padding:10px;margin:10px 0;
-                 background:#f8d7da;color:#721c24;
-                 border:1px solid #f5c6cb;border-radius:5px;">
-                ${message}
-            </div>
-        </c:if>
-        <c:if test="${not empty success}">
-            <div style="padding:10px;margin:10px 0;
-                 background:#28a745;color:#721c24;
-                 border:1px solid #f5c6cb;border-radius:5px;">
-                ${success}
-            </div>
-        </c:if>
-        <c:if test="${not empty deleteError}">
-            <div class="alert alert-danger mt-3">${deleteError}</div>
-            <c:remove var="deleteError" scope="session"/>
-        </c:if>
+
     </div>
     <%-- Edit Genre po-up--%>
     <div id="editPopup" class="modal-overlay">

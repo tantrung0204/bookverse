@@ -106,4 +106,14 @@ public class GenreService {
     public long countProductByGenreId(int id) {
         return genreDAO.checkGenreInUse(id);
     }
+
+    public List<Genre> getGenresByPage(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return genreDAO.findByPage(offset, pageSize);
+    }
+
+    public int getTotalPages(int pageSize) {
+        long totalItems = genreDAO.countAll();
+        return (int) Math.ceil((double) totalItems / pageSize);
+    }
 }

@@ -89,7 +89,7 @@ public class NotificationDAO {
     public List<Notification> getByPage(int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createNamedQuery("Notification.findAll", Notification.class)
+            return em.createQuery("SELECT n FROM Notification n ORDER BY n.notificationId DESC", Notification.class)
                     .setFirstResult((page - 1) * pageSize)
                     .setMaxResults(pageSize)
                     .getResultList();
@@ -114,7 +114,7 @@ public class NotificationDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                    "SELECT n FROM Notification n WHERE n.title LIKE :kw",
+                    "SELECT n FROM Notification n WHERE n.title LIKE :kw ORDER BY n.notificationId DESC",
                     Notification.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .setFirstResult((page - 1) * pageSize)

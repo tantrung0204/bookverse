@@ -85,17 +85,11 @@ public class VoucherController extends HttpServlet {
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
-                    
+
             case "search":
                 String keyword = request.getParameter("keyword");
                 List<Voucher> searchList = voucherService.searchVouchers(keyword);
-
-                if (searchList == null || searchList.isEmpty()) {
-                    request.setAttribute("searchMessage", "No voucher found");
-                } else {
-                    request.setAttribute("vouchers", searchList);
-                }
-
+                request.setAttribute("vouchers", searchList);
                 request.setAttribute("contentPage", "voucher-list.jsp");
                 request.setAttribute("activeMenu", "voucher");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")

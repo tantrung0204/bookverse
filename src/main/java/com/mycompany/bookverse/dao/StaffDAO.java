@@ -4,7 +4,7 @@
  */
 package com.mycompany.bookverse.dao;
 
-import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.model.Staff;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -12,52 +12,33 @@ import java.util.List;
 
 /**
  *
- * @author TrungNT - CE200064
+ * @author huyqu
  */
-public class CustomerDAO {
+public class StaffDAO {
 
-    public List<Customer> findAll() {
-        // Khởi tạo entity manager
+    public List<Staff> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // Câu lệnh JPQL (Lấy đối tượng Customer)
-//            String jpql = "SELECT c FROM Customer c";
-//            TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
-//            
-//            return query.getResultList();
-            // Chỉ cần gọi tên định danh đã khai báo trong Model
-            return em.createNamedQuery("Customer.findAll", Customer.class)
-                    .getResultList();
+            return em.createNamedQuery("Staff.findAll", Staff.class).getResultList();
         } finally {
             em.close();
         }
     }
-  
-//    để gửi notification
-    public List<Customer> getActiveCustomers() {
+
+    public Staff findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery(
-                    "SELECT c FROM Customer c WHERE c.status = 1",
-                    Customer.class
-            ).getResultList();
-        }finally {
-            em.close();
-        }
-}
-    public Customer findById(int id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Customer.class, id);
+            return em.find(Staff.class, id);
         } finally {
             em.close();
         }
     }
-    public boolean create(Customer customer) {
+
+    public boolean create(Staff staff) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.persist(customer);
+            em.persist(staff);
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -70,11 +51,12 @@ public class CustomerDAO {
             em.close();
         }
     }
-    public boolean update(Customer customer) {
+
+    public boolean update(Staff staff) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.merge(customer);
+            em.merge(staff);
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -87,13 +69,14 @@ public class CustomerDAO {
             em.close();
         }
     }
+
     public boolean delete(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            Customer customer = em.find(Customer.class, id);
-            if (customer != null) {
-                em.remove(customer);
+            Staff staff = em.find(Staff.class, id);
+            if (staff != null) {
+                em.remove(staff);
             }
             em.getTransaction().commit();
             return true;
@@ -107,11 +90,12 @@ public class CustomerDAO {
             em.close();
         }
     }
-    public List<Customer> search(String keyword) {
+
+    public List<Staff> search(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String hql = "SELECT c FROM Customer c WHERE c.fullName LIKE :keyword OR c.email LIKE :keyword OR c.phoneNumber LIKE :keyword";
-            TypedQuery<Customer> query = em.createQuery(hql, Customer.class);
+            String hql = "SELECT s FROM Staff s WHERE s.fullName LIKE :keyword OR s.email LIKE :keyword OR s.phoneNumber LIKE :keyword";
+            TypedQuery<Staff> query = em.createQuery(hql, Staff.class);
             query.setParameter("keyword", "%" + keyword + "%");
             return query.getResultList();
         } finally {

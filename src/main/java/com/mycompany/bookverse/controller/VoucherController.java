@@ -176,6 +176,7 @@ public class VoucherController extends HttpServlet {
                     String msg = voucherService.createVoucher(vCreate);
 
                     if (!msg.contains("successfully")) {
+
                         int page = 1;
                         int pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
@@ -188,10 +189,18 @@ public class VoucherController extends HttpServlet {
                         request.setAttribute("currentPage", page);
                         request.setAttribute("totalPages", totalPages);
 
-                        request.setAttribute("createError", msg);   // chỉ dùng createError
+                        //  Lưu lại dữ liệu user đã nhập
+                        request.setAttribute("code", request.getParameter("code"));
+                        request.setAttribute("discount", request.getParameter("discount"));
+                        request.setAttribute("quantity", request.getParameter("quantity"));
+                        request.setAttribute("status", request.getParameter("status"));
+                        request.setAttribute("expiryDate", request.getParameter("expiryDate"));
+
+                        request.setAttribute("createError", msg);
                         request.setAttribute("openCreate", true);
                         request.setAttribute("contentPage", "voucher-list.jsp");
                         request.setAttribute("activeMenu", "voucher");
+
                         request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                                 .forward(request, response);
                         return;

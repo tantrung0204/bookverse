@@ -86,7 +86,7 @@
                                     <div class="action-buttons">
 
                                         <!-- VIEW -->
-                                        <button class="btn-action btn-detail"
+                                        <button class="btn-action btn-detail" title="View Detail"
                                                 onclick="openDetailModal(
                                                                 '${n.notificationId}',
                                                                 '${n.title}',
@@ -107,7 +107,7 @@
                                             <input type="hidden" name="id" value="${n.notificationId}"/>
 
                                             <button type="submit"
-                                                    class="btn-action btn-delete"
+                                                    class="btn-action btn-delete" title="Delete"
                                                     onclick="return confirm('Delete this notification?')">
                                                 <i class="bi bi-trash"></i>
                                             </button>

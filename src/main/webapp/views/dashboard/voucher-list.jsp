@@ -94,7 +94,7 @@
                                     <div class="action-buttons">
 
                                         <!-- VIEW -->
-                                        <button class="btn-action btn-detail"
+                                        <button class="btn-action btn-detail" title="View Detail"
                                                 onclick="openDetailModal(
                                                                 '${v.voucherId}',
                                                                 '${v.voucherCode}',
@@ -109,7 +109,7 @@
                                         </button>
 
                                         <!-- EDIT -->
-                                        <button class="btn-action btn-edit"
+                                        <button class="btn-action btn-edit" title="Edit"
                                                 onclick="openEditModal(
                                                                 '${v.voucherId}',
                                                                 '${v.voucherCode}',
@@ -129,7 +129,7 @@
                                             <input type="hidden" name="id" value="${v.voucherId}"/>
 
                                             <button type="submit"
-                                                    class="btn-action btn-delete"
+                                                    class="btn-action btn-delete" title="Delete"
                                                     onclick="return confirm('Delete this voucher?')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
@@ -206,6 +206,7 @@
                         <input type="text"
                                name="code"
                                class="form-control"
+                               value="${code}"
                                required>
                     </div>
 
@@ -216,6 +217,7 @@
                                step="0.1"
                                name="discount"
                                class="form-control"
+                               value="${discount}"
                                required>
                     </div>
 
@@ -225,6 +227,7 @@
                         <input type="number"
                                name="quantity"
                                class="form-control"
+                               value="${quantity}"
                                required>
                     </div>
 
@@ -233,8 +236,8 @@
                         <label>Status</label>
                         <select name="status"
                                 class="form-control">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
+                            <option value="1" <c:if test="${status == '1'}">selected</c:if>>Active</option>
+                            <option value="0" <c:if test="${status == '0'}">selected</c:if>>Inactive</option>
                         </select>
                     </div>
 
@@ -244,6 +247,7 @@
                         <input type="date"
                                name="expiryDate"
                                class="form-control"
+                               value="${expiryDate}"
                                required>
                     </div>
 

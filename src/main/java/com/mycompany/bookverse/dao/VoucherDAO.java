@@ -63,7 +63,7 @@ public class VoucherDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e; 
+            throw e;
         } finally {
             em.close();
         }
@@ -145,6 +145,56 @@ public class VoucherDAO {
                     + "AND o.orderStatus NOT IN ('pending', 'cancelled')",
                     Long.class)
                     .setParameter("vid", voucherId)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Voucher> getVouchersPaging(int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT v FROM Voucher v ORDER BY v.voucherId DESC", Voucher.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long getTotalVoucherCount() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(v) FROM Voucher v", Long.class)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Voucher> searchByCodePaging(String keyword, int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT v FROM Voucher v WHERE v.voucherCode LIKE :kw ORDER BY v.voucherId DESC",
+                    Voucher.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countSearchVoucher(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(v) FROM Voucher v WHERE v.voucherCode LIKE :kw",
+                    Long.class)
+                    .setParameter("kw", "%" + keyword + "%")
                     .getSingleResult();
         } finally {
             em.close();

@@ -63,8 +63,8 @@
                             <th width="10%">ID</th>
                             <th width="20%">Title</th>
                             <th width="30%">Content</th>
-                            <th width="15%">Image</th>
-                            <th width="25%">Actions</th>
+                            <th width="20%">Image</th>
+                            <th width="20%">Actions</th>
                         </tr>
                     </thead>
 
@@ -92,20 +92,11 @@
                                                                 '${n.title}',
                                                                 '${n.contentText}',
                                                                 '${n.imageUrl}',
-                                                                '${n.createdAt}'
+                                                                '${n.createdAt}',
+                                                                '${n.totalSent}',
+                                                                '${n.totalRead}'
                                                                 )">
                                             <i class="bi bi-eye"></i>
-                                        </button>
-
-                                        <!-- EDIT -->
-                                        <button class="btn-action btn-edit"
-                                                onclick="openEditModal(
-                                                                '${n.notificationId}',
-                                                                '${n.title}',
-                                                                '${n.contentText}',
-                                                                '${n.imageUrl}'
-                                                                )">
-                                            <i class="bi bi-pencil"></i>
                                         </button>
 
                                         <!-- DELETE -->
@@ -139,6 +130,29 @@
             </c:otherwise>
 
         </c:choose>
+
+        <c:if test="${totalPages > 1}">
+            <div class="pagination">
+
+                <c:if test="${currentPage > 1}">
+                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage - 1}"
+                       class="page-btn">«</a>
+                </c:if>
+
+                <c:forEach begin="1" end="${totalPages}" var="i">
+                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${i}"
+                       class="page-btn ${i == currentPage ? 'active' : ''}">
+                        ${i}
+                    </a>
+                </c:forEach>
+
+                <c:if test="${currentPage < totalPages}">
+                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage + 1}"
+                       class="page-btn">»</a>
+                </c:if>
+
+            </div>
+        </c:if>
 
         <!-- CREATE NOTIFICATION POPUP -->
         <div id="createModal" class="modal-overlay">
@@ -205,72 +219,6 @@
             </div>
         </div>
 
-        <!-- EDIT NOTIFICATION POPUP -->
-        <div id="editModal" class="modal-overlay">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h3>Edit Notification</h3>
-                </div>
-
-                <c:if test="${not empty editError}">
-                    <div class="alert alert-danger p-2 mb-3" style="font-size:13px;">
-                        ${editError}
-                    </div>
-                </c:if>
-
-                <form action="${pageContext.request.contextPath}/notification"
-                      method="post"
-                      enctype="multipart/form-data">
-
-                    <input type="hidden" name="action" value="edit"/>
-                    <input type="hidden" id="editId" name="id"/>
-
-                    <!-- TITLE -->
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text"
-                               id="editTitle"
-                               name="title"
-                               class="form-control"
-                               required>
-                    </div>
-
-                    <!-- CONTENT -->
-                    <div class="form-group">
-                        <label>Content</label>
-                        <textarea id="editContent"
-                                  name="content"
-                                  class="form-control"
-                                  rows="4"
-                                  required></textarea>
-                    </div>
-
-                    <!-- IMAGE -->
-                    <div class="form-group">
-                        <label>Current Image</label>
-                        <img id="currentImagePreview"
-                             src=""
-                             style="width:100px; display:none; margin-bottom:10px;">
-                    </div>
-
-                    <!-- FOOTER -->
-                    <div class="modal-footer">
-                        <button type="button"
-                                class="btn-cancel"
-                                onclick="closeEditModal()">
-                            Cancel
-                        </button>
-
-                        <button type="submit"
-                                class="btn-save">
-                            Save Changes
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
 
         <!-- DETAIL NOTIFICATION MODAL -->
         <div id="detailModal" class="modal-overlay">
@@ -284,6 +232,8 @@
                     <tr><th>ID:</th><td id="detailId"></td></tr>
                     <tr><th>Title:</th><td id="detailTitle"></td></tr>
                     <tr><th>Content:</th><td id="detailContent"></td></tr>
+                    <tr><th>Total Sent:</th><td id="detailTotalSent"></td></tr>
+                    <tr><th>Total Read:</th><td id="detailTotalRead"></td></tr>
                     <tr>
                         <th>Image:</th>
                         <td>
@@ -313,27 +263,6 @@
             function closePopup() {
                 document.getElementById("createModal").style.display = "none";
             }
-
-            function openEditModal(id, title, content, image) {
-
-                document.getElementById("editId").value = id;
-                document.getElementById("editTitle").value = title;
-                document.getElementById("editContent").value = content;
-
-                if (image && image !== "") {
-                    document.getElementById("currentImagePreview").src =
-                            "${pageContext.request.contextPath}/" + image;
-                    document.getElementById("currentImagePreview").style.display = "block";
-                } else {
-                    document.getElementById("currentImagePreview").style.display = "none";
-                }
-
-                document.getElementById("editModal").style.display = "flex";
-            }
-
-            function closeEditModal() {
-                document.getElementById("editModal").style.display = "none";
-            }
         </script>
 
         <c:if test="${openCreate}">
@@ -344,27 +273,15 @@
             </script>
         </c:if>
 
-        <c:if test="${openEdit}">
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-
-                    document.getElementById("editId").value = "${editNotification.notificationId}";
-                    document.getElementById("editTitle").value = "${editNotification.title}";
-                    document.getElementById("editContent").value = "${editNotification.contentText}";
-                    document.getElementById("editImage").value = "${editNotification.imageUrl}";
-
-                    document.getElementById("editModal").style.display = "flex";
-                });
-            </script>
-        </c:if>
-
         <script>
-            function openDetailModal(id, title, content, image, created) {
+            function openDetailModal(id, title, content, image, created, totalSent, totalRead) {
 
                 document.getElementById("detailId").innerText = id;
                 document.getElementById("detailTitle").innerText = title;
                 document.getElementById("detailContent").innerText = content;
                 document.getElementById("detailCreated").innerText = created;
+                document.getElementById("detailTotalSent").innerText = totalSent;
+                document.getElementById("detailTotalRead").innerText = totalRead;
 
                 const imgTag = document.getElementById("detailImage");
                 const noImgText = document.getElementById("noDetailImage");

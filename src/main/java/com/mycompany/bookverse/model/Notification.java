@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -59,6 +60,26 @@ public class Notification implements Serializable {
     private Date createdAt;
     @OneToMany(mappedBy = "notificationId")
     private Collection<CustomerNotification> customerNotificationCollection;
+    @Transient
+    private long totalSent;
+    @Transient
+    private long totalRead;
+
+    public long getTotalSent() {
+        return totalSent;
+    }
+
+    public void setTotalSent(long totalSent) {
+        this.totalSent = totalSent;
+    }
+
+    public long getTotalRead() {
+        return totalRead;
+    }
+
+    public void setTotalRead(long totalRead) {
+        this.totalRead = totalRead;
+    }
 
     public Notification() {
     }
@@ -140,5 +161,5 @@ public class Notification implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Notification[ notificationId=" + notificationId + " ]";
     }
-    
+
 }

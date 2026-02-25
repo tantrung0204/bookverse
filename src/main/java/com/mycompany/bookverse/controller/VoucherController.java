@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.mycompany.bookverse.model.Voucher;
 import com.mycompany.bookverse.service.VoucherService;
+import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -69,29 +70,76 @@ public class VoucherController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
+        int page = 0;
+        int pageSize = 0;
+        String pageParam = "";
+        long totalItems = 0;
+        int totalPages = 0;
         if (action == null) {
             action = "list";
         }
         switch (action) {
             case "list":
-                List<Voucher> vouchers = voucherService.getVouchers();
-                if (vouchers == null || vouchers.isEmpty()) {
-                    request.setAttribute("message", "No vouchers found");
-                } else {
-                    request.setAttribute("vouchers", vouchers);
+
+                page = 1;
+                pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                pageParam = request.getParameter("page");
+                if (pageParam != null) {
+                    try {
+                        page = Integer.parseInt(pageParam);
+                        if (page < 1) {
+                            page = 1;
+                        }
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
                 }
+
+                totalItems = voucherService.getTotalVoucherCount();
+                totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
+                if (page > totalPages && totalPages > 0) {
+                    page = totalPages;
+                }
+
+                List<Voucher> vouchers = voucherService.getVouchersPaging(page, pageSize);
+
+                request.setAttribute("vouchers", vouchers);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
                 request.setAttribute("contentPage", "voucher-list.jsp");
                 request.setAttribute("activeMenu", "voucher");
+
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
 
             case "search":
                 String keyword = request.getParameter("keyword");
-                List<Voucher> searchList = voucherService.searchVouchers(keyword);
+
+                page = 1;
+                pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                pageParam = request.getParameter("page");
+                if (pageParam != null) {
+                    page = Integer.parseInt(pageParam);
+                }
+
+                totalItems = voucherService.countSearchVoucher(keyword);
+                totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
+                List<Voucher> searchList
+                        = voucherService.searchVouchersPaging(keyword, page, pageSize);
+
                 request.setAttribute("vouchers", searchList);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                request.setAttribute("keyword", keyword);
+
                 request.setAttribute("contentPage", "voucher-list.jsp");
                 request.setAttribute("activeMenu", "voucher");
+
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
@@ -128,8 +176,17 @@ public class VoucherController extends HttpServlet {
                     String msg = voucherService.createVoucher(vCreate);
 
                     if (!msg.contains("successfully")) {
-                        List<Voucher> vouchers = voucherService.getVouchers();
+                        int page = 1;
+                        int pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                        long totalItems = voucherService.getTotalVoucherCount();
+                        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
+                        List<Voucher> vouchers = voucherService.getVouchersPaging(page, pageSize);
+
                         request.setAttribute("vouchers", vouchers);
+                        request.setAttribute("currentPage", page);
+                        request.setAttribute("totalPages", totalPages);
 
                         request.setAttribute("createError", msg);   // chỉ dùng createError
                         request.setAttribute("openCreate", true);
@@ -179,8 +236,17 @@ public class VoucherController extends HttpServlet {
                     String msg = voucherService.updateVoucher(vEdit);
 
                     if (!msg.contains("successfully")) {
-                        List<Voucher> vouchers = voucherService.getVouchers();
+                        int page = 1;
+                        int pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                        long totalItems = voucherService.getTotalVoucherCount();
+                        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
+                        List<Voucher> vouchers = voucherService.getVouchersPaging(page, pageSize);
+
                         request.setAttribute("vouchers", vouchers);
+                        request.setAttribute("currentPage", page);
+                        request.setAttribute("totalPages", totalPages);
                         request.setAttribute("editError", msg);
                         request.setAttribute("voucher", old);
 

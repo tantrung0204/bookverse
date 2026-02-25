@@ -65,9 +65,9 @@
                             <th width="10%">ID</th>
                             <th width="20%">Code</th>
                             <th width="15%">Discount</th>
-                            <th width="15%">Quantity</th>
-                            <th width="15%">Status</th>
-                            <th width="25%">Actions</th>
+                            <th width="17%">Quantity</th>
+                            <th width="18%">Status</th>
+                            <th width="20%">Actions</th>
                         </tr>
                     </thead>
 
@@ -96,28 +96,28 @@
                                         <!-- VIEW -->
                                         <button class="btn-action btn-detail"
                                                 onclick="openDetailModal(
-                                                            '${v.voucherId}',
-                                                            '${v.voucherCode}',
-                                                            '${v.discountPercent}',
-                                                            '${v.availableQuantity}',
-                                                            '${v.status}',
-                                                            '${v.startDate}',
-                                                            '${v.expiryDate}',
-                                                            '${v.usedCount}'
-                                                            )">
+                                                                '${v.voucherId}',
+                                                                '${v.voucherCode}',
+                                                                '${v.discountPercent}',
+                                                                '${v.availableQuantity}',
+                                                                '${v.status}',
+                                                                '${v.startDate}',
+                                                                '${v.expiryDate}',
+                                                                '${v.usedCount}'
+                                                                )">
                                             <i class="bi bi-eye"></i>
                                         </button>
 
                                         <!-- EDIT -->
                                         <button class="btn-action btn-edit"
                                                 onclick="openEditModal(
-                                                            '${v.voucherId}',
-                                                            '${v.voucherCode}',
-                                                            '${v.discountPercent}',
-                                                            '${v.availableQuantity}',
-                                                            '${v.status}',
-                                                            '${v.expiryDate}'
-                                                            )">
+                                                                '${v.voucherId}',
+                                                                '${v.voucherCode}',
+                                                                '${v.discountPercent}',
+                                                                '${v.availableQuantity}',
+                                                                '${v.status}',
+                                                                '${v.expiryDate}'
+                                                                )">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
@@ -151,6 +151,34 @@
             </c:otherwise>
 
         </c:choose>
+
+        <c:set var="currentAction"
+               value="${param.action == 'search' ? 'search' : 'list'}"/>
+        <c:set var="keywordParam" value="${param.keyword}"/>
+
+        <c:if test="${totalPages > 1}">
+            <div class="pagination">
+
+                <c:if test="${currentPage > 1}">
+                    <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage - 1}"
+                       class="page-btn">«</a>
+                </c:if>
+
+                <c:forEach begin="1" end="${totalPages}" var="i">
+                    <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${i}"
+                       class="page-btn ${i == currentPage ? 'active' : ''}">
+                        ${i}
+                    </a>
+                </c:forEach>
+
+                <c:if test="${currentPage < totalPages}">
+                    <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage + 1}"
+                       class="page-btn">»</a>
+                </c:if>
+
+            </div>
+        </c:if>
+
         <!-- CREATE VOUCHER POPUP -->
         <div id="createModal" class="modal-overlay">
             <div class="modal-content">

@@ -20,9 +20,9 @@ public class VoucherService {
     public List<Voucher> getVouchers() {
         List<Voucher> list = voucherDAO.getAllVouchers();
         for (Voucher v : list) {
-        long used = voucherDAO.countUsedVoucher(v.getVoucherId());
-        v.setUsedCount(used); 
-    }
+            long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+            v.setUsedCount(used);
+        }
         return list;
     }
 
@@ -122,5 +122,35 @@ public class VoucherService {
     public long countUsedVoucher(int voucherId) {
         return voucherDAO.countUsedVoucher(voucherId);
     }
-    
+
+    public List<Voucher> getVouchersPaging(int page, int pageSize) {
+        List<Voucher> list = voucherDAO.getVouchersPaging(page, pageSize);
+
+        for (Voucher v : list) {
+            long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+            v.setUsedCount(used);
+        }
+
+        return list;
+    }
+
+    public long getTotalVoucherCount() {
+        return voucherDAO.getTotalVoucherCount();
+    }
+
+    public List<Voucher> searchVouchersPaging(String keyword, int page, int pageSize) {
+        List<Voucher> list = voucherDAO.searchByCodePaging(keyword, page, pageSize);
+
+        for (Voucher v : list) {
+            long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+            v.setUsedCount(used);
+        }
+
+        return list;
+    }
+
+    public long countSearchVoucher(String keyword) {
+        return voucherDAO.countSearchVoucher(keyword);
+    }
+
 }

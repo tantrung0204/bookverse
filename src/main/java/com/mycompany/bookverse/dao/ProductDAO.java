@@ -108,4 +108,17 @@ public class ProductDAO {
             em.close();
         }
     }
+    
+    public Product insert(Product product) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(product);     // INSERT PRODUCT
+            em.getTransaction().commit();
+            return product;          // có product_id
+        } finally {
+            em.close();
+        }
+    }
 }
+

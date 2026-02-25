@@ -50,4 +50,8 @@ public class ProductService {
     public List<Product> getAllStationery() {
         return productDao.findProductsHaveStationery();
     }
+    
+    public Product create(Product product) {
+        return productDao.insert(product);
+    }
 }

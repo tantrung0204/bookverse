@@ -24,4 +24,15 @@ public class BookDAO {
             em.close();
         }
     }
+    public void insert(Book book) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(book);   // 👈 INSERT INTO book
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
 }

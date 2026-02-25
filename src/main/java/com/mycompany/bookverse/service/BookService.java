@@ -13,9 +13,21 @@ import java.util.List;
  * @author NganTTK-CE190411
  */
 public class BookService {
-    public BookDAO bookDAO = new BookDAO();
+    private BookDAO bookDAO = new BookDAO();
     
-    public List<Book> getAllBooks() {
+     public List<Book> getAllBooks() {
         return bookDAO.findAll();
+    }
+
+    public void createBook(int productId, String isbn,
+            String publisher, int publishedYear) {
+
+        Book book = new Book();
+        book.setProductId(productId);
+        book.setIsbn(isbn);
+        book.setPublisher(publisher);
+        book.setPublishedYear(publishedYear);
+
+        bookDAO.insert(book);
     }
 }

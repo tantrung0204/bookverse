@@ -4,9 +4,12 @@
  */
 package com.mycompany.bookverse.controller;
 
+import com.mycompany.bookverse.dao.StationeryDAO;
 import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Stationery;
 import com.mycompany.bookverse.service.BookService;
 import com.mycompany.bookverse.service.ProductService;
+import com.mycompany.bookverse.service.StationeryService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +17,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -25,6 +29,7 @@ public class ProductController extends HttpServlet {
 
     private ProductService productService = new ProductService();
     private BookService bookService = new BookService();
+    private StationeryService stationeryService = new StationeryService();
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -37,7 +42,7 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-String action = request.getParameter("action");
+        String action = request.getParameter("action");
         if (action == null) {
             action = "list";
         }
@@ -45,6 +50,9 @@ String action = request.getParameter("action");
         switch (action) {
             case "list":
                 getListProducts(request, response);
+                break;
+            case "search":
+                getSearchProduct(request, response);
                 break;
             default:
                 throw new AssertionError();
@@ -62,8 +70,18 @@ String action = request.getParameter("action");
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        String action = request.getParameter("action");
+        if (action == null) {
+            getListProducts(request, response);
+            return;
+        }
 
+        switch (action) {
+            case "create":
+                handleCreateAction(request, response);
+                break;
+
+        }
     }
 
     /**
@@ -94,6 +112,64 @@ String action = request.getParameter("action");
         request.setAttribute("contentPage", "product-list.jsp");
         request.setAttribute("activeMenu", "product");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+    }
+
+    private void handleCreateAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String type = request.getParameter("type");
+        if (type == null) {
+            type = "book"; // default
+        }
+
+        // ================= PRODUCT CHUNG =================
+        Product product = new Product();
+        product.setName(request.getParameter("name"));
+        product.setPrice(new BigDecimal(request.getParameter("price")));
+        product.setStockQuantity(Integer.parseInt(request.getParameter("stock")));
+        product.setStatus(1);
+        product.setCategoryId(Integer.parseInt(request.getParameter("categoryId")));
+
+        // insert product trước
+        Product savedProduct = productService.create(product);
+
+        // ================= THEO TYPE =================
+        if ("book".equals(type)) {
+            bookService.createBook(
+                    savedProduct.getProductId(),
+                    request.getParameter("isbn"),
+                    request.getParameter("publisher"),
+                    Integer.parseInt(request.getParameter("publishedYear"))
+            );
+        } else if ("stationery".equals(type)) {
+            stationeryService.createStationery(
+                    savedProduct.getProductId(),
+                    request.getParameter("color"),
+                    request.getParameter("material")
+            );
+        }
+
+        // quay về list đúng type
+        response.sendRedirect(request.getContextPath()
+                + "/product?action=list&type=" + type);
+    }
+
+    private void getSearchProduct(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String keyword = request.getParameter("keyword");
+
+        List<Product> searchList = productService.searchProducts(keyword);
+
+        if (searchList == null || searchList.isEmpty()) {
+            request.setAttribute("message", "No category found");
+        } else {
+            request.setAttribute("products", searchList);
+        }
+
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("contentPage", "product-list.jsp");
+        request.setAttribute("activeMenu", "product");
+        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+
     }
 
 }

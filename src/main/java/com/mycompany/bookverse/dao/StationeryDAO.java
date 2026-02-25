@@ -24,4 +24,15 @@ public class StationeryDAO {
             em.close();
         }
     }
+    
+    public void insert(Stationery stationery) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(stationery);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 }

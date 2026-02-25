@@ -24,14 +24,27 @@
             <div class="filter-buttons">
                 <a href="${pageContext.request.contextPath}/product?action=list&type=book"
                    class="btn-filter ${type == null || type == 'book' ? 'active' : ''}">
-                    📖 <span>Books</span>
+                    📖 Books
                 </a>
-
                 <a href="${pageContext.request.contextPath}/product?action=list&type=stationery"
                    class="btn-filter ${type == 'stationery' ? 'active' : ''}">
-                    ✏️ <span>Stationery</span>
+                    ✏️ Stationery
                 </a>
             </div>
+
+            <button class="btn btn-primary"
+                    onclick="openCreateModal('${type == null ? "book" : type}')">
+                ➕ Add Product
+            </button>
+
+            <form action="${pageContext.request.contextPath}/product" method="get">
+                <input type="hidden" name="action" value="search" />
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+                </div>
+                <button type="submit" hidden></button>
+            </form>
         </div>
 
         <c:choose>
@@ -86,11 +99,11 @@
 
                                         <button type="button" class="btn-action btn-edit" title="Edit"
                                                 onclick="openEditPopup(
-                                                        '${c.categoryId}',
-                                                        '${c.categoryName}',
-                                                        '${c.descriptionText}',
-                                                        '${c.status}'
-                                                        )">
+                                                                '${c.categoryId}',
+                                                                '${c.categoryName}',
+                                                                '${c.descriptionText}',
+                                                                '${c.status}'
+                                                                )">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
@@ -126,4 +139,80 @@
     </div>
 </div>
 
+<div id="createModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
 
+        <h3 id="modalTitle"></h3>
+
+        <!-- FORM BOOK -->
+        <form id="bookForm" method="post"
+              action="${pageContext.request.contextPath}/product">
+            <input type="hidden" name="action" value="createBook"/>
+
+            <label>Book Name</label>
+            <input type="text" name="name" required/>
+
+            <label>Price</label>
+            <input type="number" name="price" required/>
+
+            <label>Stock</label>
+            <input type="number" name="stock"/>
+
+            <label>ISBN</label>
+            <input type="text" name="isbn"/>
+
+            <label>Publisher</label>
+            <input type="text" name="publisher"/>
+
+            <label>Published Year</label>
+            <input type="number" name="publishedYear"/>
+
+            <button type="submit">Save Book</button>
+        </form>
+
+        <!-- FORM STATIONERY -->
+        <form id="stationeryForm" method="post"
+              action="${pageContext.request.contextPath}/product">
+            <input type="hidden" name="action" value="createStationery"/>
+
+            <label>Stationery Name</label>
+            <input type="text" name="name" required/>
+
+            <label>Price</label>
+            <input type="number" name="price" required/>
+
+            <label>Stock</label>
+            <input type="number" name="stock"/>
+
+            <label>Color</label>
+            <input type="text" name="color"/>
+
+            <label>Material</label>
+            <input type="text" name="material"/>
+
+            <button type="submit">Save Stationery</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openCreateModal(type) {
+        document.getElementById("createModal").style.display = "block";
+
+        document.getElementById("bookForm").style.display = "none";
+        document.getElementById("stationeryForm").style.display = "none";
+
+        if (type === "stationery") {
+            document.getElementById("modalTitle").innerText = "Add Stationery";
+            document.getElementById("stationeryForm").style.display = "block";
+        } else {
+            document.getElementById("modalTitle").innerText = "Add Book";
+            document.getElementById("bookForm").style.display = "block";
+        }
+    }
+
+    function closeModal() {
+        document.getElementById("createModal").style.display = "none";
+    }
+</script>

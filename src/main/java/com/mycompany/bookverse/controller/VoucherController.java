@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.mycompany.bookverse.model.Voucher;
 import com.mycompany.bookverse.service.VoucherService;
 import com.mycompany.bookverse.utils.JPAUtil;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -82,7 +83,7 @@ public class VoucherController extends HttpServlet {
             case "list":
 
                 page = 1;
-                pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
                 pageParam = request.getParameter("page");
                 if (pageParam != null) {
@@ -119,7 +120,7 @@ public class VoucherController extends HttpServlet {
                 String keyword = request.getParameter("keyword");
 
                 page = 1;
-                pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
                 pageParam = request.getParameter("page");
                 if (pageParam != null) {
@@ -178,7 +179,7 @@ public class VoucherController extends HttpServlet {
                     if (!msg.contains("successfully")) {
 
                         int page = 1;
-                        int pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
                         long totalItems = voucherService.getTotalVoucherCount();
                         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
@@ -246,7 +247,7 @@ public class VoucherController extends HttpServlet {
 
                     if (!msg.contains("successfully")) {
                         int page = 1;
-                        int pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
                         long totalItems = voucherService.getTotalVoucherCount();
                         int totalPages = (int) Math.ceil((double) totalItems / pageSize);

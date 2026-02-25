@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.mycompany.bookverse.model.Notification;
 import com.mycompany.bookverse.service.NotificationService;
 import com.mycompany.bookverse.utils.JPAUtil;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -84,7 +85,7 @@ public class NotificationController extends HttpServlet {
                     page = Integer.parseInt(pageParam);
                 }
 
-                int pageSize = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
                 List<Notification> list = service.getByPage(page, pageSize);
                 for (Notification n : list) {
@@ -111,7 +112,7 @@ public class NotificationController extends HttpServlet {
                     pageSearch = Integer.parseInt(pageParamSearch);
                 }
 
-                int pageSizeSearch = JPAUtil.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                int pageSizeSearch = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
                 List<Notification> searchList = service.searchByPage(keyword, pageSearch, pageSizeSearch);
 

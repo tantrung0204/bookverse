@@ -72,5 +72,11 @@
                 <i class="bi bi-bar-chart-steps"></i> Statistics
             </a>
         </li>
+        <li class="sidebar-item">
+            <a href="${pageContext.request.contextPath}/supplier"
+               class="sidebar-link ${activeMenu == 'supplier'? 'active':''}">
+                <i class="bi bi-box-seam"></i> Supplier
+            </a>
+        </li>
     </ul>
 </aside>

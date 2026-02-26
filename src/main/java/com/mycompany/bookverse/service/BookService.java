@@ -30,4 +30,10 @@ public class BookService {
 
         bookDAO.insert(book);
     }
+    
+    public Book findByProductId(int productId) {
+    return bookDAO.findByProductId(productId);
+}
+
+
 }

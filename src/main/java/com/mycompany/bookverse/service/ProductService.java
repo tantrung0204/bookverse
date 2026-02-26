@@ -54,4 +54,16 @@ public class ProductService {
     public Product create(Product product) {
         return productDao.insert(product);
     }
+    
+    public Product findById(int id) {
+        return productDao.findById(id);
+    }
+    
+    public double getAverageRating(int productId) {
+        return productDao.getAverageRating(productId);
+    }
+
+    public int getSoldQuantity(int productId) {
+        return productDao.getSoldQuantity(productId);
+    }
 }

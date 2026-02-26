@@ -25,5 +25,9 @@ public class StationeryService {
 
         stationeryDAO.insert(st);
     }
+    
+    public Stationery findByProductId(int productId) {
+    return stationeryDAO.findByProductId(productId);
+}
 }
 

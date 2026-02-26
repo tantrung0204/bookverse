@@ -35,4 +35,13 @@ public class BookDAO {
         }
     }
     
+    
+public Book findByProductId(int productId) {
+    EntityManager em = JPAUtil.getEntityManager();
+    try {
+        return em.find(Book.class, productId);
+    } finally {
+        em.close();
+    }
+}
 }

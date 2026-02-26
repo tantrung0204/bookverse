@@ -24,13 +24,22 @@ public class StationeryDAO {
             em.close();
         }
     }
-    
+
     public void insert(Stationery stationery) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
             em.persist(stationery);
             em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Stationery findByProductId(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Stationery.class, productId);
         } finally {
             em.close();
         }

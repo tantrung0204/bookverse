@@ -75,7 +75,6 @@ Author : NganTTK-CE190411 --%>
 
                                 <td>
                                     <div class="action-buttons">
-                                        <!--<input type="hidden" name="action" value="detail"/>-->
                                         <button type="button" class="btn-action btn-detail"
                                                 title="View Detail" onclick="openDetailPopup(
                                                                         '${c.categoryId}',

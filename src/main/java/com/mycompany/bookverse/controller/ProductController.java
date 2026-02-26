@@ -5,7 +5,10 @@
 package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.dao.StationeryDAO;
+import com.mycompany.bookverse.model.Author;
 import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Book;
+import com.mycompany.bookverse.model.Stationery;
 import com.mycompany.bookverse.model.Stationery;
 import com.mycompany.bookverse.service.BookService;
 import com.mycompany.bookverse.service.ProductService;
@@ -53,6 +56,9 @@ public class ProductController extends HttpServlet {
                 break;
             case "search":
                 getSearchProduct(request, response);
+                break;
+            case "detail":
+                getDetailProduct(request, response);
                 break;
             default:
                 throw new AssertionError();
@@ -172,4 +178,63 @@ public class ProductController extends HttpServlet {
 
     }
 
+   
+    private void getDetailProduct(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        int productId = Integer.parseInt(request.getParameter("productId"));
+
+        Product p = productService.findById(productId);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        if (p == null) {
+            response.getWriter().print("{}");
+            return;
+        }
+
+        StringBuilder json = new StringBuilder("{");
+
+        json.append("\"productId\":").append(p.getProductId()).append(",");
+        json.append("\"name\":\"").append(p.getName()).append("\",");
+        json.append("\"price\":").append(p.getPrice()).append(",");
+        json.append("\"imageUrl\":\"").append(p.getImageUrl() == null ? "" : p.getImageUrl()).append("\",");
+        json.append("\"stockQuantity\":").append(p.getStockQuantity()).append(",");
+        json.append("\"averageRating\":").append(p.getAverageRating()).append(",");
+        json.append("\"soldQuantity\":").append(p.getSoldQuantity()).append(",");
+        json.append("\"category\":\"").append(p.getCategoryName()).append("\",");
+        json.append("\"type\":\"").append(p.getType()).append("\"");
+
+        // ===== BOOK =====
+        if ("Book".equals(p.getType())) {
+            Book b = bookService.findByProductId(productId);
+
+            json.append(",\"isbn\":\"").append(b.getIsbn()).append("\",");
+            json.append("\"publisher\":\"").append(b.getPublisher()).append("\",");
+            json.append("\"publishedYear\":").append(b.getPublishedYear()).append(",");
+            json.append("\"genre\":\"").append(b.getGenreName()).append("\",");
+
+            json.append("\"authors\":[");
+            int i = 0;
+            for (Author a : b.getAuthorCollection()) {
+                json.append("\"").append(a.getAuthorName()).append("\"");
+                if (++i < b.getAuthorCollection().size()) {
+                    json.append(",");
+                }
+            }
+            json.append("]");
+        }
+
+        // ===== STATIONERY =====
+        if ("Stationery".equals(p.getType())) {
+            Stationery s = stationeryService.findByProductId(productId);
+            json.append(",\"color\":\"").append(s.getColor()).append("\",");
+            json.append("\"material\":\"").append(s.getMaterial()).append("\"");
+        }
+
+        json.append("}");
+        response.getWriter().print(json.toString());
+    }
+    
 }

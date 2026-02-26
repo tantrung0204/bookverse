@@ -196,6 +196,52 @@
     </div>
 </div>
 
+<!-- PRODUCT DETAIL MODAL -->
+<div id="detailModal" class="modal">
+    <div class="modal-content modal-lg">
+        <span class="close" onclick="closeDetailModal()">&times;</span>
+
+        <h3 id="detailName"></h3>
+
+        <div class="detail-wrapper">
+            <!-- IMAGE -->
+            <div class="detail-image">
+                <img id="detailImage" />
+            </div>
+
+            <!-- INFO -->
+            <div class="detail-info">
+                <p><b>Type:</b> <span id="detailType"></span></p>
+                <p><b>Category:</b> <span id="detailCategory"></span></p>
+                <p><b>Price:</b> <span id="detailPrice"></span></p>
+                <p><b>Stock:</b> <span id="detailStock"></span></p>
+                <p><b>Rating Avg:</b> ⭐ <span id="detailRating"></span></p>
+                <p><b>Sold:</b> <span id="detailSold"></span></p>
+
+                <!-- BOOK -->
+                <div id="bookDetail" style="display:none;">
+                    <hr>
+                    <p><b>Authors:</b> <span id="detailAuthors"></span></p>
+                    <p><b>Genre:</b> <span id="detailGenre"></span></p>
+                    <p><b>Publisher:</b> <span id="detailPublisher"></span></p>
+                    <p><b>Published Year:</b> <span id="detailYear"></span></p>
+                    <p><b>ISBN:</b> <span id="detailISBN"></span></p>
+                    <p><b>Translator:</b> <span id="detailTranslator"></span></p>
+                    <p><b>Description:</b></p>
+                    <p id="detailDescription"></p>
+                </div>
+
+                <!-- STATIONERY -->
+                <div id="stationeryDetail" style="display:none;">
+                    <hr>
+                    <p><b>Color:</b> <span id="detailColor"></span></p>
+                    <p><b>Material:</b> <span id="detailMaterial"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
 <script>
     function openCreateModal(type) {
         document.getElementById("createModal").style.display = "block";
@@ -214,5 +260,59 @@
 
     function closeModal() {
         document.getElementById("createModal").style.display = "none";
+    }
+</script>
+
+<script>
+function openDetailPopup(productId) {
+    fetch('${pageContext.request.contextPath}/product?action=detail&productId=' + productId)
+        .then(res => res.json())
+        .then(p => {
+            if (!p || !p.productId) {
+                alert("Không tìm thấy sản phẩm");
+                return;
+            }
+
+            document.getElementById("detailModal").style.display = "block";
+
+            detailName.innerText = p.name;
+            detailImage.src = p.imageUrl && p.imageUrl !== ""
+                ? p.imageUrl
+                : "${pageContext.request.contextPath}/images/no-image.png";
+
+            detailType.innerText = p.type;
+            detailCategory.innerText = p.category;
+            detailPrice.innerText = p.price + " ₫";
+            detailStock.innerText = p.stockQuantity;
+            detailRating.innerText = p.averageRating;
+            detailSold.innerText = p.soldQuantity;
+
+            bookDetail.style.display = "none";
+            stationeryDetail.style.display = "none";
+
+            if (p.type === "Book") {
+                bookDetail.style.display = "block";
+                detailAuthors.innerText = p.authors ? p.authors.join(", ") : "Updating";
+                detailGenre.innerText = p.genre;
+                detailPublisher.innerText = p.publisher;
+                detailYear.innerText = p.publishedYear;
+                detailISBN.innerText = p.isbn;
+            }
+
+            if (p.type === "Stationery") {
+                stationeryDetail.style.display = "block";
+                detailColor.innerText = p.color;
+                detailMaterial.innerText = p.material;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Lỗi khi load chi tiết sản phẩm");
+        });
+}
+</script>
+<script>
+    function closeDetailModal() {
+        document.getElementById("detailModal").style.display = "none";
     }
 </script>

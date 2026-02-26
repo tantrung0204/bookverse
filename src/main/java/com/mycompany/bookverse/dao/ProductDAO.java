@@ -8,6 +8,7 @@ import java.util.List;
 import com.mycompany.bookverse.model.*;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import org.hibernate.Hibernate;
 
@@ -108,7 +109,7 @@ public class ProductDAO {
             em.close();
         }
     }
-    
+
     public Product insert(Product product) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -120,5 +121,62 @@ public class ProductDAO {
             em.close();
         }
     }
-}
 
+    public Product getProductDetailById(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT p FROM Product p "
+                    + "LEFT JOIN FETCH p.category "
+                    + "LEFT JOIN FETCH p.feedbackCollection "
+                    + "LEFT JOIN FETCH p.book b "
+                    + "LEFT JOIN FETCH b.genre "
+                    + "LEFT JOIN FETCH b.authorCollection "
+                    + "LEFT JOIN FETCH p.stationery s "
+                    + "WHERE p.productId = :id", Product.class)
+                    .setParameter("id", productId)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public Product findById(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Product.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    public double getAverageRating(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Double avg = em.createQuery(
+                    "SELECT AVG(f.rating) FROM Feedback f WHERE f.product.productId = :pid",
+                    Double.class)
+                    .setParameter("pid", productId)
+                    .getSingleResult();
+            return avg == null ? 0 : avg;
+        } finally {
+            em.close();
+        }
+    }
+
+    public int getSoldQuantity(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long total = em.createQuery(
+                    "SELECT SUM(oi.quantity) FROM OrderItem oi WHERE oi.product.productId = :pid",
+                    Long.class)
+                    .setParameter("pid", productId)
+                    .getSingleResult();
+            return total == null ? 0 : total.intValue();
+        } finally {
+            em.close();
+        }
+    }
+}

@@ -117,50 +117,86 @@
 
 
         </c:choose>
+        <c:set var="startPage" value="${currentPage - 1}" />
+        <c:set var="endPage" value="${currentPage + 1}" />
 
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+            <c:set var="endPage" value="4"/>
+        </c:if>
+
+        <c:if test="${endPage > totalPages - 1}">
+            <c:set var="endPage" value="${totalPages - 1}"/>
+            <c:set var="startPage" value="${totalPages - 3}"/>
+        </c:if>
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+        </c:if>
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+
+                <%-- Nút Previous --%>
+                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
+                </li>
+
+                <%-- Nếu tổng <= 5 thì hiển thị hết --%>
+                <c:if test="${totalPages <= 5}">
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" href="genre?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+                </c:if>
+
+                <%-- Nếu tổng > 5 --%>
+                <c:if test="${totalPages > 5}">
+
+                    <%-- Trang 1 luôn hiện --%>
+                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
+                        <a class="page-link" href="genre?page=1">1</a>
+                    </li>
+
+                    <%-- Dấu ... đầu --%>
+                    <c:if test="${startPage > 2}">
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    </c:if>
+
+                    <%-- Trang giữa --%>
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" href="genre?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+
+                    <%-- Dấu ... cuối --%>
+                    <c:if test="${endPage < totalPages - 1}">
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    </c:if>
+
+                    <%-- Trang cuối luôn hiện --%>
+                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
+                        <a class="page-link" href="genre?page=${totalPages}">
+                            ${totalPages}
+                        </a>
+                    </li>
+
+                </c:if>
+
+                <%-- Nút Next --%>
+                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="genre?page=${currentPage + 1}">&raquo;</a>
+                </li>
+
+            </ul>
+        </nav>
     </div>
-    <%-- Edit Genre po-up--%>
-    <div id="editPopup" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Genre</h3>
-            </div>
 
-            <c:if test="${not empty editError}">
-                <div class="alert alert-danger p-2 mb-3" id="editErrorMsg" style="font-size: 13px;">
-                    ${editError}
-                </div>
-            </c:if>
-
-            <form action="${pageContext.request.contextPath}/genre" method="post">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="genreId" id="editGenreId">
-
-                <div class="form-group">
-                    <label>Genre Name</label>
-                    <input type="text" name="genreName" id="editGenreName" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Description</label>
-                    <input type="text" name="descriptionText" id="editDescription" class="form-control">
-                </div>
-
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="status" id="editStatus" class="form-control">
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
-                    <button type="submit" class="btn-save">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div> 
 </div>
 
 <script>
@@ -276,7 +312,7 @@
 <div id="createPopup" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Add new Category</h3>
+            <h3>Add new genre</h3>
         </div>
 
         <c:if test="${not empty createError}">
@@ -289,7 +325,7 @@
             <input type="hidden" name="action" value="create">
 
             <div class="form-group">
-                <label>Category Name</label>
+                <label>Genre Name</label>
                 <input type="text" name="name" class="form-control" value="${createName}">
             </div>
 
@@ -349,15 +385,15 @@
         </div>
     </div>
 </div>
-
+<%-- Edit Genre po-up--%>
 <div id="editPopup" class="modal-overlay">
-    <div class="modal-content ">
+    <div class="modal-content">
         <div class="modal-header">
             <h3>Edit Genre</h3>
         </div>
 
         <c:if test="${not empty editError}">
-            <div class="alert alert-danger p-2 mb-3 alert-error" id="editErrorMsg" style="font-size: 13px;">
+            <div class="alert alert-danger p-2 mb-3" id="editErrorMsg" style="font-size: 13px;">
                 ${editError}
             </div>
         </c:if>
@@ -368,7 +404,7 @@
 
             <div class="form-group">
                 <label>Genre Name</label>
-                <input type="text" name="genreName" id="editGenreName" class="form-control">
+                <input type="text" name="genreName" id="editGenreName" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -378,7 +414,7 @@
 
             <div class="form-group">
                 <label>Status</label>
-                <select name="status" id="status" class="form-control">
+                <select name="status" id="editStatus" class="form-control">
                     <option value="1">Active</option>
                     <option value="0">Inactive</option>
                 </select>
@@ -390,4 +426,5 @@
             </div>
         </form>
     </div>
-</div>
+</div> 
+

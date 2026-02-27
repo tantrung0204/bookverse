@@ -24,22 +24,27 @@ public class GenreService {
         return genreDAO.findById(id);
     }
 
-    public List<Genre> searchGenres(String keyword) {
-        return genreDAO.searchByName(keyword);
-    }
-
     public String insertGenre(String name, String des, int status) {
-
+        String error = "";
         if (des == null || des.trim().isEmpty()) {
-            return "Description is empty";
+            error += "Description can not be empty.\n";
+        } else if (!des.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Description contains invalid characters.\n";
         }
         if (name == null || name.trim().isEmpty()) {
-            return "Name is empty";
+            error += "Name cannot be left blank.\n";
+        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Name contains invalid characters.\n";
         }
-
+        if (status != 0 && status != 1) {
+            error += "status must be 1 or 2.\n";
+        }
         boolean checkExist = genreDAO.checkGenreExistByName(name);
 
-        if (!checkExist) {
+        if (checkExist) {
+            return "Genre already exists";
+        }
+        if (error.isEmpty()) {
             Genre genre = new Genre();
             genre.setGenreName(name);
             genre.setDescriptionText(des);
@@ -49,9 +54,8 @@ public class GenreService {
             } else {
                 return "Create genre false";
             }
-        } else {
-            return "Genre already exists";
         }
+        return error;
     }
 
     public String editGenre(int id, String name, String description, int status) {
@@ -114,6 +118,16 @@ public class GenreService {
 
     public int getTotalPages(int pageSize) {
         long totalItems = genreDAO.countAll();
+        return (int) Math.ceil((double) totalItems / pageSize);
+    }
+
+    public List<Genre> searchByKeyword(String keyword, int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return genreDAO.findByKeywordAndPage(keyword, offset, pageSize);
+    }
+
+    public int getTotalPagesByKeyword(String keyword, int pageSize) {
+        long totalItems = genreDAO.countByKeyword(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
     }
 }

@@ -4,7 +4,7 @@
  */
 package com.mycompany.bookverse.dao;
 
-import com.mycompany.bookverse.model.Genre;
+import com.mycompany.bookverse.model.Author;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -15,23 +15,23 @@ import java.util.List;
  *
  * @author LECOO
  */
-public class GenreDAO {
+public class AuthorDAO {
 
-    public List<Genre> findAll() {
+    public List<Author> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createNamedQuery("Genre.findAll", Genre.class)
+            return em.createNamedQuery("Author.findAll", Author.class)
                     .getResultList();
         } finally {
             em.close();
         }
     }
 
-    public Genre findById(int id) {
+    public Author findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createNamedQuery("Genre.findByGenreId", Genre.class)
-                    .setParameter("genreId", id)
+            return em.createNamedQuery("Author.findByAuthorId", Author.class)
+                    .setParameter("authorId", id)
                     .getSingleResult();
         } catch (Exception e) {
             return null;
@@ -40,10 +40,10 @@ public class GenreDAO {
         }
     }
 
-    public List<Genre> searchByName(String keyword) {
+    public List<Author> searchByName(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT g FROM Genre g WHERE g.genreName LIKE :kw", Genre.class)
+            return em.createQuery("SELECT a FROM Author a WHERE a.authorName LIKE :kw", Author.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .getResultList();
         } finally {
@@ -51,28 +51,11 @@ public class GenreDAO {
         }
     }
 
-    public boolean createGenre(Genre genre) {
+    public boolean createAuthor(Author author) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.persist(genre);// tạo genre mới
-            em.getTransaction().commit();
-            return true;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {// nếu Transaction đang hoạt động mà bị lỗi thì trả về.
-                em.getTransaction().rollback();
-            }
-            return false;
-        } finally {
-            em.close();
-        }
-    }
-
-    public boolean update(Genre genre) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.merge(genre);
+            em.persist(author);
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
@@ -85,37 +68,52 @@ public class GenreDAO {
         }
     }
 
-    public boolean checkGenreExist(int id, String name) {
-        List<Genre> list = findAll();
-        for (Genre genre : list) {
-            if (genre.getGenreId() != id && genre.getGenreName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkGenreExistByName(String name) {
-        List<Genre> list = findAll();
-        for (Genre genre : list) {
-            if (genre.getGenreName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public long checkGenreInUse(int id) {
+    public boolean update(Author author) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Long count = em.createQuery(
-                    "SELECT COUNT(b) FROM Book b WHERE b.genreId.id = :id",
-                    Long.class)
-                    .setParameter("id", id)
+            em.getTransaction().begin();
+            em.merge(author);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean checkAuthorExist(int id, String name) {
+        List<Author> list = findAll();
+        for (Author author : list) {
+            if (author.getAuthorId() != id && author.getAuthorName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAuthorExistByName(String name) {
+        List<Author> list = findAll();
+        for (Author author : list) {
+            if (author.getAuthorName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Long countBooksByAuthorId(int authorId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(b) FROM Author a JOIN a.bookCollection b WHERE a.authorId = :id";
+
+            long quantity = em.createQuery(jpql, Long.class)
+                    .setParameter("id", authorId)
                     .getSingleResult();
-
-            return count;
-
+            return quantity;
         } finally {
             em.close();
         }
@@ -124,12 +122,12 @@ public class GenreDAO {
     public boolean deleteById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Genre genre = em.find(Genre.class, id);
-            if (genre == null) {
+            Author author = em.find(Author.class, id);
+            if (author == null) {
                 return false;
             }
             em.getTransaction().begin();
-            em.remove(genre);
+            em.remove(author);
             em.getTransaction().commit();
             return true;
 
@@ -143,12 +141,12 @@ public class GenreDAO {
         }
     }
 
-    public List<Genre> findByPage(int offset, int limit) {
+    public List<Author> findByPage(int offset, int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Genre> query = em.createQuery(
-                    "SELECT g FROM Genre g ORDER BY g.genreId DESC",
-                    Genre.class
+            TypedQuery<Author> query = em.createQuery(
+                    "SELECT a FROM Author a ORDER BY a.authorId DESC",
+                    Author.class
             );
             query.setFirstResult(offset);
             query.setMaxResults(limit);
@@ -162,7 +160,7 @@ public class GenreDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                    "SELECT COUNT(g) FROM Genre g",
+                    "SELECT COUNT(a) FROM Author a",
                     Long.class
             ).getSingleResult();
         } finally {
@@ -170,14 +168,14 @@ public class GenreDAO {
         }
     }
 
-    public List<Genre> findByKeywordAndPage(String keyword, int offset, int limit) {
+    public List<Author> findByKeywordAndPage(String keyword, int offset, int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Genre> query = em.createQuery(
-                    "SELECT g FROM Genre g "
-                    + "WHERE LOWER(g.genreName) LIKE LOWER(:kw) "
-                    + "ORDER BY g.genreId DESC",
-                    Genre.class
+            TypedQuery<Author> query = em.createQuery(
+                    "SELECT a FROM Author a "
+                    + "WHERE LOWER(a.authorName) LIKE LOWER(:kw) "
+                    + "ORDER BY a.authorId DESC",
+                    Author.class
             );
 
             query.setParameter("kw", "%" + keyword + "%");
@@ -194,8 +192,8 @@ public class GenreDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                    "SELECT COUNT(g) FROM Genre g "
-                    + "WHERE LOWER(g.genreName) LIKE LOWER(:kw)",
+                    "SELECT COUNT(a) FROM Author a "
+                    + "WHERE LOWER(a.authorName) LIKE LOWER(:kw)",
                     Long.class
             )
                     .setParameter("kw", "%" + keyword + "%")
@@ -204,5 +202,4 @@ public class GenreDAO {
             em.close();
         }
     }
-
 }

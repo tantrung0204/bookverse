@@ -48,6 +48,9 @@ public class SupplierController extends HttpServlet {
             case "search":
                 getSearchSupplier(request, response);
                 break;
+            case "detail":
+                getDetailSupplier(request, response);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -91,19 +94,26 @@ public class SupplierController extends HttpServlet {
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
 
-       List <Supplier> list = supplierService.getSearchByName(keyword);
+        List<Supplier> list = supplierService.getSearchByName(keyword);
 
-       if (list == null || list.isEmpty()){
-           request.setAttribute("message", "No supplier found");
-       } else {
-           request.setAttribute("suppliers", list);
-       }
+        if (list == null || list.isEmpty()) {
+            request.setAttribute("message", "No supplier found");
+        } else {
+            request.setAttribute("suppliers", list);
+        }
 
         request.setAttribute("keyword", keyword);
         request.setAttribute("contentPage", "supplier-list.jsp");
         request.setAttribute("activeMenu", "supplier");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
 
+    }
+
+    private void getDetailSupplier(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int supplierId = Integer.parseInt(request.getParameter("supplierId"));
+        
+        response.setContentType("application/json");
     }
 
 }

@@ -85,8 +85,9 @@
                                                                 '${s.supplierId}',
                                                                 '${s.supplierName}',
                                                                 '${s.supplierEmail}',
-                                                                '${s.supplierPhone}'
-                                                                '${s.supplierAddress}'
+                                                                '${s.supplierPhone}',
+                                                                '${s.supplierAddress}',
+                                                                '${s.status}'
                                                                 )">
                                             <i class="bi bi-eye"></i>
                                         </button>
@@ -135,53 +136,11 @@
     </div>
 </div>
 
-<!-- ================= CREATE POPUP ================= -->
-<!--<div id="createPopup" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Add new Category</h3>
-        </div>
-
-        <c:if test="${not empty createError}">
-            <div class="alert alert-danger" id="createErrorMsg">
-                ${createError}
-            </div>
-        </c:if>
-
-        <form action="${pageContext.request.contextPath}/category" method="post">
-            <input type="hidden" name="action" value="create">
-
-            <div class="form-group">
-                <label>Category Name</label>
-                <input type="text" name="categoryName" class="form-control" value="${createName}">
-            </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <input type="text" name="descriptionText" class="form-control" value="${createDes}">
-            </div>
-
-            <div class="form-group">
-                <label>Status</label>
-                <select name="status" class="form-control">
-                    <option value="1" ${createStatus==1 ? "selected" : "" }>Active</option>
-                    <option value="0" ${createStatus==0 ? "selected" : "" }>Inactive</option>
-                </select>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
-                <button type="submit" class="btn-save">Create</button>
-            </div>
-        </form>
-    </div>
-</div>
-
- ================= DETAIL POPUP ================= 
+<!--================= DETAIL POPUP =================--> 
 <div id="detailPopup" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Category Detail</h3>
+            <h3>Supplier Detail</h3>
         </div>
 
         <table class="detail-table">
@@ -194,16 +153,20 @@
                 <td id="detailName"></td>
             </tr>
             <tr>
-                <th>Description:</th>
-                <td id="detailDesc"></td>
+                <th>Email:</th>
+                <td id="detailEmail"></td>
+            </tr>
+            <tr>
+                <th>Phone:</th>
+                <td id="detailPhone"></td>
+            </tr>
+            <tr>
+                <th>Address:</th>
+                <td id="detailAddress"></td>
             </tr>
             <tr>
                 <th>Status:</th>
                 <td id="detailStatus"></td>
-            </tr>
-            <tr>
-                <th>Quantity:</th>
-                <td id="detailQuantity"></td>
             </tr>
         </table>
 
@@ -212,75 +175,16 @@
         </div>
     </div>
 </div>
--->
-<!--<div id="editPopup" class="modal-overlay">
-    <div class="modal-content ">
-        <div class="modal-header">
-            <h3>Edit Category</h3>
-        </div>
 
-        <c:if test="${not empty editError}">
-            <div class="alert alert-danger p-2 mb-3 alert-error" id="editErrorMsg" style="font-size: 13px;">
-                ${editError}
-            </div>
-        </c:if>
-
-        <form action="${pageContext.request.contextPath}/category" method="post">
-            <input type="hidden" name="action" value="edit">
-            <input type="hidden" name="categoryId" id="editCategoryId">
-
-            <div class="form-group">
-                <label>Category Name</label>
-                <input type="text" name="categoryName" id="editCategoryName" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <input type="text" name="descriptionText" id="editDescription" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Status</label>
-                <select name="status" id="editStatus" class="form-control">
-                    <option value="1">Active</option>
-                    <option value="0">Inactive</option>
-                </select>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
-                <button type="submit" class="btn-save">Save Changes</button>
-            </div>
-        </form>
-    </div>
-</div>-->
-
-<!--<script>
-    function openCreatePopup() {
-        document.getElementById("createPopup").style.display = "flex";
-        const err = document.getElementById("createErrorMsg");
-        if (err)
-            err.style.display = 'none';
-    }
-    function closeCreatePopup() {
-        document.getElementById("createPopup").style.display = "none";
-    }
-
-    function openDetailPopup(id, name, desc, status) {
+<script>
+    function openDetailPopup(id, name, email, phone, address, status) {
         document.getElementById("detailId").innerText = id;
         document.getElementById("detailName").innerText = name;
-        document.getElementById("detailDesc").innerText = desc;
+        document.getElementById("detailEmail").innerText = email;
+        document.getElementById("detailPhone").innerText = phone;
+        document.getElementById("detailAddress").innerText = address;
         document.getElementById("detailStatus").innerText = status == 1 ? "Active" : "Inactive";
-        document.getElementById("detailQuantity").innerText = "Loading...";
 
-        fetch('${pageContext.request.contextPath}/category?action=detail&categoryId=' + id)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("detailQuantity").innerText = data.quantity + " products";
-                })
-                .catch(error => {
-                    document.getElementById("detailQuantity").innerText = "Error";
-                });
 
 
         document.getElementById("detailPopup").style.display = "flex";
@@ -288,78 +192,4 @@
     function closeDetailPopup() {
         document.getElementById("detailPopup").style.display = "none";
     }
-    // Hàm mở Popup và điền dữ liệu
-    function openEditPopup(id, name, description, status) {
-        document.getElementById("editCategoryId").value = id;
-        document.getElementById("editCategoryName").value = name;
-        document.getElementById("editDescription").value = description;
-        document.getElementById("editStatus").value = status;
-
-        // Ẩn thông báo lỗi cũ nếu có
-        const err = document.getElementById("editErrorMsg");
-        if (err)
-            err.style.display = 'none';
-
-        // Hiển thị modal (sử dụng Flex để căn giữa)
-        document.getElementById("editPopup").style.display = "flex";
-    }
-
-    // Hàm đóng Popup
-    function closeEditPopup() {
-        document.getElementById("editPopup").style.display = "none";
-    }
-
-    // Xử lý confirm xóa
-    function confirmDelete(id, name) {
-        return confirm("Are you sure you want to delete category:\n" + name + " (ID: " + id + ")");
-    }
-
-    let popupTimer = null;
-
-
-    // Đóng Popup khi click ra ngoài vùng trắng
-    window.onclick = function (event) {
-        var modal = document.getElementById("editPopup");
-        if (event.target == modal) {
-            closeEditPopup();
-        }
-    }
-</script>-->
-
-<%--<c:if test="${openCreatePopup}">
-    <script>
-        window.onload = function () {
-            setTimeout(function () {
-                openCreatePopup(
-                        '${createName}',
-                        '${createDesc}',
-                        '${createStatus}'
-                        );
-                // Hiển thị lại lỗi
-                const err = document.getElementById("createErrorMsg");
-                if (err)
-                    err.style.display = 'block';
-            }, 100);
-        };
-    </script>
-</c:if>--%>
-
-<%--<c:if test="${openEditPopup}">
-    <script>
-        window.onload = function () {
-            // Đảm bảo DOM đã load xong
-            setTimeout(function () {
-                openEditPopup(
-                        '${editId}',
-                        '${editName}',
-                        '${editDesc}',
-                        '${editStatus}'
-                        );
-                // Hiển thị lại lỗi
-                const err = document.getElementById("editErrorMsg");
-                if (err)
-                    err.style.display = 'block';
-            }, 100);
-        };
-    </script>
-</c:if>--%>
+</script>

@@ -80,7 +80,7 @@ public class AuthorController extends HttpServlet {
             }
         }
         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-        
+
         switch (view) {
             case "list":
                 String success = (String) request.getSession().getAttribute("success");
@@ -88,11 +88,14 @@ public class AuthorController extends HttpServlet {
                     request.setAttribute("success", success);
                     request.getSession().removeAttribute("success");
                 }
+                int totalPages = authorServices.getTotalPages(pageSize);
                 List<Author> authors = authorServices.getAuthorsByPage(page, pageSize);
                 if (authors == null || authors.isEmpty()) {
                     request.setAttribute("message", "No vouchers found");
                 } else {
                     request.setAttribute("authors", authors);
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("totalPages", totalPages);
                     request.setAttribute("contentPage", "author-list.jsp");
                     request.setAttribute("activeMenu", "author");
                 }
@@ -100,14 +103,18 @@ public class AuthorController extends HttpServlet {
                 break;
             case "search":
                 String keyword = request.getParameter("keyword");
-                List<Author> searchList = authorServices.searchAuthors(keyword);
+                totalPages = authorServices.getTotalPagesByKeyword(keyword, pageSize);
+                List<Author> searchList = authorServices.searchByKeyword(keyword, page, pageSize);
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No author found for:" + keyword);
                 } else {
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("totalPages", totalPages);
                     request.setAttribute("authors", searchList);
+                    request.setAttribute("contentPage", "author-list.jsp");
+                    request.setAttribute("activeMenu", "author");
                 }
-                request.setAttribute("contentPage", "author-list.jsp");
-                request.setAttribute("activeMenu", "author");
+
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "detail":

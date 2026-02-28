@@ -36,7 +36,7 @@
         <div class="toolbar">
             <%-- Add author --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Author
+                <i class="bi bi-plus-lg me-1"></i> Add author
             </button>
             <%-- Search author --%>
             <form action="author" method="get" class="search-form">
@@ -71,7 +71,7 @@
                                 <%-- Detail author --%>
                                 <div class="action-buttons">
                                     <button type="button" class="btn-action btn-detail"
-                                            title="View Detail" onclick="openDetailPopup(
+                                            title="Detail" onclick="openDetailPopup(
                                                             '${a.authorId}',
                                                             '${a.authorName}',
                                                             '${a.birthYear}',
@@ -111,7 +111,84 @@
 
 
         </c:choose>
+        <c:set var="startPage" value="${currentPage - 1}" />
+        <c:set var="endPage" value="${currentPage + 1}" />
 
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+            <c:set var="endPage" value="4"/>
+        </c:if>
+
+        <c:if test="${endPage > totalPages - 1}">
+            <c:set var="endPage" value="${totalPages - 1}"/>
+            <c:set var="startPage" value="${totalPages - 3}"/>
+        </c:if>
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+        </c:if>
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+
+                <%-- Nút Previous --%>
+                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
+                </li>
+
+                <%-- Nếu tổng <= 5 thì hiển thị hết --%>
+                <c:if test="${totalPages <= 5}">
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" href="genre?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+                </c:if>
+
+                <%-- Nếu tổng > 5 --%>
+                <c:if test="${totalPages > 5}">
+
+                    <%-- Trang 1 luôn hiện --%>
+                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
+                        <a class="page-link" href="author?page=1">1</a>
+                    </li>
+
+                    <%-- Dấu ... đầu --%>
+                    <c:if test="${startPage > 2}">
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    </c:if>
+
+                    <%-- Trang giữa --%>
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" href="author?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+
+                    <%-- Dấu ... cuối --%>
+                    <c:if test="${endPage < totalPages - 1}">
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    </c:if>
+
+                    <%-- Trang cuối luôn hiện --%>
+                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
+                        <a class="page-link" href="author?page=${totalPages}">
+                            ${totalPages}
+                        </a>
+                    </li>
+
+                </c:if>
+
+                <%-- Nút Next --%>
+                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="author?page=${currentPage + 1}">&raquo;</a>
+                </li>
+
+            </ul>
+        </nav>
     </div>
 
 

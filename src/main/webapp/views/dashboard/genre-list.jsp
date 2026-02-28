@@ -36,7 +36,7 @@
         <div class="toolbar">
             <%-- Add Genre --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Genre
+                <i class="bi bi-plus-lg me-1"></i> Add genre
             </button>
             <%-- Search Genre --%>
             <form action="genre" method="get" class="search-form">
@@ -79,7 +79,7 @@
                                 <%-- Detail Genre --%>
                                 <div class="action-buttons">
                                     <button type="button" class="btn-action btn-detail"
-                                            title="View Detail" onclick="openDetailPopup(
+                                            title="Detail" onclick="openDetailPopup(
                                                             '${g.genreId}',
                                                             '${g.genreName}',
                                                             '${g.descriptionText}',

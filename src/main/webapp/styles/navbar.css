@@ -1,0 +1,75 @@
+:root {
+    --brand-color: #8B6B4C;
+    --brand-color-hover: #6e5238;
+    --font-stack-serif: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+}
+
+/* ================= NAVBAR CHÍNH ================= */
+.bookverse-navbar {
+    background-color: var(--brand-color);
+    padding: 0; /* Xóa padding mặc định để các nút dính sát lề trên/dưới */
+    font-family: var(--font-stack-serif);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Đổ bóng nhẹ phân cách với thân trang */
+}
+
+/* ================= CÁC LINK ĐIỀU HƯỚNG ================= */
+.bookverse-nav-list .nav-link {
+    color: #ffffff !important;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.8rem 1.5rem !important; /* Mở rộng vùng click */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+/* Hiệu ứng hover cho link */
+.bookverse-nav-list .nav-link:hover,
+.bookverse-nav-list .nav-link:focus {
+    background-color: var(--brand-color-hover);
+    color: #f4f0ec !important;
+}
+
+/* ================= DROPDOWN CATEGORIES ================= */
+.bookverse-navbar .nav-item.dropdown {
+    position: static;
+}
+
+.brand-dropdown-menu {
+    background-color: #ffffff;
+    border: 1px solid rgba(139, 107, 76, 0.2);
+    border-top: 3px solid var(--brand-color);
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    
+    width: 80%;
+    margin-top: 0;
+    padding: 1.5rem;
+    
+    position: absolute !important; 
+    top: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important
+}
+
+.brand-dropdown-menu.show {
+    display: grid !important; /* Bắt buộc dùng !important để đè Bootstrap */
+    grid-template-columns: repeat(5, 1fr); /* Hiển thị 5 danh mục 1 hàng ngang */
+    gap: 15px; /* Khoảng cách giữa các cột/hàng */
+}
+
+/* Các item trong Dropdown */
+.brand-dropdown-menu .dropdown-item {
+    color: #2c2c2c;
+    font-family: var(--font-stack-serif);
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 4px; /* Bo góc nhẹ cho item */
+    white-space: normal; /* Bắt buộc: Cho phép chữ tự động rớt dòng nếu tên quá dài */
+}
+
+/* Hiệu ứng hover cho item trong Dropdown */
+.brand-dropdown-menu .dropdown-item:hover {
+    background-color: rgba(139, 107, 76, 0.08); /* Đổi màu nền nâu nhạt */
+    color: var(--brand-color);
+}

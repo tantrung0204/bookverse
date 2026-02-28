@@ -1,0 +1,133 @@
+:root {
+    --brand-color: #8B6B4C;
+    --brand-color-hover: #6e5238;
+    --text-dark: #2c2c2c;
+    --font-stack-serif: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+}
+
+/* ================= HEADER MAIN ================= */
+.bookverse-header {
+    font-family: var(--font-stack-serif); /* Đảm bảo header luôn có font này dù file chung chưa set */
+    border-bottom: 1px solid rgba(139, 107, 76, 0.2);
+}
+
+.navbar-brand img {
+    object-fit: contain;
+}
+
+.text-brand {
+    color: var(--brand-color) !important;
+}
+
+/* ================= SEARCH BAR ================= */
+.header-search-form {
+    max-width: 500px;
+    position: relative;
+}
+
+.header-search-group .form-control {
+    border-color: var(--brand-color);
+    padding-right: 40px;
+    border-radius: 20px;
+}
+
+.header-search-group .form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(139, 107, 76, 0.25);
+    border-color: var(--brand-color);
+}
+
+.btn-search-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--brand-color);
+    font-size: 1.2rem;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 10;
+}
+
+.btn-search-icon:hover {
+    color: var(--brand-color-hover);
+}
+
+/* ================= HEADER BUTTONS ================= */
+/* Nút "Sign In" */
+.btn-brand-rounded {
+    background-color: var(--brand-color);
+    color: #fff;
+    border: 2px solid var(--brand-color);
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem; /* Đảm bảo nút có độ lớn chuẩn trong Header */
+    transition: all 0.3s ease;
+}
+
+.btn-brand-rounded:hover {
+    background-color: var(--brand-color-hover);
+    border-color: var(--brand-color-hover);
+    color: #fff;
+}
+
+/* Nút "Sign Up" */
+.btn-outline-brand-rounded {
+    background-color: #fff;
+    color: var(--brand-color);
+    border: 2px solid var(--brand-color);
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-brand-rounded:hover {
+    color: var(--brand-color-hover);
+    border: 2px solid var(--brand-color-hover);
+    text-shadow: 0 0 1px currentColor, 0.5px 0 0 currentColor;
+}
+
+/* ================= USER ICONS & DROPDOWN ================= */
+.icon-link, .user-dropdown-link {
+    color: var(--brand-color) !important;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover, .user-dropdown-link:hover {
+    color: var(--brand-color-hover) !important;
+}
+
+.bg-brand-accent {
+    background-color: var(--brand-color) !important;
+    color: white;
+}
+
+.user-avatar {
+    object-fit: cover;
+    border: 2px solid var(--brand-color);
+    padding: 1px;
+}
+
+.brand-dropdown .dropdown-item {
+    font-family: var(--font-stack-serif);
+    color: var(--text-dark);
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.brand-dropdown .dropdown-item:hover {
+    background-color: rgba(139, 107, 76, 0.1);
+    color: var(--brand-color);
+}
+
+.brand-dropdown .dropdown-item i {
+    color: var(--brand-color);
+    opacity: 0.8;
+}
+
+.user-dropdown-link::after {
+    color: var(--brand-color);
+}

@@ -158,26 +158,23 @@
 
         <c:if test="${totalPages > 1}">
             <div class="pagination">
-
                 <c:if test="${currentPage > 1}">
                     <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage - 1}"
                        class="page-btn">«</a>
                 </c:if>
-
                 <c:forEach begin="1" end="${totalPages}" var="i">
                     <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${i}"
                        class="page-btn ${i == currentPage ? 'active' : ''}">
                         ${i}
                     </a>
                 </c:forEach>
-
                 <c:if test="${currentPage < totalPages}">
                     <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage + 1}"
                        class="page-btn">»</a>
                 </c:if>
-
             </div>
         </c:if>
+
 
         <!-- CREATE VOUCHER POPUP -->
         <div id="createModal" class="modal-overlay">
@@ -238,17 +235,17 @@
                                 class="form-control">
                             <option value="1" <c:if test="${status == '1'}">selected</c:if>>Active</option>
                             <option value="0" <c:if test="${status == '0'}">selected</c:if>>Inactive</option>
-                        </select>
-                    </div>
+                            </select>
+                        </div>
 
-                    <!-- EXPIRY -->
-                    <div class="form-group">
-                        <label>Expiry Date</label>
-                        <input type="date"
-                               name="expiryDate"
-                               class="form-control"
-                               value="${expiryDate}"
-                               required>
+                        <!-- EXPIRY -->
+                        <div class="form-group">
+                            <label>Expiry Date</label>
+                            <input type="date"
+                                   name="expiryDate"
+                                   class="form-control"
+                                   value="${expiryDate}"
+                            required>
                     </div>
 
                     <!-- FOOTER -->

@@ -13,16 +13,54 @@ import java.util.List;
  * @author TrungNT - CE200064
  */
 public class CustomerService {
-    private CustomerDAO customerDAO = new CustomerDAO();
+
+    private CustomerDAO customerDAO;
+
+    public CustomerService() {
+        this.customerDAO = new CustomerDAO();
+    }
 
     public List<Customer> getAllCustomers() {
         return customerDAO.findAll();
     }
 
-    public static void main(String[] args) {
-        CustomerService service = new CustomerService();
-        for (Customer c : service.getAllCustomers()) {
-            System.out.println(c.getUsername());
+    public Customer getCustomerById(int id) {
+        return customerDAO.findById(id);
+    }
+
+    public int addCustomer(Customer customer) {
+
+        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()
+                || customer.getEmail() == null || customer.getEmail().trim().isEmpty()) {
+            return 2;
         }
+
+        boolean success = customerDAO.create(customer);
+        if (success) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    public int editCustomer(Customer customer) {
+        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()) {
+            return 2;
+        }
+
+        boolean success = customerDAO.update(customer);
+        if (success) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    public boolean deleteCustomer(int id) {
+        return customerDAO.delete(id);
+    }
+
+    public List<Customer> searchCustomers(String keyword) {
+        return customerDAO.search(keyword);
     }
 }

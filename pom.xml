@@ -19,7 +19,7 @@
             <version>${jakartaee}</version>
             <scope>provided</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>

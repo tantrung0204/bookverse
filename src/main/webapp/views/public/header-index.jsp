@@ -7,16 +7,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<header class="bookverse-header sticky-top">
+<header class="bookverse-header">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand me-5" href="${pageContext.request.contextPath}/">
                 <img src="${pageContext.request.contextPath}/assets/images/logo.png" alt="Bookverse Logo" height="75" class="d-inline-block align-text-top">
             </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
 

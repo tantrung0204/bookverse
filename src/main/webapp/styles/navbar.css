@@ -1,13 +1,7 @@
-:root {
-    --brand-color: #8B6B4C;
-    --brand-color-hover: #6e5238;
-    --font-stack-serif: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
-}
-
 /* ================= NAVBAR CHÍNH ================= */
 .bookverse-navbar {
-    background-color: var(--brand-color);
-    font-family: var(--font-stack-serif);
+    background-color: #8B6B4C;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -22,11 +16,11 @@
 }
 
 .bookverse-nav-list .nav-link:hover {
-    background-color: var(--brand-color-hover);
+    background-color: #6e5238;
     color: #f4f0ec !important;
 }
 .bookverse-nav-list .nav-link.active {
-    background-color: var(--brand-color-hover);
+    background-color: #6e5238;
     color: #f4f0ec !important;
 }
 
@@ -38,7 +32,7 @@
 .brand-dropdown-menu {
     background-color: #ffffff;
     border: 1px solid rgba(139, 107, 76, 0.2);
-    border-top: 3px solid var(--brand-color);
+    border-top: 3px solid #8B6B4C;
     border-radius: 0 0 5px 5px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 
@@ -61,7 +55,7 @@
 
 .brand-dropdown-menu .dropdown-item {
     color: #2c2c2c;
-    font-family: var(--font-stack-serif);
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
     padding: 0.6rem 1rem;
     font-size: 0.95rem;
     border-radius: 4px;
@@ -70,5 +64,5 @@
 
 .brand-dropdown-menu .dropdown-item:hover {
     background-color: rgba(139, 107, 76, 0.08);
-    color: var(--brand-color);
+    color: #8B6B4C;
 }

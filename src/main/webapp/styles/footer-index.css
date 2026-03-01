@@ -1,13 +1,8 @@
-:root {
-    --brand-color: #8B6B4C;
-    --font-stack-serif: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
-}
-
 /* ================= BỌC CHUNG CHO FOOTER ================= */
 .bookverse-footer {
-    background-color: var(--brand-color);
+    background-color: #8B6B4C;
     color: #ffffff;
-    font-family: var(--font-stack-serif);
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
 }

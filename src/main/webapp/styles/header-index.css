@@ -7,7 +7,7 @@
 
 /* ================= HEADER MAIN ================= */
 .bookverse-header {
-    font-family: var(--font-stack-serif); /* Đảm bảo header luôn có font này dù file chung chưa set */
+    font-family: var(--font-stack-serif);
     border-bottom: 1px solid rgba(139, 107, 76, 0.2);
 }
 
@@ -56,14 +56,13 @@
 }
 
 /* ================= HEADER BUTTONS ================= */
-/* Nút "Sign In" */
 .btn-brand-rounded {
     background-color: var(--brand-color);
     color: #fff;
     border: 2px solid var(--brand-color);
     text-decoration: none;
     border-radius: 5px;
-    padding: 0.5rem 1rem; /* Đảm bảo nút có độ lớn chuẩn trong Header */
+    padding: 0.5rem 1rem;
     transition: all 0.3s ease;
 }
 
@@ -73,7 +72,6 @@
     color: #fff;
 }
 
-/* Nút "Sign Up" */
 .btn-outline-brand-rounded {
     background-color: #fff;
     color: var(--brand-color);

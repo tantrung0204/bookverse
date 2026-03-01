@@ -17,15 +17,18 @@
             <ul class="navbar-nav bookverse-nav-list">
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/home">Home</a>
+                    <a class="nav-link ${param.activePage == 'home' ? 'active' : ''}" 
+                       href="${pageContext.request.contextPath}/home">Home</a>
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/books">Book</a>
+                    <a class="nav-link ${param.activePage == 'book' ? 'active' : ''}" 
+                       href="${pageContext.request.contextPath}/books">Book</a>
                 </li>
                 
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/stationery">Stationery</a>
+                    <a class="nav-link ${param.activePage == 'stationery' ? 'active' : ''}" 
+                       href="${pageContext.request.contextPath}/stationery">Stationery</a>
                 </li>
                 
                 <li class="nav-item dropdown position-static">

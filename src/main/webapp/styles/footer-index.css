@@ -14,7 +14,6 @@
 
 /* ================= CÁC THÀNH PHẦN BÊN TRONG FOOTER ================= */
 
-/* Tiêu đề Logo (Bookverse) - Chỉ tác dụng trong footer */
 .bookverse-footer .footer-brand-title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -22,17 +21,15 @@
     letter-spacing: 0.5px;
 }
 
-/* Tiêu đề của các cột (Quick Links, Support, Contact) */
 .bookverse-footer h5 {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 1.2rem;
 }
 
-/* Định dạng đoạn văn bản và thẻ link */
 .bookverse-footer p {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.85); /* Chữ trắng đục để đỡ chói mắt */
+    color: rgba(255, 255, 255, 0.85);
     margin-bottom: 0.8rem;
     line-height: 1.6;
 }
@@ -43,13 +40,11 @@
     transition: all 0.3s ease;
 }
 
-/* Hiệu ứng khi di chuột vào link */
 .bookverse-footer a:hover {
     color: #ffffff;
     text-decoration: underline;
 }
 
-/* Icon mạng xã hội */
 .bookverse-footer .footer-socials {
     margin-top: 1.5rem;
 }
@@ -67,14 +62,12 @@
     text-decoration: none;
 }
 
-/* Đường kẻ ngang (Divider) */
 .bookverse-footer .footer-divider {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     margin-top: 2rem;
     margin-bottom: 1.5rem;
 }
 
-/* Copyright */
 .bookverse-footer .footer-copyright {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.7);

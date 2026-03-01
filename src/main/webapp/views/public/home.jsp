@@ -1,5 +1,5 @@
 <%-- 
-    Document   : index
+    Document   : home
     Created on : Feb 28, 2026, 3:13:06 PM
     Author     : TrungNT - CE200064
 --%>
@@ -14,13 +14,15 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/index.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/home.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css"  type="text/css"/>
     </head>
     <body>
         <jsp:include page="header-index.jsp" />
-        <jsp:include page="navbar.jsp" />
+        <jsp:include page="navbar.jsp">
+            <jsp:param name="activePage" value="home"/>
+        </jsp:include>
 
         <main class="container my-5"style="min-height: 60vh;">
             <h1>Welcome to Bookverse</h1>

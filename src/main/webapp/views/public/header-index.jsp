@@ -19,7 +19,7 @@
             </button>
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-                
+
                 <form class="d-flex mx-lg-auto flex-grow-1 header-search-form my-3 my-lg-0" action="${pageContext.request.contextPath}/search" method="get">
                     <div class="header-search-group position-relative w-100">
                         <input class="form-control" type="search" name="query" placeholder="Search books, authors..." aria-label="Search">
@@ -55,8 +55,7 @@
                                     <i class="fas fa-shopping-cart fa-lg"></i>
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-brand-accent" style="font-size: 0.7rem;">
                                         3
-                                        <span class="visually-hidden">items in cart</span>
-                                      </span>
+                                    </span>
                                 </a>
                             </li>
 
@@ -67,7 +66,7 @@
                                             <img src="${sessionScope.user.avatarUrl}" alt="${sessionScope.user.username}" width="35" height="35" class="rounded-circle me-2 user-avatar border border-brand">
                                         </c:when>
                                         <c:otherwise>
-                                             <i class="fas fa-user-circle fa-2x me-2 brand-color"></i>
+                                            <i class="fas fa-user-circle fa-2x me-2 brand-color"></i>
                                         </c:otherwise>
                                     </c:choose>
 
@@ -79,7 +78,7 @@
                                     <li><a class="dropdown-item" href="#"><i class="far fa-user me-2"></i> Profile</a></li>
                                     <li><a class="dropdown-item" href="#"><i class="fas fa-receipt me-2"></i> My Orders</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a></li>
                                 </ul>
                             </li>
                         </c:otherwise>

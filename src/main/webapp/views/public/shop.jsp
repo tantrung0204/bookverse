@@ -1,6 +1,6 @@
 <%-- 
     Document   : shop
-    Created on : Mar 1, 2026, 4:05:16 PM
+    Created on : Mar 1, 2026, 4:05:16 PM
     Author     : TrungNT - CE200064
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -21,8 +21,6 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/shop.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
-
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/shop-style.css"> 
     </head>
 
     <body>
@@ -34,14 +32,17 @@
 
         <div class="shop-wrapper container">
 
-            <aside class="filter-column">
+            <aside class="col-md-3 filter-column">
                 <form id="filterForm" action="shop" method="GET">
                     <input type="hidden" name="type" value="${selectedType}" />
                     <input type="hidden" id="pageInput" name="page" value="1" />
+                    <c:if test="${not empty searchKeyword}">
+                        <input type="hidden" name="keyword" value="${searchKeyword}" />
+                    </c:if>
 
-                    <div class="filter-group">
-                        <h4>Sort By Price</h4>
-                        <select name="sort" class="form-select" style="font-family: 'Playfair Display', serif;">
+                    <div class="filter-group mb-4">
+                        <h5 class="filter-title mb-2">Sort By Price</h5>
+                        <select name="sort" class="form-select filter-select">
                             <option value="">Default</option>
                             <option value="asc" ${selectedSort == 'asc' ? 'selected' : ''}>Low to High</option>
                             <option value="desc" ${selectedSort == 'desc' ? 'selected' : ''}>High to Low</option>
@@ -49,9 +50,10 @@
                     </div>
 
                     <c:if test="${selectedType == 'book'}">
-                        <div class="filter-group">
-                            <h4>Genres</h4>
-                            <div style="max-height: 300px; overflow-y: auto;"> <c:forEach items="${allGenres}" var="g">
+                        <div class="filter-group mb-4">
+                            <h5 class="filter-title mb-2">Genres</h5>
+                            <div class="genre-scroll-box"> 
+                                <c:forEach items="${allGenres}" var="g">
                                     <label class="checkbox-item">
                                         <input type="checkbox" name="genre" value="${g.genreId}" 
                                                <c:if test="${selectedGenres.contains(g.genreId)}">checked</c:if>
@@ -62,30 +64,42 @@
                             </div>
                         </div>
                     </c:if>
-
-                    <button type="submit" class="btn btn-filter-apply w-100 text-white mt-3">Apply Filter</button>
+                    <button type="button" onclick="submitFilter()" class="btn btn-filter-apply w-100 text-white mt-3">Apply Filter</button>
                 </form>
             </aside>
 
-            <section class="product-column">
-                <h2 class="shop-title">
-                    ${selectedType == 'book' ? 'All Books' : 'All Stationery'}
-                    <span style="font-size: 0.6em; color: #777; font-weight: 400;">(${totalProducts} items found)</span>
-                </h2>
+            <section class="col-md-9 product-column">
+                <div class="shop-header">
+                    <h2 class="shop-title">
+                        <c:choose>
+                            <c:when test="${selectedType == 'book'}">All Books</c:when>
+                            <c:when test="${selectedType == 'stationery'}">All Stationery</c:when>
+                            <c:otherwise>All Products</c:otherwise>
+                        </c:choose>
+                    </h2>
+                    <span class="shop-item-count">
+                        (${totalProducts} items found)
+                    </span>
+                </div>
+
+                <c:if test="${not empty searchKeyword}">
+                    <div class="alert alert-light border mb-3 py-2 search-alert">
+                        Search results for: "<strong>${searchKeyword}</strong>"
+                    </div>
+                </c:if>
 
                 <div class="grid-container">
                     <c:forEach items="${productList}" var="p">
                         <a href="product-detail?id=${p.productId}" class="custom-card">
                             <div class="card-img-wrapper">
-                                <img src="${p.imageUrl}" alt="${p.name}" />
+                                <img src="${p.imageUrl}" alt="${p.name}"
+                                    onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';"/>
                             </div>
-
                             <div class="card-body-custom">
                                 <div class="product-title" title="${p.name}">${p.name}</div>
                                 <div class="product-price">
                                     <fmt:formatNumber value="${p.price}" pattern="#,###"/> đ
                                 </div>
-
                                 <div class="product-meta">
                                     <span>
                                         <span class="rating-star">★</span> 
@@ -93,18 +107,26 @@
                                     </span>
                                     <span>Sold: ${p.soldQuantity}</span>
                                 </div>
+                                <c:if test="${p.type == 'Stationery' && not empty p.color}">
+                                    <div class="product-meta mt-1 small text-muted border-0 pt-0">
+                                        Color: ${p.color}
+                                    </div>
+                                </c:if>
                             </div>
                         </a>
                     </c:forEach>
                 </div>
+
                 <c:if test="${empty productList}">
-                    <div class="col-12 text-center py-5">
-                        <p class="text-muted">No products found matching your criteria.</p>
+                    <div class="text-center py-5">
+                        <p class="no-products-text">
+                            No products found matching your criteria.
+                        </p>
                     </div>
                 </c:if>
 
                 <c:if test="${totalPages > 1}">
-                    <div class="pagination">
+                    <div class="pagination mt-4 d-flex justify-content-center gap-1">
                         <c:forEach begin="1" end="${totalPages}" var="i">
                             <a href="javascript:void(0);" 
                                class="page-link-custom ${currentPage == i ? 'active' : ''}" 
@@ -121,9 +143,12 @@
         <script src="${pageContext.request.contextPath}/boostrap/bootstrap.bundle.min.js" type="text/javascript"></script>
         <script>
                                    function goToPage(pageNum) {
-                                       // Set giá trị cho input hidden 'page'
                                        document.getElementById('pageInput').value = pageNum;
-                                       // Submit form bộ lọc để giữ lại các filter đang chọn
+                                       document.getElementById('filterForm').submit();
+                                   }
+
+                                   function submitFilter() {
+                                       document.getElementById('pageInput').value = 1;
                                        document.getElementById('filterForm').submit();
                                    }
         </script>

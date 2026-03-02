@@ -56,21 +56,33 @@ public class ProductService {
         return genreDao.findAll();
     }
 
-    public List<? extends Product> getFilteredProducts(String type, List<Integer> genreIds, String sort, int page) {
-        int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE; // = 20
+    public List<? extends Product> getFilteredProducts(String type, List<Integer> genreIds, String sort, String keyword, int page) {
+        int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE;
 
         if ("book".equalsIgnoreCase(type)) {
-            return productDao.findBooksWithFilter(genreIds, sort, page, pageSize);
+            return productDao.findBooksWithFilter(genreIds, sort, keyword, page, pageSize);
+        } else if ("stationery".equalsIgnoreCase(type)) {
+            return productDao.findStationeryWithFilter(sort, keyword, page, pageSize);
         } else {
-            return productDao.findStationeryWithFilter(sort, page, pageSize);
+            return productDao.searchAllProducts(sort, keyword, page, pageSize);
         }
     }
 
-    public long getTotalCount(String type, List<Integer> genreIds) {
+    public long getTotalCount(String type, List<Integer> genreIds, String keyword) {
         if ("book".equalsIgnoreCase(type)) {
-            return productDao.countBooks(genreIds);
+            return productDao.countBooks(genreIds, keyword);
+        } else if ("stationery".equalsIgnoreCase(type)) {
+            return productDao.countStationery(keyword);
         } else {
-            return productDao.countStationery();
+            return productDao.countAllProducts(keyword);
         }
+    }
+    
+    public Product getProductDetail(int productId) {
+        return productDao.findProductById(productId);
+    }
+    
+    public List<Product> getRelatedProducts(Product product) {
+        return productDao.findRelatedProducts(product, 4);
     }
 }

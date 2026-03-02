@@ -65,8 +65,9 @@ public class Product implements Serializable {
     private String imageUrl;
     @Column(name = "status")
     private Integer status;
-    @Column(name = "category_id")
-    private int categoryId;
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @ManyToOne
+    private Category categoryId;
     @OneToMany(mappedBy = "productId")
     private Collection<ImportStockDetail> importStockDetailCollection;
     @OneToMany(mappedBy = "productId")
@@ -131,11 +132,11 @@ public class Product implements Serializable {
         this.status = status;
     }
 
-    public int getCategoryId() {
+    public Category getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Category categoryId) {
         this.categoryId = categoryId;
     }
 

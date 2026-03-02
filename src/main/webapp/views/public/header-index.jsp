@@ -10,15 +10,22 @@
 <header class="bookverse-header">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand me-5" href="${pageContext.request.contextPath}/">
+            <a class="navbar-brand me-5" href="${pageContext.request.contextPath}/home">
                 <img src="${pageContext.request.contextPath}/assets/images/logo.png" alt="Bookverse Logo" height="75" class="d-inline-block align-text-top">
             </a>
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
 
-                <form class="d-flex mx-lg-auto flex-grow-1 header-search-form my-3 my-lg-0" action="${pageContext.request.contextPath}/search" method="get">
+                <form class="d-flex mx-lg-auto flex-grow-1 header-search-form my-3 my-lg-0" 
+                      action="${pageContext.request.contextPath}/shop" method="GET">
+
                     <div class="header-search-group position-relative w-100">
-                        <input class="form-control" type="search" name="query" placeholder="Search books, authors..." aria-label="Search">
+                        <input class="form-control" type="search" name="keyword" 
+                               placeholder="Search entire store..." 
+                               value="${param.keyword}">
+
+                        <input type="hidden" name="type" value="all">
+
                         <button class="btn-search-icon" type="submit">
                             <i class="fas fa-search"></i>
                         </button>

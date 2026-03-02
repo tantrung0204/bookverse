@@ -12,7 +12,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Home</title>
+        <title>Home - Bookverse</title>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
@@ -40,7 +40,8 @@
                     <c:forEach items="${topBooks}" var="b">
                         <a href="product-detail?id=${b.productId}" class="custom-card">
                             <div class="card-img-wrapper">
-                                <img src="${b.imageUrl}" alt="${b.name}"/>
+                                <img src="${b.imageUrl}" alt="${b.name}"
+                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';"/>
                             </div>
                             <div class="card-body-custom">
                                 <div class="product-title" title="${b.name}">${b.name}</div>
@@ -83,7 +84,8 @@
                     <c:forEach items="${topStationery}" var="s">
                         <a href="product-detail?id=${s.productId}" class="custom-card">
                             <div class="card-img-wrapper">
-                                <img src="${s.imageUrl}" alt="${s.name}" />
+                                <img src="${s.imageUrl}" alt="${s.name}" 
+                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';"/>
                             </div>
                             <div class="card-body-custom">
                                 <div class="product-title" title="${s.name}">${s.name}</div>

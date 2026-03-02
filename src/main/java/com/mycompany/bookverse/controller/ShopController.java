@@ -24,10 +24,9 @@ import java.util.List;
  */
 @WebServlet(name = "ShopController", urlPatterns = {"/shop"})
 public class ShopController extends HttpServlet {
-    
+
     private ProductService productService = new ProductService();
     private CategoryService categoryService = new CategoryService();
-    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -67,7 +66,7 @@ public class ShopController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Lấy các tham số từ URL
         String type = request.getParameter("type");
         if (type == null) {
@@ -97,19 +96,24 @@ public class ShopController extends HttpServlet {
                 }
             }
         }
-        
+
+        String keyword = request.getParameter("keyword");
+        if (keyword != null) {
+            keyword = keyword.trim();
+        }
+
         // Lấy danh sách sản phẩm
-        List<? extends Product> productList = productService.getFilteredProducts(type, genreIds, sort, page);
+        List<? extends Product> productList = productService.getFilteredProducts(type, genreIds, sort, keyword, page);
         // Lấy tổng số lượng để tính phân trang
-        long totalItems = productService.getTotalCount(type, genreIds);
+        long totalItems = productService.getTotalCount(type, genreIds, keyword);
         // Tính toán tổng số trang
         int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE;
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
-        
+
         // Lấy danh sách Genre cho filter
         List<Genre> allGenres = productService.getAllGenres();
         List<Category> categories = categoryService.getAllCategories();
-        
+
         // Đẩy dữ liệu sang JSP
         request.setAttribute("categories", categories);
         request.setAttribute("productList", productList);
@@ -117,12 +121,13 @@ public class ShopController extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
         request.setAttribute("allGenres", allGenres);
-        
+
         // Giữ lại trạng thái bộ lọc
-        request.setAttribute("selectedType",type);
+        request.setAttribute("selectedType", type);
         request.setAttribute("selectedSort", sort);
         request.setAttribute("selectedGenres", genreIds);
-        
+        request.setAttribute("searchKeyword", keyword);
+
         request.getRequestDispatcher("/views/public/shop.jsp").forward(request, response);
     }
 

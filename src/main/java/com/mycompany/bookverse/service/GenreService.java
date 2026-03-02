@@ -28,7 +28,7 @@ public class GenreService {
         return genreDAO.searchByName(keyword);
     }
 
-    public String insertGenre(String name, String des) {
+    public String insertGenre(String name, String des, int status) {
 
         if (des == null || des.trim().isEmpty()) {
             return "Description is empty";
@@ -37,59 +37,73 @@ public class GenreService {
             return "Name is empty";
         }
 
-        boolean checkExist = genreDAO.checkGenreExist(name);
+        boolean checkExist = genreDAO.checkGenreExistByName(name);
 
-        if (!checkExist) {// nếu chưa tồn tại thì bắt đầu tạo genre mới
+        if (!checkExist) {
             Genre genre = new Genre();
             genre.setGenreName(name);
             genre.setDescriptionText(des);
-            genre.setStatus(0);// set mặt định là 0 (inactive)
-            if (genreDAO.createGenre(genre)) {// nếu tạo thành công thì trả về 0
+            genre.setStatus(status);
+            if (genreDAO.createGenre(genre)) {
                 return "Create genre successfully";
-            } else // tạo không được thì trả về 1 (các lỗi như database bị mất kết nối, mạng kém ...)
-            {
+            } else {
                 return "Create genre false";
             }
-        } else {// tạo không được do genre bị trùng thì trả về 2
+        } else {
             return "Genre already exists";
         }
     }
 
     public String editGenre(int id, String name, String description, int status) {
-        boolean checkExist = genreDAO.checkGenreExist(name);
+        String error = "";
+        boolean checkExist = genreDAO.checkGenreExist(id, name);
         Genre old = genreDAO.findById(id);
-        if (!checkExist) {
-            return "Genre does not exist";
+        if (checkExist) {
+            return "Genre already exist.";
         }
         if (description == null || description.trim().isEmpty()) {
-            return "Description is empty";
+            error += "Description can not be empty.\n";
+        } else if (!description.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Description contains invalid characters.\n";
         }
         if (name == null || name.trim().isEmpty()) {
-            return "Name is empty";
+            error += "Name cannot be left blank.\n";
+        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Name contains invalid characters.\n";
         }
         if (status != 0 && status != 1) {
-            return "status must be 1 or 2";
+            error += "status must be 1 or 2.\n";
         }
-        old.setGenreName(name);
-        old.setDescriptionText(description);
-        old.setStatus(status);
 
-        if (genreDAO.update(old)) {
-            return "Update genre successfully";
-        } else {
-            return "Update genre false";
+        if (error.isEmpty()) {
+
+            old.setGenreName(name);
+            old.setDescriptionText(description);
+            old.setStatus(status);
+
+            if (genreDAO.update(old)) {
+                return "Update genre successfully";
+            }
         }
+        return error;
+
     }
-    public String deleteGenre(int id){
-        if(findGenreById(id)==null){
+
+    public String deleteGenre(int id) {
+        if (findGenreById(id) == null) {
             return "Genre does not exist";
         }
-        if(genreDAO.checkGenreInUse(id)){
+        if (genreDAO.checkGenreInUse(id) > 0) {
             return "Genre is in use";
         }
-        if(genreDAO.deleteById(id)){
-        return "Delete genre successfully";
+        if (genreDAO.deleteById(id)) {
+            return "Delete genre successfully";
+        } else {
+            return "Delete genre false";
         }
-        else return "Delete genre false";
+    }
+
+    public long countProductByGenreId(int id) {
+        return genreDAO.checkGenreInUse(id);
     }
 }

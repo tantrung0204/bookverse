@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -66,6 +67,8 @@ public class Voucher implements Serializable {
     private Date expiryDate;
     @OneToMany(mappedBy = "voucherId")
     private Collection<Order> order1Collection;
+    @Transient
+    private long usedCount;
 
     public Voucher() {
     }
@@ -139,6 +142,14 @@ public class Voucher implements Serializable {
         this.order1Collection = order1Collection;
     }
 
+    public long getUsedCount() {
+        return usedCount;
+    }
+
+    public void setUsedCount(long usedCount) {
+        this.usedCount = usedCount;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -163,5 +174,5 @@ public class Voucher implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Voucher[ voucherId=" + voucherId + " ]";
     }
-    
+
 }

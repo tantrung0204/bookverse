@@ -85,30 +85,42 @@ public class GenreDAO {
         }
     }
 
-    public boolean checkGenreExist(String name) {
-        List<Genre> list = findAll();// Lấy danh sách genre trong database
-        for (Genre genre : list) {// Kiểm tra xem genre đã tồn tại trong db chưa.
-            if (genre.getGenreName().equalsIgnoreCase(name)) {// nếu đã tồn tại thì trả về true
+    public boolean checkGenreExist(int id, String name) {
+        List<Genre> list = findAll();
+        for (Genre genre : list) {
+            if (genre.getGenreId() != id && genre.getGenreName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
         return false;
     }
-    public boolean checkGenreInUse(int id){
+
+    public boolean checkGenreExistByName(String name) {
+        List<Genre> list = findAll();
+        for (Genre genre : list) {
+            if (genre.getGenreName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public long checkGenreInUse(int id) {
         EntityManager em = JPAUtil.getEntityManager();
-    try {
-        Long count = em.createQuery(
-                "SELECT COUNT(b) FROM Book b WHERE b.genreId.id = :id",
-                Long.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(b) FROM Book b WHERE b.genreId.id = :id",
+                    Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
 
-        return count > 0;
+            return count;
 
-    } finally {
-        em.close();
+        } finally {
+            em.close();
+        }
     }
-    }
+
     public boolean deleteById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

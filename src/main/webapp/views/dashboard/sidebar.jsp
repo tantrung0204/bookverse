@@ -80,7 +80,7 @@
         </li>
         <li class="sidebar-item">
             <a href="${pageContext.request.contextPath}/genre" 
-               class="sidebar-link ${activeMenu == 'genre'? 'active':''}">
+               class="sidebar-link list.">
                 <i class="bi bi-bar-chart-steps"></i> Genre
             </a>
         </li>

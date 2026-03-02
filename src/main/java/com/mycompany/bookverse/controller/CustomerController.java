@@ -82,74 +82,7 @@ public class CustomerController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-       
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-       
-        String action = request.getParameter("action");
-        if (action == null) {
-            response.sendRedirect("customer");
-            return;
-        }
-
-       
-        if ("create".equals(action)) {
-            String fullName = request.getParameter("fullName");
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            String username = request.getParameter("username"); 
-            
-            Customer newCustomer = new Customer();
-            newCustomer.setFullName(fullName);
-            newCustomer.setEmail(email);
-            newCustomer.setPasswordHash(password); 
-            newCustomer.setUsername(username);
-            newCustomer.setStatus(1); 
-
-            int result = customerService.addCustomer(newCustomer);
-            
-            
-            if (result == 0) {
-                response.sendRedirect("customer?msg=success_add");
-            } else if (result == 2) {
-                response.sendRedirect("customer?msg=missing_info");
-            } else {
-                response.sendRedirect("customer?msg=error_db");
-            }
-        } 
-        
-       
-        else if ("edit".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("customerId"));
-            Customer editCustomer = customerService.getCustomerById(id);
-            
-            if (editCustomer != null) {
-                editCustomer.setFullName(request.getParameter("fullName"));
-                editCustomer.setEmail(request.getParameter("email"));
-               
-                
-                int result = customerService.editCustomer(editCustomer);
-                if (result == 0) {
-                    response.sendRedirect("customer?msg=success_edit");
-                } else {
-                    response.sendRedirect("customer?msg=error_edit");
-                }
-            }
-        } 
-        
-       
-        else if ("delete".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("customerId"));
-            boolean success = customerService.deleteCustomer(id);
-            
-            if (success) {
-                response.sendRedirect("customer?msg=success_delete");
-            } else {
-                response.sendRedirect("customer?msg=error_delete");
-            }
-        }
+        processRequest(request, response);
     }
 
     /**

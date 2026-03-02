@@ -33,4 +33,36 @@ public class CartService {
         }
         return total;
     }
+
+    public void addToCart(int customerId, int productId, int quantity) {
+        Cart existingCartItem = cartDAO.findByCustomerAndProduct(customerId, productId);
+
+        if (existingCartItem != null) {
+            // Đã tồn tại -> Cộng dồn số lượng
+            int currentQty = existingCartItem.getCartQuantity();
+            existingCartItem.setCartQuantity(currentQty + quantity);
+            cartDAO.save(existingCartItem);
+        } else {
+            // Chưa tồn tại -> Tạo mới
+            Cart newItem = new Cart();
+            newItem.setCartQuantity(quantity);
+
+            newItem.setCustomerId(new Customer(customerId));
+            newItem.setProductId(new Product(productId));
+
+            cartDAO.save(newItem);
+        }
+    }
+
+    public void updateCartQuantity(int cartId, int newQuantity) {
+        Cart item = cartDAO.findById(cartId);
+        if (item != null) {
+            item.setCartQuantity(newQuantity);
+            cartDAO.save(item);
+        }
+    }
+
+    public void removeCartItem(int cartId) {
+        cartDAO.delete(cartId);
+    }
 }

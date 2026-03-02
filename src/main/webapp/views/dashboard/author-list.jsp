@@ -36,7 +36,7 @@
         <div class="toolbar">
             <%-- Add author --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add author
+                <i class="bi bi-plus-lg me-1"></i> Add New Author
             </button>
             <%-- Search author --%>
             <form action="author" method="get" class="search-form">

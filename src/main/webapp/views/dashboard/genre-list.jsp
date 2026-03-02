@@ -36,7 +36,7 @@
         <div class="toolbar">
             <%-- Add Genre --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add genre
+                <i class="bi bi-plus-lg me-1"></i> Add New Genre
             </button>
             <%-- Search Genre --%>
             <form action="genre" method="get" class="search-form">

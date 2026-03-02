@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -55,10 +56,12 @@ public class Author implements Serializable {
     @Size(max = 300)
     @Column(name = "biography_text")
     private String biographyText;
+
     @JoinTable(name = "book_author", joinColumns = {
         @JoinColumn(name = "author_id", referencedColumnName = "author_id")}, inverseJoinColumns = {
         @JoinColumn(name = "book_id", referencedColumnName = "book_id")})
     @ManyToMany
+    
     private Collection<Book> bookCollection;
 
     public Author() {

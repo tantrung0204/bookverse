@@ -39,12 +39,15 @@ public class CartService {
         Cart existingCartItem = cartDAO.findByCustomerAndProduct(customerId, productId);
 
         if (existingCartItem != null) {
-            int currentQuantity = existingCartItem.getCartQuantity();
-            existingCartItem.setCartQuantity(currentQuantity + quantity);
+            // Đã tồn tại -> Cộng dồn số lượng
+            int currentQty = existingCartItem.getCartQuantity();
+            existingCartItem.setCartQuantity(currentQty + quantity);
             cartDAO.save(existingCartItem);
         } else {
+            // Chưa tồn tại -> Tạo mới
             Cart newItem = new Cart();
             newItem.setCartQuantity(quantity);
+
             newItem.setCustomerId(new Customer(customerId));
             newItem.setProductId(new Product(productId));
 
@@ -62,13 +65,5 @@ public class CartService {
 
     public void removeCartItem(int cartId) {
         cartDAO.delete(cartId);
-    }
-
-    public static void main(String[] args) {
-        CartService service = new CartService();
-        service.addToCart(1, 1, 2);
-        for (Cart item : service.getCustomerCart(1)) {
-            System.out.println(item.getCartQuantity());
-        }
     }
 }

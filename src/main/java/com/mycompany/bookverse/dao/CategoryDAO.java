@@ -120,19 +120,13 @@ public class CategoryDAO {
     public boolean canDeleteCategory(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Long bookCount = em.createQuery(
-                    "SELECT COUNT(b) FROM Book b WHERE b.category.categoryId = :id",
+            Long productCount = em.createQuery(
+                    "SELECT COUNT(p) FROM Product p WHERE p.categoryId.categoryId = :id",
                     Long.class
             ).setParameter("id", id)
                     .getSingleResult();
 
-            Long stationeryCount = em.createQuery(
-                    "SELECT COUNT(s) FROM Stationery s WHERE s.category.categoryId = :id",
-                    Long.class
-            ).setParameter("id", id)
-                    .getSingleResult();
-
-            return bookCount == 0 && stationeryCount == 0;
+            return productCount == 0;
         } finally {
             em.close();
         }
@@ -151,7 +145,6 @@ public class CategoryDAO {
             em.remove(category);
             em.getTransaction().commit();
             return true;
-
         } catch (Exception e) {
             em.getTransaction().rollback();
             return false;

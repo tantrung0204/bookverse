@@ -7,6 +7,7 @@ package com.mycompany.bookverse.dao;
 import com.mycompany.bookverse.model.Voucher;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 
 /**
@@ -28,12 +29,11 @@ public class VoucherDAO {
     public Voucher findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            List<Voucher> list = em.createNamedQuery("Voucher.findByVoucherId", Voucher.class)
+            return em.createNamedQuery("Voucher.findByVoucherId", Voucher.class)
                     .setParameter("voucherId", id)
-                    .getResultList();
-            return list.isEmpty() ? null : list.get(0);
-        } catch (Exception e) {
-            throw new RuntimeException("Error finding voucher by id", e);
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
@@ -63,7 +63,7 @@ public class VoucherDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e; // hoặc log
+            throw e; 
         } finally {
             em.close();
         }
@@ -131,6 +131,21 @@ public class VoucherDAO {
                 em.getTransaction().rollback();
             }
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countUsedVoucher(int voucherId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(o) FROM Order o "
+                    + "WHERE o.voucherId.voucherId = :vid "
+                    + "AND o.orderStatus NOT IN ('pending', 'cancelled')",
+                    Long.class)
+                    .setParameter("vid", voucherId)
+                    .getSingleResult();
         } finally {
             em.close();
         }

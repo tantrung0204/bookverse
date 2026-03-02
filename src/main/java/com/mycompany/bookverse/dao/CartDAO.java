@@ -33,7 +33,7 @@ public class CartDAO {
     public Cart findByCustomerAndProduct(int customerId, int productId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String sql = "SELECT c FROM Cart c where c.customerId.customerId = :cid AND c.productId.productId = :pid";
+            String sql = "SELECT c FROM Cart c WHERE c.customerId.customerId = :cid AND c.productId.productId = :pid";
             TypedQuery<Cart> query = em.createQuery(sql, Cart.class);
             query.setParameter("cid", customerId);
             query.setParameter("pid", productId);
@@ -45,14 +45,15 @@ public class CartDAO {
             em.close();
         }
     }
-    
-    public Cart findById(int cartId) {
+
+    public Cart findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(Cart.class, cartId);
+            return em.find(Cart.class, id);
         } finally {
             em.close();
         }
+
     }
 
     public void save(Cart cartItem) {
@@ -60,10 +61,10 @@ public class CartDAO {
         try {
             em.getTransaction().begin();
             if (cartItem.getCartId() == null) {
-                // Chưa có -> insert
+                // Chưa có ID -> Thêm mới
                 em.persist(cartItem);
             } else {
-                // Có rồi -> update
+                // Đã có ID -> Cập nhật
                 em.merge(cartItem);
             }
             em.getTransaction().commit();
@@ -78,8 +79,9 @@ public class CartDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
+
             Cart cartItem = findById(cartId);
-            
+
             if (cartItem != null) {
                 em.remove(cartItem);
             }
@@ -89,10 +91,5 @@ public class CartDAO {
         } finally {
             em.close();
         }
-    }
-
-    public static void main(String[] args) {
-        CartDAO dao = new CartDAO();
-        System.out.println(dao.findById(20));
     }
 }

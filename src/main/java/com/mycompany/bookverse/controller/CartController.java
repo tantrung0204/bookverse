@@ -21,7 +21,7 @@ import java.math.BigDecimal;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CartController", urlPatterns = {"/cart"})
+@WebServlet(name = "CartController", urlPatterns = { "/cart" })
 public class CartController extends HttpServlet {
 
     private CartService cartService = new CartService();
@@ -30,10 +30,10 @@ public class CartController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,14 +52,15 @@ public class CartController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -83,10 +84,10 @@ public class CartController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -115,8 +116,8 @@ public class CartController extends HttpServlet {
 
     private void viewCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        int customerId = session.getAttribute("customerId");
+        // HttpSession session = request.getSession();
+        // int customerId = session.getAttribute("customerId");
         int customerId = 1;
         List<Cart> cartItems = cartService.getCustomerCart(customerId);
         BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);
@@ -130,7 +131,7 @@ public class CartController extends HttpServlet {
     private void addToCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-//        int customerId = session.getAttribute("customerId");
+        // int customerId = session.getAttribute("customerId");
         String referer = request.getHeader("referer");
 
         try {
@@ -152,11 +153,11 @@ public class CartController extends HttpServlet {
             session.setAttribute("messageType", "error");
         }
 
-        //Quay lại trang chi tiết sản phẩm
+        // Quay lại trang chi tiết sản phẩm
         if (referer != null && !referer.isEmpty()) {
             response.sendRedirect(referer);
         } else {
-            //Về trang danh sách giỏ hàng
+            // Về trang danh sách giỏ hàng
             response.sendRedirect("cart");
         }
     }
@@ -171,7 +172,7 @@ public class CartController extends HttpServlet {
 
             cartService.updateCartQuantity(cartId, newQuantity);
 
-//            int customerId = session.getAttribute("customerId");
+            // int customerId = session.getAttribute("customerId");
             int customerId = 1;
             List<Cart> cartItems = cartService.getCustomerCart(customerId);
             BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);

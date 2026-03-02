@@ -19,6 +19,10 @@ public class VoucherService {
 
     public List<Voucher> getVouchers() {
         List<Voucher> list = voucherDAO.getAllVouchers();
+        for (Voucher v : list) {
+        long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+        v.setUsedCount(used); 
+    }
         return list;
     }
 
@@ -72,8 +76,8 @@ public class VoucherService {
             return "Voucher does not exist";
         }
 
-        if (voucher.getAvailableQuantity() < 0) {
-            return "Quantity cannot be less than 0";
+        if (voucher.getAvailableQuantity() <= 0) {
+            return "Quantity cannot be less than or equal to 0";
         }
 
         if (voucher.getDiscountPercent() == null
@@ -115,4 +119,8 @@ public class VoucherService {
         return "Delete voucher successfully";
     }
 
+    public long countUsedVoucher(int voucherId) {
+        return voucherDAO.countUsedVoucher(voucherId);
+    }
+    
 }

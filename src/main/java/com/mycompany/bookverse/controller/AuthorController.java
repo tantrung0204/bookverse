@@ -79,7 +79,7 @@ public class AuthorController extends HttpServlet {
                 page = 1;
             }
         }
-        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+        int pageSize = 3;
 
         switch (view) {
             case "list":

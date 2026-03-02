@@ -132,14 +132,14 @@
 
                 <%-- Nút Previous --%>
                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
+                    <a class="page-link" href="author?page=${currentPage - 1}">&laquo;</a>
                 </li>
 
                 <%-- Nếu tổng <= 5 thì hiển thị hết --%>
                 <c:if test="${totalPages <= 5}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="genre?page=${i}">${i}</a>
+                            <a class="page-link" href="author?page=${i}">${i}</a>
                         </li>
                     </c:forEach>
                 </c:if>

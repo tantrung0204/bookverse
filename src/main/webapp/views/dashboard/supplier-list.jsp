@@ -21,7 +21,7 @@
 
         <div class="toolbar">
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Suppliers
+                <i class="bi bi-plus-lg me-1"></i> Add New Supplier
             </button>
 
             <form action="${pageContext.request.contextPath}/supplier" method="get">
@@ -120,6 +120,58 @@
                         </c:forEach>
                     </tbody>
                 </table>
+
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination-container">
+
+                        <!-- Previous -->
+                        <c:if test="${currentPage > 1}">
+                            <c:url var="prevUrl" value="/supplier">
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="action" value="search"/>
+                                    <c:param name="keyword" value="${keyword}"/>
+                                </c:if>
+                                <c:param name="page" value="${currentPage - 1}"/>
+                            </c:url>
+
+                            <a class="page-btn" href="${prevUrl}">
+                                &laquo; Previous
+                            </a>
+                        </c:if>
+
+                        <!-- Page numbers -->
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <c:url var="pageUrl" value="/supplier">
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="action" value="search"/>
+                                    <c:param name="keyword" value="${keyword}"/>
+                                </c:if>
+                                <c:param name="page" value="${i}"/>
+                            </c:url>
+
+                            <a class="page-number ${i == currentPage ? 'active-page' : ''}"
+                               href="${pageUrl}">
+                                ${i}
+                            </a>
+                        </c:forEach>
+
+                        <!-- Next -->
+                        <c:if test="${currentPage < totalPages}">
+                            <c:url var="nextUrl" value="/supplier">
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="action" value="search"/>
+                                    <c:param name="keyword" value="${keyword}"/>
+                                </c:if>
+                                <c:param name="page" value="${currentPage + 1}"/>
+                            </c:url>
+
+                            <a class="page-btn" href="${nextUrl}">
+                                Next &raquo;
+                            </a>
+                        </c:if>
+
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <div style="text-align:center; padding: 40px; color: #999;">
@@ -176,6 +228,59 @@
     </div>
 </div>
 
+<!-- ================= CREATE POPUP ================= -->
+<div id="createPopup" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Supplier</h3>
+        </div>
+
+        <c:if test="${not empty createError}">
+            <div class="alert alert-danger" id="createErrorMsg">
+                ${createError}
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/supplier" method="post">
+            <input type="hidden" name="action" value="create">
+
+            <div class="form-group">
+                <label>Supplier Name</label>
+                <input type="text" name="supplierName" class="form-control" value="${createName}">
+            </div>
+
+            <div class="form-group">
+                <label> Email</label>
+                <input type="text" name="supplierEmail" class="form-control" value="${createEmail}">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="supplierPhone" class="form-control" value="${createPhone}">
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="supplierAddress" class="form-control" value="${createAddress}">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="1" ${createStatus==1 ? "selected" : "" }>Active</option>
+                    <option value="0" ${createStatus==0 ? "selected" : "" }>Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
+                <button type="submit" class="btn-save">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
     function openDetailPopup(id, name, email, phone, address, status) {
         document.getElementById("detailId").innerText = id;
@@ -192,4 +297,44 @@
     function closeDetailPopup() {
         document.getElementById("detailPopup").style.display = "none";
     }
+
+    function openCreatePopup() {
+        document.getElementById("createPopup").style.display = "flex";
+        const err = document.getElementById("createErrorMsg");
+        if (err)
+            err.style.display = 'none';
+    }
+    function closeCreatePopup() {
+        document.getElementById("createPopup").style.display = "none";
+    }
+
+    let popupTimer = null;
+
+
+    // Đóng Popup khi click ra ngoài vùng trắng
+    window.onclick = function (event) {
+        var modal = document.getElementById("detailPopup");
+        if (event.target == modal) {
+            closeEditPopup();
+        }
+    }
 </script>
+<c:if test="${openCreatePopup}">
+    <script>
+        window.onload = function () {
+            setTimeout(function () {
+                openCreatePopup(
+                        '${createName}',
+                        '${createEmail}',
+                        '${createPhone}',
+                        '${createAddress}',
+                        '${createStatus}'
+                        );
+                // Hiển thị lại lỗi
+                const err = document.getElementById("createErrorMsg");
+                if (err)
+                    err.style.display = 'block';
+            }, 100);
+        };
+    </script>
+</c:if>

@@ -35,7 +35,8 @@ import java.util.Collection;
     @NamedQuery(name = "Supplier.findBySupplierPhone", query = "SELECT s FROM Supplier s WHERE s.supplierPhone = :supplierPhone"),
     @NamedQuery(name = "Supplier.findBySupplierAddress", query = "SELECT s FROM Supplier s WHERE s.supplierAddress = :supplierAddress"),
     @NamedQuery(name = "Supplier.findByStatus", query = "SELECT s FROM Supplier s WHERE s.status = :status"),
-    @NamedQuery(name = "Supplier.searchByName", query = "SELECT s FROM Supplier s WHERE LOWER(s.supplierName) LIKE LOWER(:keyword)"),})
+    @NamedQuery(name = "Supplier.searchByName", query = "SELECT s FROM Supplier s WHERE LOWER(s.supplierName) LIKE LOWER(:keyword)"),
+    @NamedQuery(name = "Supplier.existsByName", query = "SELECT COUNT(s) FROM Supplier s WHERE LOWER(s.supplierName) = LOWER(:name)"),})
 public class Supplier implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -94,9 +94,21 @@ public class SupplierController extends HttpServlet {
 
     private void getListSuppliers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Supplier> list = supplierService.getAllSuppliers();
+        
+        int page = 1;
+        String pageParam = request.getParameter("page");
+        
+        if(pageParam != null){
+            page = Integer.parseInt(pageParam);
+        }
+        
+        List<Supplier> list = supplierService.getAllSuppliers(page);
+        long totalPages = supplierService.getTotalPages();
 
         request.setAttribute("suppliers", list);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        
         request.setAttribute("contentPage", "supplier-list.jsp");
         request.setAttribute("activeMenu", "supplier");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
@@ -104,9 +116,19 @@ public class SupplierController extends HttpServlet {
 
     private void getSearchSupplier(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
 
-        List<Supplier> list = supplierService.getSearchByName(keyword);
+        String keyword = request.getParameter("keyword");
+        
+        int page = 1;
+        String pageParam = request.getParameter("page");
+        
+        if(pageParam != null){
+            page = Integer.parseInt(pageParam);
+        }
+
+        List<Supplier> list = supplierService.searchPaging(keyword, page);
+        
+         long totalPages = supplierService.getTotalSearchPages(keyword);
 
         if (list == null || list.isEmpty()) {
             request.setAttribute("message", "No supplier found");
@@ -132,9 +154,29 @@ public class SupplierController extends HttpServlet {
             throws ServletException, IOException {
         String name = request.getParameter("supplierName");
         String email = request.getParameter("supplierEmail");
-        int phone = Integer.parseInt(request.getParameter("supplierPhone"));
-        String address = request.getParameter("supllierAdress");
-         String statusRaw = request.getParameter("status");
+        String phone = request.getParameter("supplierPhone");
+        String address = request.getParameter("supplierAddress");
+        String statusRaw = request.getParameter("status");
+
+        try {
+            supplierService.createSupplier(name, email, phone, address, statusRaw);
+            request.getSession().setAttribute("successMsg", "Create supplier successfully");
+            response.sendRedirect(request.getContextPath() + "/supplier");
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("createError", e.getMessage());
+            request.setAttribute("openCreatePopup", true);
+            request.setAttribute("createName", name);
+            request.setAttribute("createEmail", email);
+            request.setAttribute("createPhone", phone);
+            request.setAttribute("createAddress", address);
+            request.setAttribute("createStatus", statusRaw);
+            request.setAttribute("suppliers", supplierService.getAllSuppliers(1));
+            request.setAttribute("contentPage", "supplier-list.jsp");
+            request.setAttribute("activeMenu", "supplier");
+
+            request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
+                    .forward(request, response);
+        }
 
     }
 

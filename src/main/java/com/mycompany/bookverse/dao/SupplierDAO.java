@@ -16,22 +16,92 @@ import java.util.List;
  */
 public class SupplierDAO {
 
-    public List<Supplier> findAll() {
+    public List<Supplier> getSuppliersPaging(int page, int pageSize) {
+
         EntityManager em = JPAUtil.getEntityManager();
+
         try {
-            return em.createNamedQuery("Supplier.findAll", Supplier.class)
+            return em.createQuery(
+                    "SELECT s FROM Supplier s ORDER BY s.supplierId DESC",
+                    Supplier.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countAllsupplier() {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(s) FROM Supplier s",
+                    Long.class)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Supplier> searchByNamePaging(String keyword,
+            int page, int pageSize) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT s FROM Supplier s "
+                    + "WHERE LOWER(c.name) LIKE LOWER(:kw) "
+                    + "ORDER BY s.supplierId DESC",
+                    Supplier.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
                     .getResultList();
         } finally {
             em.close();
         }
     }
     
-    public List<Supplier> searchByName(String keyword){
-         EntityManager em = JPAUtil.getEntityManager();
-         try {
-            return em.createNamedQuery("Supplier.searchByName", Supplier.class)
-                    .setParameter("keyword", "%" + keyword + "%")
-                    .getResultList();
+    public long countSearch(String keyword) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(s) FROM Supplier s "
+                    + "WHERE LOWER(s.name) LIKE LOWER(:kw)",
+                    Long.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public void create(Supplier supplier) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(supplier);   // INSERT
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+    public boolean existSupplierName(String suppliername) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createNamedQuery("Supplier.existsByName", Long.class)
+                    .setParameter("name", suppliername.trim())
+                    .getSingleResult();
+            return count > 0;
         } finally {
             em.close();
         }

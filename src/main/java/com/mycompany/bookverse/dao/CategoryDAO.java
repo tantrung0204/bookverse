@@ -16,26 +16,72 @@ import java.util.List;
  */
 public class CategoryDAO {
 
-    public List<Category> findAll() {
+    public List<Category> getCategoriesPaging(int page, int pageSize) {
+
         EntityManager em = JPAUtil.getEntityManager();
+
         try {
-            return em.createNamedQuery("Category.findAll", Category.class)
+            return em.createQuery(
+                    "SELECT c FROM Category c ORDER BY c.categoryId DESC",
+                    Category.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
                     .getResultList();
         } finally {
             em.close();
         }
     }
 
-    public List<Category> searchByName(String keyword) {
+    public long countAllCategories() {
+
         EntityManager em = JPAUtil.getEntityManager();
+
         try {
-            return em.createNamedQuery("Category.searchByName", Category.class)
-                    .setParameter("keyword", "%" + keyword + "%")
+            return em.createQuery(
+                    "SELECT COUNT(c) FROM Category c",
+                    Long.class)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Category> searchByNamePaging(String keyword,
+            int page, int pageSize) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT c FROM Category c "
+                    + "WHERE LOWER(c.name) LIKE LOWER(:kw) "
+                    + "ORDER BY c.categoryId DESC",
+                    Category.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
                     .getResultList();
         } finally {
             em.close();
         }
     }
+
+    public long countSearch(String keyword) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(c) FROM Category c "
+                    + "WHERE LOWER(c.name) LIKE LOWER(:kw)",
+                    Long.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+    
 
     public Category findByCategoryId(int categoryId) {
         EntityManager em = JPAUtil.getEntityManager();

@@ -67,7 +67,19 @@ public class SupplierController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if (action == null) {
+            getListSuppliers(request, response);
+            return;
+        }
 
+        switch (action) {
+            case "create":
+                handleCreateSupplier(request, response);
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     /**
@@ -112,8 +124,18 @@ public class SupplierController extends HttpServlet {
     private void getDetailSupplier(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int supplierId = Integer.parseInt(request.getParameter("supplierId"));
-        
+
         response.setContentType("application/json");
+    }
+
+    private void handleCreateSupplier(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String name = request.getParameter("supplierName");
+        String email = request.getParameter("supplierEmail");
+        int phone = Integer.parseInt(request.getParameter("supplierPhone"));
+        String address = request.getParameter("supllierAdress");
+         String statusRaw = request.getParameter("status");
+
     }
 
 }

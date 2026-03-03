@@ -111,6 +111,58 @@ Author : NganTTK-CE190411 --%>
                         </c:forEach>
                     </tbody>
                 </table>
+                
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination-container">
+
+                        <!-- Previous -->
+                        <c:if test="${currentPage > 1}">
+                            <c:url var="prevUrl" value="/category">
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="action" value="search"/>
+                                    <c:param name="keyword" value="${keyword}"/>
+                                </c:if>
+                                <c:param name="page" value="${currentPage - 1}"/>
+                            </c:url>
+
+                            <a class="page-btn" href="${prevUrl}">
+                                &laquo; Previous
+                            </a>
+                        </c:if>
+
+                        <!-- Page numbers -->
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <c:url var="pageUrl" value="/category">
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="action" value="search"/>
+                                    <c:param name="keyword" value="${keyword}"/>
+                                </c:if>
+                                <c:param name="page" value="${i}"/>
+                            </c:url>
+
+                            <a class="page-number ${i == currentPage ? 'active-page' : ''}"
+                               href="${pageUrl}">
+                                ${i}
+                            </a>
+                        </c:forEach>
+
+                        <!-- Next -->
+                        <c:if test="${currentPage < totalPages}">
+                            <c:url var="nextUrl" value="/category">
+                                <c:if test="${not empty keyword}">
+                                    <c:param name="action" value="search"/>
+                                    <c:param name="keyword" value="${keyword}"/>
+                                </c:if>
+                                <c:param name="page" value="${currentPage + 1}"/>
+                            </c:url>
+
+                            <a class="page-btn" href="${nextUrl}">
+                                Next &raquo;
+                            </a>
+                        </c:if>
+
+                    </div>
+                </c:if>
             </c:when>
             <c:otherwise>
                 <div style="text-align:center; padding: 40px; color: #999;">

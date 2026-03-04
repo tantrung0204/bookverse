@@ -14,18 +14,18 @@ import java.util.List;
  */
 public class AuthorService {
 
-    private AuthorDAO AuthorDAO = new AuthorDAO();
+    private AuthorDAO authorDAO = new AuthorDAO();
 
     public List<Author> getAllAuthors() {
-        return AuthorDAO.findAll();
+        return authorDAO.findAll();
     }
 
     public Author findAuthorById(int id) {
-        return AuthorDAO.findById(id);
+        return authorDAO.findById(id);
     }
 
     public List<Author> searchAuthors(String keyword) {
-        return AuthorDAO.searchByName(keyword);
+        return authorDAO.searchByName(keyword);
     }
 
     public String insertAuthor(String name, String birth, String nat, String bio) {
@@ -52,7 +52,7 @@ public class AuthorService {
         }
 
         if (error.isEmpty()) {
-            boolean checkExist = AuthorDAO.checkAuthorExistByName(name);
+            boolean checkExist = authorDAO.checkAuthorExistByName(name);
             if (!checkExist) {
                 Author Author = new Author();
                 Author.setAuthorName(name);
@@ -60,7 +60,7 @@ public class AuthorService {
                 Author.setBirthYear(birthDay);
                 Author.setNationality(nat);
                 Author.setBiographyText(bio);
-                if (AuthorDAO.createAuthor(Author)) {
+                if (authorDAO.createAuthor(Author)) {
                     return "Create Author successfully";
                 } else {
                     return "Create Author false";
@@ -94,8 +94,8 @@ public class AuthorService {
         } else if (!birth.matches("\\d{4}")) {
             error += "Birth day must be a number.\n";
         }
-        boolean checkExist = AuthorDAO.checkAuthorExist(id, name);
-        Author old = AuthorDAO.findById(id);
+        boolean checkExist = authorDAO.checkAuthorExist(id, name);
+        Author old = authorDAO.findById(id);
         if (checkExist) {
             return "Author already exist.";
         }
@@ -105,7 +105,7 @@ public class AuthorService {
             old.setNationality(nationality);
             old.setBiographyText(biography);
             old.setBirthYear(birthDay);
-            if (AuthorDAO.update(old)) {
+            if (authorDAO.update(old)) {
                 return "Update Author successfully";
             }
         }
@@ -116,10 +116,10 @@ public class AuthorService {
         if (findAuthorById(id) == null) {
             return "Author does not exist";
         }
-        if (AuthorDAO.countBooksByAuthorId(id) > 0) {
+        if (authorDAO.countBooksByAuthorId(id) > 0) {
             return "Author is in use";
         }
-        if (AuthorDAO.deleteById(id)) {
+        if (authorDAO.deleteById(id)) {
             return "Delete Author successfully";
         } else {
             return "Delete Author false";
@@ -127,25 +127,25 @@ public class AuthorService {
     }
 
     public Long countBooksByAuthorId(int authorId) {
-        return AuthorDAO.countBooksByAuthorId(authorId);
+        return authorDAO.countBooksByAuthorId(authorId);
     }
 
     public List<Author> getAuthorsByPage(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
-        return AuthorDAO.findByPage(offset, pageSize);
+        return authorDAO.findByPage(offset, pageSize);
     }
 
     public int getTotalPages(int pageSize) {
-        long totalItems = AuthorDAO.countAll();
+        long totalItems = authorDAO.countAll();
         return (int) Math.ceil((double) totalItems / pageSize);
     }
     public List<Author> searchByKeyword(String keyword, int page, int pageSize) {
         int offset = (page - 1) * pageSize;
-        return AuthorDAO.findByKeywordAndPage(keyword, offset, pageSize);
+        return authorDAO.findByKeywordAndPage(keyword, offset, pageSize);
     }
 
     public int getTotalPagesByKeyword(String keyword, int pageSize) {
-        long totalItems = AuthorDAO.countByKeyword(keyword);
+        long totalItems = authorDAO.countByKeyword(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
     }
 }

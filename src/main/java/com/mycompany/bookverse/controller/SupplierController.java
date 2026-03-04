@@ -77,6 +77,12 @@ public class SupplierController extends HttpServlet {
             case "create":
                 handleCreateSupplier(request, response);
                 break;
+            case "edit":
+                handleEditSupplier(request, response);
+                break;
+            case "delete":
+                handleDeleteSupplier(request, response);
+                break;
             default:
                 throw new AssertionError();
         }
@@ -94,21 +100,21 @@ public class SupplierController extends HttpServlet {
 
     private void getListSuppliers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         int page = 1;
         String pageParam = request.getParameter("page");
-        
-        if(pageParam != null){
+
+        if (pageParam != null) {
             page = Integer.parseInt(pageParam);
         }
-        
+
         List<Supplier> list = supplierService.getAllSuppliers(page);
         long totalPages = supplierService.getTotalPages();
 
         request.setAttribute("suppliers", list);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
-        
+
         request.setAttribute("contentPage", "supplier-list.jsp");
         request.setAttribute("activeMenu", "supplier");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
@@ -118,17 +124,17 @@ public class SupplierController extends HttpServlet {
             throws ServletException, IOException {
 
         String keyword = request.getParameter("keyword");
-        
+
         int page = 1;
         String pageParam = request.getParameter("page");
-        
-        if(pageParam != null){
+
+        if (pageParam != null) {
             page = Integer.parseInt(pageParam);
         }
 
         List<Supplier> list = supplierService.searchPaging(keyword, page);
-        
-         long totalPages = supplierService.getTotalSearchPages(keyword);
+
+        long totalPages = supplierService.getTotalSearchPages(keyword);
 
         if (list == null || list.isEmpty()) {
             request.setAttribute("message", "No supplier found");
@@ -178,6 +184,61 @@ public class SupplierController extends HttpServlet {
                     .forward(request, response);
         }
 
+    }
+
+    private void handleEditSupplier(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idRaw = request.getParameter("supplierId");
+        String name = request.getParameter("supplierName");
+        String email = request.getParameter("supplierEmail");
+        String phone = request.getParameter("supplierPhone");
+        String address = request.getParameter("supplierAddress");
+        String statusRaw = request.getParameter("status");
+
+        try {
+
+            supplierService.editSupplier(idRaw, name, email, phone, address, statusRaw);
+
+            request.getSession().setAttribute("successMsg", "Edit supplier successfully");
+
+            response.sendRedirect(request.getContextPath() + "/supplier");
+        } catch (IllegalArgumentException e) {
+
+            request.setAttribute("editError", e.getMessage());
+            request.setAttribute("openEditPopup", true);
+            request.setAttribute("editId", idRaw);
+            request.setAttribute("editName", name);
+            request.setAttribute("editEmail", email);
+            request.setAttribute("editPhone", phone);
+            request.setAttribute("editAddress", address);
+            request.setAttribute("editStatus", statusRaw);
+            request.setAttribute("suppliers", supplierService.getAllSuppliers(1));
+            request.setAttribute("contentPage", "supplier-list.jsp");
+            request.setAttribute("activeMenu", "supplier");
+
+            request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
+                    .forward(request, response);
+
+        }
+    }
+
+    private void handleDeleteSupplier(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String idParam = request.getParameter("id");
+        
+         boolean success = supplierService.deleteSupplier(idParam);
+
+        if (!success) {
+            request.getSession().setAttribute("errorMsg",
+                    "Cannot delete this supplier");
+        } else {
+            request.getSession().removeAttribute("errorMsg");
+            request.getSession().setAttribute("successMsg",
+                    "Delete supplier successfully");
+        }
+
+        response.sendRedirect("supplier");
     }
 
 }

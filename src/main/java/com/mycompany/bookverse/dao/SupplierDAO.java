@@ -65,7 +65,7 @@ public class SupplierDAO {
             em.close();
         }
     }
-    
+
     public long countSearch(String keyword) {
 
         EntityManager em = JPAUtil.getEntityManager();
@@ -95,6 +95,7 @@ public class SupplierDAO {
             em.close();
         }
     }
+
     public boolean existSupplierName(String suppliername) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -106,4 +107,52 @@ public class SupplierDAO {
             em.close();
         }
     }
+
+    public void edit(Supplier supplier) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(supplier);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+    public boolean existSupplier(String supplierName, int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createNamedQuery("Supplier.existsSupplier", Long.class)
+                    .setParameter("name", supplierName.trim())
+                    .setParameter("id", id)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public boolean deleteSupplierById(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            Supplier supplier = em.find(Supplier.class, id);
+            if (supplier == null) {
+                return false;
+            }
+
+            em.remove(supplier);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
 }

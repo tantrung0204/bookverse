@@ -97,8 +97,8 @@
                                                                 '${s.supplierId}',
                                                                 '${s.supplierName}',
                                                                 '${s.supplierEmail}',
-                                                                '${s.supplierPhone}'
-                                                                '${s.supplierAddress}'
+                                                                '${s.supplierPhone}',
+                                                                '${s.supplierAddress}',
                                                                 '${s.status}'
                                                                 )">
                                             <i class="bi bi-pencil"></i>
@@ -280,6 +280,58 @@
     </div>
 </div>
 
+<div id="editPopup" class="modal-overlay">
+    <div class="modal-content ">
+        <div class="modal-header">
+            <h3>Edit Supplier</h3>
+        </div>
+
+        <c:if test="${not empty editError}">
+            <div class="alert alert-danger p-2 mb-3 alert-error" id="editErrorMsg" style="font-size: 13px;">
+                ${editError}
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/supplier" method="post">
+            <input type="hidden" name="action" value="edit">
+            <input type="hidden" name="supplierId" id="editSupplierId">
+
+            <div class="form-group">
+                <label>Supplier Name</label>
+                <input type="text" name="supplierName" id="editSupplierName" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" name="supplierEmail" id="editSupplierEmail" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="supplierPhone" id="editSupplierPhone" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="supplierAddress" id="editSupplierAddress" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" id="editStatus" class="form-control">
+                    <option value="1">Active</option>
+                    <option value="0">Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
+                <button type="submit" class="btn-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>               
+
 
 <script>
     function openDetailPopup(id, name, email, phone, address, status) {
@@ -308,6 +360,34 @@
         document.getElementById("createPopup").style.display = "none";
     }
 
+    function openEditPopup(id, name, email, phone, address, status) {
+        document.getElementById("editSupplierId").value = id;
+        document.getElementById("editSupplierName").value = name;
+        document.getElementById("editSupplierEmail").value = email;
+        document.getElementById("editSupplierPhone").value = phone;
+        document.getElementById("editSupplierAddress").value = address;
+        document.getElementById("editStatus").value = status;
+
+        // Ẩn thông báo lỗi cũ nếu có
+        const err = document.getElementById("editErrorMsg");
+        if (err)
+            err.style.display = 'none';
+
+        // Hiển thị modal (sử dụng Flex để căn giữa)
+        document.getElementById("editPopup").style.display = "flex";
+    }
+
+    // Hàm đóng Popup
+    function closeEditPopup() {
+        document.getElementById("editPopup").style.display = "none";
+    }
+    
+     // Xử lý confirm xóa
+    function confirmDelete(id, name) {
+        return confirm("Are you sure you want to delete supplier:\n" + name + " (ID: " + id + ")");
+    }
+
+
     let popupTimer = null;
 
 
@@ -332,6 +412,28 @@
                         );
                 // Hiển thị lại lỗi
                 const err = document.getElementById("createErrorMsg");
+                if (err)
+                    err.style.display = 'block';
+            }, 100);
+        };
+    </script>
+</c:if>
+
+<c:if test="${openEditPopup}">
+    <script>
+        window.onload = function () {
+            // Đảm bảo DOM đã load xong
+            setTimeout(function () {
+                openEditPopup(
+                        '${editId}',
+                        '${editName}',
+                        '${editEmail}',
+                        '${editPhone}',
+                        '${editAddress}',
+                        '${editStatus}'
+                        );
+                // Hiển thị lại lỗi
+                const err = document.getElementById("editErrorMsg");
                 if (err)
                     err.style.display = 'block';
             }, 100);

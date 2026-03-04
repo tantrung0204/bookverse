@@ -149,19 +149,19 @@ public class CategoryDAO {
         }
     }
 
-    public boolean existCategoryById(int id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            Long count = em.createQuery(
-                    "SELECT COUNT(c) FROM Category c WHERE c.categoryId = :id",
-                    Long.class)
-                    .setParameter("id", id)
-                    .getSingleResult();
-            return count > 0;
-        } finally {
-            em.close();
-        }
-    }
+//    public boolean existCategoryById(int id) {
+//        EntityManager em = JPAUtil.getEntityManager();
+//        try {
+//            Long count = em.createQuery(
+//                    "SELECT COUNT(c) FROM Category c WHERE c.categoryId = :id",
+//                    Long.class)
+//                    .setParameter("id", id)
+//                    .getSingleResult();
+//            return count > 0;
+//        } finally {
+//            em.close();
+//        }
+//    }
 
     public boolean canDeleteCategory(int id) {
         EntityManager em = JPAUtil.getEntityManager();

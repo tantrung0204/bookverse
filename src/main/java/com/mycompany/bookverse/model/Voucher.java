@@ -36,37 +36,63 @@ import java.util.Date;
     @NamedQuery(name = "Voucher.findAll", query = "SELECT v FROM Voucher v"),
     @NamedQuery(name = "Voucher.findByVoucherId", query = "SELECT v FROM Voucher v WHERE v.voucherId = :voucherId"),
     @NamedQuery(name = "Voucher.findByVoucherCode", query = "SELECT v FROM Voucher v WHERE v.voucherCode = :voucherCode"),
-    @NamedQuery(name = "Voucher.findByDiscountPercent", query = "SELECT v FROM Voucher v WHERE v.discountPercent = :discountPercent"),
-    @NamedQuery(name = "Voucher.findByAvailableQuantity", query = "SELECT v FROM Voucher v WHERE v.availableQuantity = :availableQuantity"),
-    @NamedQuery(name = "Voucher.findByStatus", query = "SELECT v FROM Voucher v WHERE v.status = :status"),
-    @NamedQuery(name = "Voucher.findByStartDate", query = "SELECT v FROM Voucher v WHERE v.startDate = :startDate"),
-    @NamedQuery(name = "Voucher.findByExpiryDate", query = "SELECT v FROM Voucher v WHERE v.expiryDate = :expiryDate")})
+    @NamedQuery(name = "Voucher.findByDiscountType", query = "SELECT v FROM Voucher v WHERE v.discountType = :discountType"),
+    @NamedQuery(name = "Voucher.findByStatus", query = "SELECT v FROM Voucher v WHERE v.status = :status")
+})
 public class Voucher implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "voucher_id")
     private Integer voucherId;
+
+    @Size(max = 100)
+    @Column(name = "voucher_name")
+    private String voucherName;
+
     @Size(max = 50)
     @Column(name = "voucher_code")
     private String voucherCode;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "discount_percent")
-    private BigDecimal discountPercent;
+
+    /**
+     * Giá trị giảm: - Nếu discount_type = 1 → % giảm (vd: 10 = 10%) - Nếu
+     * discount_type = 2 → số tiền giảm cố định
+     */
+    @Column(name = "discount_value")
+    private BigDecimal discountValue;
+
+    /**
+     * 1 = Giảm theo phần trăm 2 = Giảm giá cố định
+     */
+    @Column(name = "discount_type")
+    private Integer discountType;
+
+    /**
+     * Giá trị đơn hàng tối thiểu để áp dụng voucher
+     */
+    @Column(name = "min_order_value")
+    private BigDecimal minOrderValue;
+
     @Column(name = "available_quantity")
     private Integer availableQuantity;
+
     @Column(name = "status")
     private Integer status;
+
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
+
     @Column(name = "expiry_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiryDate;
+
     @OneToMany(mappedBy = "voucherId")
     private Collection<Order> order1Collection;
+
     @Transient
     private long usedCount;
 
@@ -85,6 +111,14 @@ public class Voucher implements Serializable {
         this.voucherId = voucherId;
     }
 
+    public String getVoucherName() {
+        return voucherName;
+    }
+
+    public void setVoucherName(String voucherName) {
+        this.voucherName = voucherName;
+    }
+
     public String getVoucherCode() {
         return voucherCode;
     }
@@ -93,12 +127,28 @@ public class Voucher implements Serializable {
         this.voucherCode = voucherCode;
     }
 
-    public BigDecimal getDiscountPercent() {
-        return discountPercent;
+    public BigDecimal getDiscountValue() {
+        return discountValue;
     }
 
-    public void setDiscountPercent(BigDecimal discountPercent) {
-        this.discountPercent = discountPercent;
+    public void setDiscountValue(BigDecimal discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public Integer getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(Integer discountType) {
+        this.discountType = discountType;
+    }
+
+    public BigDecimal getMinOrderValue() {
+        return minOrderValue;
+    }
+
+    public void setMinOrderValue(BigDecimal minOrderValue) {
+        this.minOrderValue = minOrderValue;
     }
 
     public Integer getAvailableQuantity() {
@@ -159,12 +209,12 @@ public class Voucher implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Voucher)) {
             return false;
         }
         Voucher other = (Voucher) object;
-        if ((this.voucherId == null && other.voucherId != null) || (this.voucherId != null && !this.voucherId.equals(other.voucherId))) {
+        if ((this.voucherId == null && other.voucherId != null)
+                || (this.voucherId != null && !this.voucherId.equals(other.voucherId))) {
             return false;
         }
         return true;
@@ -172,7 +222,6 @@ public class Voucher implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mycompany.bookverse.model.Voucher[ voucherId=" + voucherId + " ]";
+        return "Voucher[ voucherId=" + voucherId + " ]";
     }
-
 }

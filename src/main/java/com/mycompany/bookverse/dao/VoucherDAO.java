@@ -16,16 +16,6 @@ import java.util.List;
  */
 public class VoucherDAO {
 
-    public List<Voucher> getAllVouchers() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createNamedQuery("Voucher.findAll", Voucher.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public Voucher findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -69,16 +59,28 @@ public class VoucherDAO {
         }
     }
 
-    public List<Voucher> searchByCode(String keyword) {
+    public List<Voucher> searchVoucher(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
+            String kw = "%" + keyword.trim().toLowerCase() + "%";
+
             return em.createQuery(
-                    "SELECT v FROM Voucher v WHERE v.voucherCode LIKE :kw",
+                    "SELECT v FROM Voucher v "
+                    + "WHERE LOWER(v.voucherName) LIKE :kw "
+                    + "OR LOWER(v.voucherCode) LIKE :kw",
                     Voucher.class)
-                    .setParameter("kw", "%" + keyword + "%")
+                    .setParameter("kw", kw)
                     .getResultList();
+
         } finally {
             em.close();
+        }
+    }
+    
+    public static void main(String[] args) {
+        VoucherDAO dao = new VoucherDAO();
+        for (Voucher voucher : dao.searchVoucher("K")) {
+            System.out.println(voucher.toString());
         }
     }
 
@@ -177,7 +179,9 @@ public class VoucherDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                    "SELECT v FROM Voucher v WHERE v.voucherCode LIKE :kw ORDER BY v.voucherId DESC",
+                    "SELECT v FROM Voucher v "
+                    + "WHERE LOWER(v.voucherName) LIKE :kw "
+                    + "OR LOWER(v.voucherCode) LIKE :kw ORDER BY v.voucherId DESC",
                     Voucher.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .setFirstResult((page - 1) * pageSize)

@@ -65,8 +65,12 @@ public class Product implements Serializable {
     private String imageUrl;
     @Column(name = "status")
     private Integer status;
-    @Column(name = "category_id")
-    private int categoryId;
+    @Size(max = 500)
+    @Column(name = "description_text")
+    private String descriptionText;
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @ManyToOne
+    private Category categoryId;
     @OneToMany(mappedBy = "productId")
     private Collection<ImportStockDetail> importStockDetailCollection;
     @OneToMany(mappedBy = "productId")
@@ -131,11 +135,19 @@ public class Product implements Serializable {
         this.status = status;
     }
 
-    public int getCategoryId() {
+    public String getDescriptionText() {
+        return descriptionText;
+    }
+
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
+    }
+
+    public Category getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Category categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -247,19 +259,6 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.bookverse.model.Product[ productId=" + productId + " ]";
-    }
-
-    public void setStock(int parseInt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public Object getCategory() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Transient
-    public String getCategoryName() {
-        return String.valueOf(categoryId);
     }
 
 }

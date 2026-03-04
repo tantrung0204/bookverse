@@ -22,7 +22,7 @@ public class CategoryDAO {
 
         try {
             return em.createQuery(
-                    "SELECT c FROM Category c ORDER BY c.categoryId DESC",
+                    "SELECT c FROM Category c WHERE c.parent IS NOT NULL ORDER BY c.categoryId DESC",
                     Category.class)
                     .setFirstResult((page - 1) * pageSize)
                     .setMaxResults(pageSize)

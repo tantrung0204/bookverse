@@ -32,9 +32,9 @@ public class VoucherService {
             return "Quantity cannot be less than 0";
         }
 
-        if (voucher.getDiscountPercent() == null
-                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
-                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
+        if (voucher.getDiscountValue() == null
+                || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) < 0
+                || voucher.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
             return "Discount must be between 0 and 100";
         }
 
@@ -76,9 +76,9 @@ public class VoucherService {
             return "Quantity cannot be less than or equal to 0";
         }
 
-        if (voucher.getDiscountPercent() == null
-                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
-                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
+        if (voucher.getDiscountValue() == null
+                || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) < 0
+                || voucher.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
             return "Discount must be between 0 and 100";
         }
 

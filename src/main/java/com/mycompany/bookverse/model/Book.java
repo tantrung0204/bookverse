@@ -13,7 +13,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -29,8 +28,8 @@ import java.util.Collection;
 @PrimaryKeyJoinColumn(name = "book_id", referencedColumnName = "product_id")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
-    @NamedQuery(name = "Book.findByIsbn", query = "SELECT b FROM Book b WHERE b.isbn = :isbn")})
+        @NamedQuery(name = "Book.findAll", query = "SELECT b FROM Book b"),
+        @NamedQuery(name = "Book.findByIsbn", query = "SELECT b FROM Book b WHERE b.isbn = :isbn") })
 public class Book extends Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,9 +44,6 @@ public class Book extends Product implements Serializable {
     private String translator;
     @Column(name = "published_year")
     private Integer publishedYear;
-    @Size(max = 500)
-    @Column(name = "description_text")
-    private String descriptionText;
     @ManyToMany(mappedBy = "bookCollection")
     private Collection<Author> authorCollection;
     @JoinColumn(name = "genre_id", referencedColumnName = "genre_id")
@@ -93,14 +89,6 @@ public class Book extends Product implements Serializable {
         this.publishedYear = publishedYear;
     }
 
-    public String getDescriptionText() {
-        return descriptionText;
-    }
-
-    public void setDescriptionText(String descriptionText) {
-        this.descriptionText = descriptionText;
-    }
-
     @XmlTransient
     public Collection<Author> getAuthorCollection() {
         return authorCollection;
@@ -143,11 +131,6 @@ public class Book extends Product implements Serializable {
     @Override
     public String toString() {
         return "com.mycompany.bookverse.model.Book[ productId=" + getProductId() + " ]";
-    }
-
-    @Transient
-    public String getGenreName() {
-        return genreId != null ? genreId.getGenreName() : "";
     }
 
 }

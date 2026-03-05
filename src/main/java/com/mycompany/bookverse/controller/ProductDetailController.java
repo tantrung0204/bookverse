@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.service.ProductService;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -62,36 +63,58 @@ public class ProductDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String idStr = request.getParameter("id");
-        int productId = 0;
         try {
-            productId = Integer.parseInt(idStr);
+            String idStr = request.getParameter("id");
+            if (idStr == null || idStr.isEmpty()) {
+                response.sendRedirect("home");
+                return;
+            }
+            int productId = Integer.parseInt(idStr);
+
+            String pageStr = request.getParameter("page");
+            int page = 1;
+            if (pageStr != null && !pageStr.isEmpty()) {
+                page = Integer.parseInt(pageStr);
+            }
+
+            Product product = productService.getProductDetail(productId);
+
+            if (product == null) {
+                response.sendRedirect("home");
+                return;
+            }
+
+            String productType = "product";
+            if (product instanceof Book) {
+                productType = "book";
+            } else if (product instanceof Stationery) {
+                productType = "stationery";
+            }
+
+            List<Product> relatedProducts = productService.getRelatedProducts(product);
+
+            // Gọi danh sách 5 Feedback hiển thị
+            List<Feedback> feedbackList = productService.getProductFeedbacks(productId, page);
+
+            // Tính toán tổng số trang feedback
+            int totalFeedbacks = product.getReviewCount();
+            int totalFbPages = (int) Math.ceil((double) totalFeedbacks / PaginationConfig.FEEDBACK_ITEMS_PER_PAGE);
+
+            // Gửi dữ liệu product
+            request.setAttribute("product", product);
+            request.setAttribute("productType", productType);
+            request.setAttribute("relatedProducts", relatedProducts);
+
+            // Gửi dữ liệu Feedback
+            request.setAttribute("feedbackList", feedbackList);
+            request.setAttribute("totalFbPages", totalFbPages);
+            request.setAttribute("currentFbPage", page);
+
+            request.getRequestDispatcher("/views/public/product-detail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("home");
             return;
         }
-
-        Product product = productService.getProductDetail(productId);
-
-        if (product == null) {
-            response.sendRedirect("home");
-            return;
-        }
-
-        List<Product> relatedProducts = productService.getRelatedProducts(product);
-
-        String productType = "product";
-        if (product instanceof Book) {
-            productType = "book";
-        } else if (product instanceof Stationery) {
-            productType = "stationery";
-        }
-        
-        request.setAttribute("product", product);
-        request.setAttribute("relatedProducts", relatedProducts);
-        request.setAttribute("productType", productType);
-        
-        request.getRequestDispatcher("/views/public/product-detail.jsp").forward(request, response);
     }
 
     /**

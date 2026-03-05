@@ -65,6 +65,9 @@ public class Product implements Serializable {
     private String imageUrl;
     @Column(name = "status")
     private Integer status;
+    @Size(max = 500)
+    @Column(name = "description_text")
+    private String descriptionText;
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     @ManyToOne
     private Category categoryId;
@@ -130,6 +133,14 @@ public class Product implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getDescriptionText() {
+        return descriptionText;
+    }
+
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
     }
 
     public Category getCategoryId() {

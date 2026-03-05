@@ -44,9 +44,6 @@ public class Book extends Product implements Serializable {
     private String translator;
     @Column(name = "published_year")
     private Integer publishedYear;
-    @Size(max = 500)
-    @Column(name = "description_text")
-    private String descriptionText;
     @ManyToMany(mappedBy = "bookCollection")
     private Collection<Author> authorCollection;
     @JoinColumn(name = "genre_id", referencedColumnName = "genre_id")
@@ -90,14 +87,6 @@ public class Book extends Product implements Serializable {
 
     public void setPublishedYear(Integer publishedYear) {
         this.publishedYear = publishedYear;
-    }
-
-    public String getDescriptionText() {
-        return descriptionText;
-    }
-
-    public void setDescriptionText(String descriptionText) {
-        this.descriptionText = descriptionText;
     }
 
     @XmlTransient

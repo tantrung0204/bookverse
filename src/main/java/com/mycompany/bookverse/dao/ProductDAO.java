@@ -75,7 +75,7 @@ public class ProductDAO {
     public List<Book> findTopSellingBooks(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String sql = "SELECT b FROM Book b "
+            String sql = "SELECT b FROM Book b WHERE b.status = 1"
                     + "ORDER BY (SELECT COALESCE(SUM(item.orderQuantity), 0) "
                     + "          FROM OrderItem item "
                     + "          WHERE item.productId = b) DESC";
@@ -95,7 +95,7 @@ public class ProductDAO {
     public List<Stationery> findTopSellingStationery(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String sql = "SELECT s FROM Stationery s "
+            String sql = "SELECT s FROM Stationery s WHERE s.status = 1"
                     + "ORDER BY (SELECT COALESCE(SUM(item.orderQuantity), 0) "
                     + "          FROM OrderItem item "
                     + "          WHERE item.productId = s) DESC";
@@ -118,7 +118,7 @@ public class ProductDAO {
     public long countBooks(List<Integer> genreIds, String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(b) FROM Book b WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT COUNT(b) FROM Book b WHERE b.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
@@ -147,7 +147,7 @@ public class ProductDAO {
     public List<Book> findBooksWithFilter(List<Integer> genreIds, String sortPrice, String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT b FROM Book b WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT b FROM Book b WHERE b.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
@@ -192,7 +192,7 @@ public class ProductDAO {
     public long countStationery(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE b.status = 1");
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
             }
@@ -210,7 +210,7 @@ public class ProductDAO {
     public List<Stationery> findStationeryWithFilter(String sortPrice, String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT s FROM Stationery s WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT s FROM Stationery s WHERE s.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
@@ -246,7 +246,7 @@ public class ProductDAO {
     public long countAllProducts(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE s.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
@@ -267,7 +267,7 @@ public class ProductDAO {
     public List<Product> searchAllProducts(String sortPrice, String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE s.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
@@ -311,6 +311,7 @@ public class ProductDAO {
                 if (product.getCategoryId() != null) {
                     product.getCategoryId().getCategoryName();
                 }
+
                 product.getOrderItemCollection().size();
                 product.getFeedbackCollection().size();
 
@@ -327,7 +328,7 @@ public class ProductDAO {
     public List<Product> findRelatedProducts(Product product, int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String sql = "SELECT p FROM Product p WHERE p.categoryId = :category AND p.productId != :id";
+            String sql = "SELECT p FROM Product p WHERE p.status = 1 AND p.categoryId = :category AND p.productId != :id";
             TypedQuery<Product> query = em.createQuery(sql, Product.class);
             query.setParameter("category", product.getCategoryId());
             query.setParameter("id", product.getProductId());

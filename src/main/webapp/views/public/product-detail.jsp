@@ -17,279 +17,17 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css" type="text/css"/>
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-detail.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
-        <style>
-            body {
-                background-color: #f6f4e6;
-                color: #333;
-                font-family: 'Segoe UI', sans-serif;
-            }
-            .product-detail-wrapper {
-                padding: 40px 0;
-            }
-
-            /* Cột Ảnh */
-            .main-img-container {
-                border: 1px solid #eee;
-                border-radius: 8px;
-                padding: 20px;
-                text-align: center;
-                background: #fff;
-                position: relative;
-            }
-            .main-img {
-                max-width: 100%;
-                height: auto;
-                max-height: 500px;
-                object-fit: contain;
-            }
-            .badge-type {
-                position: absolute;
-                top: 15px;
-                left: 15px;
-                padding: 5px 12px;
-                border-radius: 4px;
-                color: #fff;
-                font-weight: 600;
-                font-size: 0.85rem;
-            }
-            .badge-book {
-                background-color: #3498db;
-            }
-            .badge-stationery {
-                background-color: #e67e22;
-            }
-
-            /* Cột Thông tin */
-            .product-info h1 {
-                font-size: 1.8rem;
-                font-weight: 700;
-                color: #2c3e50;
-                margin-bottom: 10px;
-            }
-            .product-price {
-                font-size: 1.6rem;
-                color: #d35400;
-                font-weight: bold;
-                margin: 15px 0;
-            }
-
-            .product-meta {
-                color: #555;
-                font-size: 0.95rem;
-                margin-bottom: 8px;
-                border-bottom: 1px dashed #eee;
-                padding-bottom: 8px;
-            }
-            .product-meta:last-child {
-                border-bottom: none;
-            }
-            .meta-label {
-                font-weight: 600;
-                color: #333;
-                min-width: 120px;
-                display: inline-block;
-            }
-
-            .stock-status {
-                font-weight: 600;
-            }
-            .in-stock {
-                color: #27ae60;
-            }
-            .out-of-stock {
-                color: #c0392b;
-            }
-
-            /* Form Cart */
-            .qty-input-group {
-                display: flex;
-                align-items: center;
-                gap: 0;
-                border: 1px solid #ced4da;
-                border-radius: 5px;
-                overflow: hidden;
-                width: 120px;
-            }
-            .qty-btn {
-                border: none;
-                background: #f8f9fa;
-                padding: 8px 12px;
-                cursor: pointer;
-                transition: 0.2s;
-            }
-            .qty-btn:hover {
-                background: #e9ecef;
-            }
-            .qty-input {
-                border: none;
-                text-align: center;
-                width: 40px;
-                -moz-appearance: textfield;
-            }
-
-            .btn-cart {
-                background-color: #d35400;
-                color: #fff;
-                padding: 10px 25px;
-                border-radius: 5px;
-                border: none;
-                font-weight: 600;
-                text-transform: uppercase;
-                transition: 0.3s;
-                flex-grow: 1;
-            }
-            .btn-cart:hover {
-                background-color: #a04000;
-                color: #fff;
-            }
-            .btn-buy {
-                background-color: #2c3e50;
-                color: #fff;
-                padding: 10px 25px;
-                border-radius: 5px;
-                border: none;
-                font-weight: 600;
-                text-transform: uppercase;
-                transition: 0.3s;
-            }
-            .btn-buy:hover {
-                background-color: #1a252f;
-                color: #fff;
-            }
-
-            /* Description Box */
-            .description-box {
-                margin-top: 30px;
-                background: #fff;
-                padding: 25px;
-                border-radius: 8px;
-                border: 1px solid #eee;
-            }
-            .section-heading {
-                font-size: 1.3rem;
-                border-bottom: 2px solid #eee;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-                color: #2c3e50;
-            }
-
-            /* TOAST MESSAGE CSS (Style lại cho đẹp hơn) */
-            #toast {
-                visibility: hidden;
-                min-width: 300px;
-                background-color: #333;
-                color: #fff;
-                text-align: center;
-                border-radius: 4px;
-                padding: 16px;
-                position: fixed;
-                z-index: 1000;
-                right: 30px;
-                top: 100px; /* Xuất hiện ở góc phải trên */
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                font-size: 1rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-            }
-            #toast.show {
-                visibility: visible;
-                -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-                animation: fadein 0.5s, fadeout 0.5s 2.5s;
-            }
-            #toast.toast-success {
-                background-color: #27ae60;
-            }
-            #toast.toast-error {
-                background-color: #c0392b;
-            }
-
-            @-webkit-keyframes fadein {
-                from {
-                    right: 0;
-                    opacity: 0;
-                }
-                to {
-                    right: 30px;
-                    opacity: 1;
-                }
-            }
-            @keyframes fadein {
-                from {
-                    right: 0;
-                    opacity: 0;
-                }
-                to {
-                    right: 30px;
-                    opacity: 1;
-                }
-            }
-            @-webkit-keyframes fadeout {
-                from {
-                    right: 30px;
-                    opacity: 1;
-                }
-                to {
-                    right: 0;
-                    opacity: 0;
-                }
-            }
-            @keyframes fadeout {
-                from {
-                    right: 30px;
-                    opacity: 1;
-                }
-                to {
-                    right: 0;
-                    opacity: 0;
-                }
-            }
-
-            /* Related Products */
-            .custom-card {
-                border: 1px solid #eee;
-                border-radius: 8px;
-                text-decoration: none;
-                color: inherit;
-                display: block;
-                background: #fff;
-                transition: 0.3s;
-            }
-            .custom-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            .card-img-wrapper {
-                height: 200px;
-                overflow: hidden;
-                border-radius: 8px 8px 0 0;
-            }
-            .card-img-wrapper img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-            .card-body-custom {
-                padding: 10px;
-            }
-            .product-title-sm {
-                font-weight: 600;
-                font-size: 0.95rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        </style>
+        
     </head>
     <body>
-
         <jsp:include page="header-index.jsp" />
         <jsp:include page="navbar.jsp">
             <jsp:param name="activePage" value=""/>
         </jsp:include>
+
         <div class="container product-detail-wrapper">
             <div class="row">
                 <div class="col-md-5 mb-4">
@@ -322,7 +60,7 @@
                         <span class="meta-label">Availability:</span>
                         <c:choose>
                             <c:when test="${product.stockQuantity > 0}">
-                                <span class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock (${product.stockQuantity})</span>
+                                <span class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock</span>
                             </c:when>
                             <c:otherwise>
                                 <span class="stock-status out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>
@@ -407,6 +145,85 @@
                 </div>
             </div>
 
+            <div id="reviews-section" class="feedback-section shadow-sm">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                    <h3 class="m-0" style="font-size: 1.4rem; color: #2c3e50;">Customer Reviews</h3>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs-4 fw-bold text-dark"><fmt:formatNumber value="${product.averageRating}" maxFractionDigits="1"/></span>
+                        <span class="text-warning fs-5">★</span>
+                        <span class="text-muted">(${product.reviewCount} Reviews)</span>
+                    </div>
+                </div>
+                <div class="review-list">
+                    <c:choose>
+                        <%-- MODIFIED: Use feedbackList instead of product.feedbackCollection --%>
+                        <c:when test="${empty feedbackList}">
+                            <div class="text-center py-4 text-muted">
+                                <i class="far fa-comment-dots fa-3x mb-3 text-light"></i>
+                                <p>There are no reviews for this product yet. Be the first to review!</p>
+                            </div>
+                        </c:when>
+
+                        <c:otherwise>
+                            <%-- MODIFIED: Loop through feedbackList --%>
+                            <c:forEach items="${feedbackList}" var="fb">
+                                <div class="review-item">
+                                    <div>
+                                        <c:choose>
+                                            <c:when test="${not empty fb.customerId.profileImageUrl}">
+                                                <img src="${fb.customerId.profileImageUrl}" alt="${fb.customerId.fullName}" class="reviewer-avatar"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="reviewer-avatar-placeholder" style="display: none;">
+                                                    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+                                                    ${fn:substring(fb.customerId.fullName, 0, 1)}
+                                                </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+                                                <div class="reviewer-avatar-placeholder">
+                                                    ${fn:substring(fb.customerId.fullName, 0, 1)}
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+
+                                    <div class="review-content">
+                                        <div class="reviewer-name">${fb.customerId.fullName}</div>
+
+                                        <div class="review-date">
+                                            <fmt:formatDate value="${fb.createdAt}" pattern="dd MMM, yyyy 'at' HH:mm"/>
+                                        </div>
+
+                                        <div class="review-rating">
+                                            <c:forEach begin="1" end="5" var="star">
+                                                <i class="${star <= fb.rating ? 'fas' : 'far'} fa-star"></i>
+                                            </c:forEach>
+                                        </div>
+
+                                        <p class="review-text">${fb.contentText}</p>
+                                    </div>
+                                </div>
+                            </c:forEach>
+
+                            <%-- ADDED: Pagination Controls for Feedback --%>
+                            <c:if test="${totalFbPages > 1}">
+                                <div class="pagination mt-4 d-flex justify-content-center gap-1">
+                                    <c:forEach begin="1" end="${totalFbPages}" var="i">
+                                        <%-- Note the #reviews-section to scroll back down after click --%>
+                                        <a href="product-detail?id=${product.productId}&page=${i}#reviews-section" 
+                                           class="page-link-custom ${currentFbPage == i ? 'active' : ''}">
+                                            ${i}
+                                        </a>
+                                    </c:forEach>
+                                </div>
+                            </c:if>
+
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+
             <c:if test="${not empty relatedProducts}">
                 <div class="mt-5">
                     <h3 class="section-heading">Related Products</h3>
@@ -457,7 +274,6 @@
             <c:remove var="cartMessage" scope="session"/>
             <c:remove var="messageType" scope="session"/>
         </c:if>
-
 
         <jsp:include page="footer-index.jsp" />
         <script src="${pageContext.request.contextPath}/boostrap/bootstrap.bundle.min.js"></script>

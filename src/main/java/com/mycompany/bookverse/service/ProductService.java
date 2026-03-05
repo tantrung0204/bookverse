@@ -1,5 +1,6 @@
 package com.mycompany.bookverse.service;
 
+import com.mycompany.bookverse.dao.FeedbackDAO;
 import com.mycompany.bookverse.dao.GenreDAO;
 import com.mycompany.bookverse.dao.ProductDAO;
 import java.util.List;
@@ -19,6 +20,7 @@ public class ProductService {
 
     private ProductDAO productDao = new ProductDAO();
     private GenreDAO genreDao = new GenreDAO();
+    private FeedbackDAO feedbackDao = new FeedbackDAO();
 
     public List<Product> getAllProducts() {
         return productDao.findAll();
@@ -77,12 +79,17 @@ public class ProductService {
             return productDao.countAllProducts(keyword);
         }
     }
-    
+
     public Product getProductDetail(int productId) {
         return productDao.findProductById(productId);
     }
-    
+
     public List<Product> getRelatedProducts(Product product) {
         return productDao.findRelatedProducts(product, 4);
+    }
+
+    public List<Feedback> getProductFeedbacks(int productId, int page) {
+        int pageSize = PaginationConfig.FEEDBACK_ITEMS_PER_PAGE;
+        return feedbackDao.getPaginatedFeedbacksByProduct(productId, page, pageSize);
     }
 }

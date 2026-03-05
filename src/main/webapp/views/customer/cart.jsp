@@ -1,6 +1,6 @@
 <%-- 
     Document   : cart.jsp
-    Created on : Feb 22, 2026, 8:18:07 PM
+    Created on : Feb 22, 2026, 8:18:07 PM
     Author     : TrungNT - CE200064
 --%>
 
@@ -14,123 +14,40 @@
 <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>My Shopping Cart</title>
+        <title>My Shopping Cart - Bookverse</title>
 
         <link href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
-            .cart-container {
-                background-color: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            }
-            .img-product {
-                width: 80px;
-                height: 80px;
-                object-fit: cover;
-                border-radius: 5px;
-                border: 1px solid #dee2e6;
-            }
-            .table > :not(caption) > * > * {
-                vertical-align: middle;
-            }
-            .total-area {
-                background-color: #f1f3f5;
-                padding: 20px;
-                border-radius: 10px;
-                margin-top: 20px;
-            }
-            .total-price {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #dc3545;
-            }
-
-            /* --- 1. CSS CHO TOAST NOTIFICATION --- */
-            #toast {
-                visibility: hidden;
-                min-width: 250px;
-                background-color: #333;
-                color: #fff;
-                text-align: center;
-                border-radius: 4px;
-                padding: 16px;
-                position: fixed;
-                z-index: 1000;
-                right: 30px;
-                top: 30px;
-                font-size: 17px;
-                box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                opacity: 0;
-                transition: opacity 0.5s ease-in-out;
-            }
-
-            #toast.show {
-                visibility: visible;
-                opacity: 1;
-                animation: slideIn 0.5s, fadeOut 0.5s 2.5s forwards;
-            }
-
-            .toast-success {
-                background-color: #28a745 !important;
-                border-left: 5px solid #1e7e34;
-            }
-
-            .toast-error {
-                background-color: #dc3545 !important;
-                border-left: 5px solid #bd2130;
-            }
-
-            @keyframes slideIn {
-                from {
-                    right: -300px;
-                    opacity: 0;
-                }
-                to {
-                    right: 30px;
-                    opacity: 1;
-                }
-            }
-
-            @keyframes fadeOut {
-                from {
-                    opacity: 1;
-                }
-                to {
-                    opacity: 0;
-                    visibility: hidden;
-                }
-            }
-        </style>
+        
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/cart.css">
     </head>
     <body>
 
-        <div class="container py-5">
-            <h2 class="mb-4"><i class="fa-solid fa-cart-shopping"></i> Your Shopping Cart</h2>
+        <jsp:include page="../public/header-index.jsp" />
+        <jsp:include page="../public/navbar.jsp">
+            <jsp:param name="activePage" value=""/>
+        </jsp:include>
+
+        <div class="container py-5" style="max-width: 1200px;">
+            <h2 class="cart-page-title"><i class="fa-solid fa-cart-shopping me-2"></i> Your Shopping Cart</h2>
 
             <c:if test="${empty requestScope.cartList}">
-                <div class="alert alert-info text-center py-5">
-                    <i class="fa-solid fa-basket-shopping fa-3x mb-3"></i>
+                <div class="empty-cart-box shadow-sm">
+                    <i class="fa-solid fa-basket-shopping fa-3x mb-3 empty-icon"></i>
                     <h4>Your cart is currently empty.</h4>
-                    <p>Looks like you haven't added any items to the cart yet.</p>
-                    <a href="home" class="btn btn-primary mt-3">Start Shopping</a>
+                    <p class="text-muted">Looks like you haven't added any items to the cart yet.</p>
+                    <a href="home" class="btn-brand-solid mt-3">Start Shopping</a>
                 </div>
             </c:if>
 
             <c:if test="${not empty requestScope.cartList}">
-                <div class="cart-container">
+                <div class="cart-container shadow-sm">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
+                        <table class="table table-hover cart-table align-middle">
+                            <thead>
                                 <tr>
                                     <th style="width: 100px;">Image</th>
                                     <th>Product Name</th>
@@ -149,36 +66,37 @@
 
                                     <tr>
                                         <td>
-                                            <a href="home?action=detail&id=${item.productId.productId}">
-                                                <img src="${item.productId.imageUrl}" alt="${item.productId.name}" class="img-product">
+                                            <a href="product-detail?id=${item.productId.productId}">
+                                                <img src="${item.productId.imageUrl}" alt="${item.productId.name}" class="img-product"
+                                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';">
                                             </a>
                                         </td>
 
                                         <td>
-                                            <a href="home?action=detail&id=${item.productId.productId}" class="text-decoration-none text-dark fw-bold">
+                                            <a href="product-detail?id=${item.productId.productId}" class="product-name-link">
                                                 ${item.productId.name}
                                             </a>
                                         </td>
 
-                                        <td>
+                                        <td class="price-text">
                                             <fmt:formatNumber value="${item.productId.price}" pattern="#,###"/> đ
                                         </td>
 
                                         <td class="text-center">
-                                            <div class="input-group d-flex justify-content-center" style="width: 120px; margin: 0 auto;">
-                                                <button class="btn btn-outline-secondary btn-sm" type="button" 
+                                            <div class="input-group qty-group d-flex justify-content-center">
+                                                <button class="btn qty-btn-custom" type="button" 
                                                         onclick="updateQuantity(${item.cartId}, -1)">-</button>
 
-                                                <input type="text" class="form-control text-center p-0" 
+                                                <input type="text" class="form-control text-center p-0 qty-input-custom" 
                                                        id="qty-${item.cartId}" 
                                                        value="${item.cartQuantity}" readonly>
 
-                                                <button class="btn btn-outline-secondary btn-sm" type="button" 
+                                                <button class="btn qty-btn-custom" type="button" 
                                                         onclick="updateQuantity(${item.cartId}, 1)">+</button>
                                             </div>
                                         </td>
 
-                                        <td class="fw-bold text-primary">
+                                        <td class="price-text">
                                             <span id="item-total-${item.cartId}">
                                                 <fmt:formatNumber value="${lineTotal}" pattern="#,###"/>
                                             </span> đ
@@ -190,7 +108,7 @@
                                                 <input type="hidden" name="cartId" value="${item.cartId}">
 
                                                 <button type="submit" 
-                                                        class="btn btn-outline-danger btn-sm" 
+                                                        class="btn-remove-item" 
                                                         onclick="return confirm('Do you really want to remove this product?');"
                                                         title="Remove item">
                                                     <i class="fa-solid fa-trash-can"></i>
@@ -205,21 +123,21 @@
 
                     <div class="total-area">
                         <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <a href="home" class="btn btn-outline-secondary">
-                                    <i class="fa-solid fa-arrow-left"></i> Continue Shopping
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <a href="home" class="btn-brand-outline">
+                                    <i class="fa-solid fa-arrow-left me-2"></i> Continue Shopping
                                 </a>
                             </div>
                             <div class="col-md-6 text-end">
-                                <span class="fs-5 me-2">Grand Total:</span>
-                                <span class="total-price">
+                                <span class="grand-total-label me-2">Grand Total:</span>
+                                <span class="grand-total-amount">
                                     <span id="grand-total">
                                         <fmt:formatNumber value="${grandTotal}" pattern="#,###"/>
                                     </span> đ
                                 </span>
                                 <br><br>
-                                <a href="checkout" class="btn btn-success btn-lg">
-                                    Place Order <i class="fa-solid fa-check"></i>
+                                <a href="checkout" class="btn-brand-solid btn-lg px-5">
+                                    Place Order
                                 </a>
                             </div>
                         </div>
@@ -249,10 +167,11 @@
                 };
             </script>
 
-            <%-- Clean session --%>
             <c:remove var="cartMessage" scope="session"/>
             <c:remove var="messageType" scope="session"/>
         </c:if>
+
+        <jsp:include page="../public/footer-index.jsp" />
 
         <script>
             function formatCurrency(number) {
@@ -283,9 +202,7 @@
                         .then(data => {
                             if (data.status === 'success') {
                                 qtyInput.value = newQty;
-
                                 document.getElementById("item-total-" + cartId).innerText = formatCurrency(data.itemTotal);
-
                                 document.getElementById("grand-total").innerText = formatCurrency(data.grandTotal);
                             }
                         })

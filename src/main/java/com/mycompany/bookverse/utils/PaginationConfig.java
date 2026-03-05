@@ -15,6 +15,9 @@ public class PaginationConfig {
 
     // Cấu hình cho trang quản trị (Admin)
     public static final int ADMIN_ITEMS_PER_PAGE = 10;
+    
+    // Cấu hình cho Feedback trong trang chi tiết
+    public static final int FEEDBACK_ITEMS_PER_PAGE = 5;
 
     // Cấu hình số lượng nút bấm phân trang hiển thị
     public static final int MAX_PAGE_NODES = 5;

@@ -66,7 +66,7 @@ public class AuthorService {
                     return "Create Author false";
                 }
             } else {
-                return "Author already exists";
+                return "Author name already exists";
             }
         }
         return error;
@@ -97,7 +97,7 @@ public class AuthorService {
         boolean checkExist = authorDAO.checkAuthorExist(id, name);
         Author old = authorDAO.findById(id);
         if (checkExist) {
-            return "Author already exist.";
+            return "Author name already exist.";
         }
         if (error.isEmpty()) {
             Integer birthDay = Integer.valueOf(birth);

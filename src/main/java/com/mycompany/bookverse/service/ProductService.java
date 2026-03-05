@@ -4,7 +4,6 @@ import com.mycompany.bookverse.dao.FeedbackDAO;
 import com.mycompany.bookverse.dao.GenreDAO;
 import com.mycompany.bookverse.dao.ProductDAO;
 import java.util.List;
-import java.util.Arrays;
 import com.mycompany.bookverse.model.*;
 import com.mycompany.bookverse.utils.PaginationConfig;
 
@@ -22,30 +21,34 @@ public class ProductService {
     private GenreDAO genreDao = new GenreDAO();
     private FeedbackDAO feedbackDao = new FeedbackDAO();
 
-    public List<Product> getAllProducts() {
-        return productDao.findAll();
+    // ==========================================
+    // CÁC HÀM DÀNH CHO TRANG QUẢN TRỊ (ADMIN)
+    // ==========================================
+    public List<Book> getAdminBooks(String keyword, int page) {
+        return productDao.findAdminBooks(keyword, page, PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
 
-    public Product getProductById(String idStr) {
-        try {
-            Integer id = Integer.parseInt(idStr);
-            return productDao.findById(id);
-        } catch (Exception e) {
-            return null;
-        }
+    public int getTotalAdminBookPages(String keyword) {
+        long totalItems = productDao.countAdminBooks(keyword);
+        return (int) Math.ceil((double) totalItems / PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
 
-    public List<Product> searchProducts(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return productDao.findAll();
-        }
-        return productDao.findByName(keyword.trim());
+    public List<Stationery> getAdminStationeries(String keyword, int page) {
+        return productDao.findAdminStationeries(keyword, page, PaginationConfig.ADMIN_ITEMS_PER_PAGE);
+    }
+
+    public int getTotalAdminStationeryPages(String keyword) {
+        long totalItems = productDao.countAdminStationeries(keyword);
+        return (int) Math.ceil((double) totalItems / PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
 
     public long countProductByCategoryId(int categoryId) {
         return productDao.countProductByCategory(categoryId);
     }
 
+    // ==========================================
+    // CÁC HÀM DÀNH CHO TRANG HOME
+    // ==========================================
     public List<Book> getTopBestSellingBooks() {
         return productDao.findTopSellingBooks(5);
     }

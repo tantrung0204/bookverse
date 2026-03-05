@@ -9,7 +9,6 @@ import com.mycompany.bookverse.model.*;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import org.hibernate.Hibernate;
 
 /**
  *
@@ -17,61 +16,100 @@ import org.hibernate.Hibernate;
  */
 public class ProductDAO {
 
-    public List<Product> findAll() {
+    // ==========================================
+    // CÁC HÀM DÀNH CHO TRANG QUẢN TRỊ (ADMIN)
+    // ==========================================
+    public List<Book> findAdminBooks(String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            List<Product> list = em.createNamedQuery("Product.findAll", Product.class)
-                    .getResultList();
-
-            for (Product p : list) {
-                Hibernate.initialize(p.getFeedbackCollection());
-                Hibernate.initialize(p.getOrderItemCollection());
+            StringBuilder sql = new StringBuilder("SELECT b FROM Book b WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
             }
-
-            return list;
+            // Sắp xếp ID lớn đến nhỏ
+            sql.append(" ORDER BY b.productId DESC");
+            TypedQuery<Book> query = em.createQuery(sql.toString(), Book.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            return query.getResultList();
         } finally {
             em.close();
         }
     }
 
-    public Product findById(Integer id) {
+    public long countAdminBooks(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Product p = em.find(Product.class, id);
-            if (p != null) {
-                Hibernate.initialize(p.getFeedbackCollection());
-                Hibernate.initialize(p.getOrderItemCollection());
-
-                if (p instanceof Book) {
-                    Book b = (Book) p;
-                    Hibernate.initialize(b.getAuthorCollection());
-                }
+            StringBuilder sql = new StringBuilder("SELECT COUNT(b) FROM Book b WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
             }
-            return p;
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public List<Product> findByName(String keyword) {
+    public List<Stationery> findAdminStationeries(String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Product> query = em.createNamedQuery("Product.findByName", Product.class);
-            query.setParameter("keyword", "%" + keyword + "%");
-
-            List<Product> list = query.getResultList();
-
-            for (Product p : list) {
-                Hibernate.initialize(p.getFeedbackCollection());
-                Hibernate.initialize(p.getOrderItemCollection());
+            StringBuilder sql = new StringBuilder("SELECT s FROM Stationery s WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
             }
+            sql.append(" ORDER BY s.productId DESC");
+            TypedQuery<Stationery> query = em.createQuery(sql.toString(), Stationery.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
 
-            return list;
+            return query.getResultList();
         } finally {
             em.close();
         }
     }
 
+    public long countAdminStationeries(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
+            }
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countProductByCategory(int categoryId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createNamedQuery("Product.countByCategoryId", Long.class)
+                    .setParameter("categoryId", categoryId)
+                    .getSingleResult();
+            return count;
+        } finally {
+            em.close();
+        }
+    }
+
+    // ==========================================
+    // CÁC HÀM DÀNH CHO TRANG HOME
+    // ==========================================
     public List<Book> findTopSellingBooks(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -192,7 +230,7 @@ public class ProductDAO {
     public long countStationery(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE b.status = 1");
+            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE s.status = 1");
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
             }
@@ -246,7 +284,7 @@ public class ProductDAO {
     public long countAllProducts(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE s.status = 1");
+            StringBuilder sql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE p.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
@@ -267,7 +305,7 @@ public class ProductDAO {
     public List<Product> searchAllProducts(String sortPrice, String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE s.status = 1");
+            StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE p.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
@@ -334,18 +372,6 @@ public class ProductDAO {
             query.setParameter("id", product.getProductId());
             query.setMaxResults(limit);
             return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    public long countProductByCategory(int categoryId) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            Long count = em.createNamedQuery("Product.countByCategoryId", Long.class)
-                    .setParameter("categoryId", categoryId)
-                    .getSingleResult();
-            return count;
         } finally {
             em.close();
         }

@@ -230,7 +230,6 @@ public class ProductManagementController extends HttpServlet {
 
         String name = request.getParameter("name") != null ? request.getParameter("name").trim() : "";
         String priceStr = request.getParameter("price") != null ? request.getParameter("price").trim() : "";
-        String qtyStr = request.getParameter("quantity") != null ? request.getParameter("quantity").trim() : "0";
         String statusStr = request.getParameter("status");
         String description = request.getParameter("description") != null ? request.getParameter("description").trim() : "";
         String type = request.getParameter("productType"); // "Book" hoặc "Stationery"
@@ -256,20 +255,35 @@ public class ProductManagementController extends HttpServlet {
             Book b = new Book();
             b.setIsbn(isbn);
             b.setPublisher(publisher);
-            if (genreId != null && !genreId.isEmpty()) {
-                Genre g = new Genre();
-                g.setGenreId(Integer.parseInt(genreId));
-                b.setGenreId(g);
+            try {
+                if (genreId != null && !genreId.isEmpty()) {
+                    Genre g = new Genre();
+                    g.setGenreId(Integer.parseInt(genreId));
+                    b.setGenreId(g);
+                }
+            } catch (NumberFormatException e) {
             }
             List<Author> tempAuthors = new ArrayList<>();
             if (authorIds != null) {
                 for (String aId : authorIds) {
-                    Author a = new Author();
-                    a.setAuthorId(Integer.parseInt(aId));
-                    tempAuthors.add(a);
+                    try {
+                        Author a = new Author();
+                        a.setAuthorId(Integer.parseInt(aId));
+                        tempAuthors.add(a);
+                    } catch (NumberFormatException e) {
+                    }
                 }
             }
             b.setAuthorCollection(tempAuthors);
+            String translator = request.getParameter("translator");
+            String publishedYearStr = request.getParameter("publishedYear");
+            b.setTranslator(translator);
+            try {
+                if (publishedYearStr != null && !publishedYearStr.isEmpty()) {
+                    b.setPublishedYear(Integer.parseInt(publishedYearStr));
+                }
+            } catch (Exception e) {
+            }
             tempProduct = b;
         }
 
@@ -281,13 +295,16 @@ public class ProductManagementController extends HttpServlet {
         } catch (Exception e) {
         }
         try {
-            tempProduct.setStockQuantity(Integer.parseInt(qtyStr));
+            tempProduct.setStockQuantity(0);
         } catch (Exception e) {
         }
-        if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-            Category c = new Category();
-            c.setCategoryId(Integer.parseInt(categoryIdStr));
-            tempProduct.setCategoryId(c);
+        try {
+            if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+                Category c = new Category();
+                c.setCategoryId(Integer.parseInt(categoryIdStr));
+                tempProduct.setCategoryId(c);
+            }
+        } catch (NumberFormatException e) {
         }
 
         try {
@@ -307,11 +324,6 @@ public class ProductManagementController extends HttpServlet {
                 throw new Exception("Invalid price.");
             }
 
-            int quantity = Integer.parseInt(qtyStr);
-            if (quantity < 0) {
-                throw new Exception("Quantity cannot be negative.");
-            }
-
             if ("Book".equals(type)) {
                 if (genreId == null || genreId.isEmpty()) {
                     throw new Exception("Please select a genre.");
@@ -323,16 +335,16 @@ public class ProductManagementController extends HttpServlet {
 
             // 3. Xử lý Image Upload
             String finalImageUrl = "";
-            jakarta.servlet.http.Part filePart = request.getPart("imageFile");
+            Part filePart = request.getPart("imageFile");
             if (filePart != null && filePart.getSize() > 0) {
-                String fileName = java.nio.file.Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                 String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
-                String uploadPath = getServletContext().getRealPath("") + java.io.File.separator + "assets" + java.io.File.separator + "images" + java.io.File.separator + "products";
-                java.io.File uploadDir = new java.io.File(uploadPath);
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "assets" + File.separator + "images" + File.separator + "products";
+                File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
-                filePart.write(uploadPath + java.io.File.separator + uniqueFileName);
+                filePart.write(uploadPath + File.separator + uniqueFileName);
                 finalImageUrl = request.getContextPath() + "/assets/images/products/" + uniqueFileName;
             }
             tempProduct.setImageUrl(finalImageUrl);

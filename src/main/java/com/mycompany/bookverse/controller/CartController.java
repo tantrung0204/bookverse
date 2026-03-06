@@ -224,13 +224,22 @@ public class CartController extends HttpServlet {
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
 
-            cartService.removeCartItem(cartId);
+            // int customerId = (Integer) session.getAttribute("customerId");
+            int customerId = 1;
 
-            session.setAttribute("cartMessage", "Item removed from cart successfully!");
-            session.setAttribute("messageType", "success");
+            boolean isRemoved = cartService.removeCartItem(cartId, customerId);
+
+            if (isRemoved) {
+                session.setAttribute("cartMessage", "Item removed from cart successfully!");
+                session.setAttribute("messageType", "success");
+            } else {
+                session.setAttribute("cartMessage", "Action denied! You don't have permission to remove this item.");
+                session.setAttribute("messageType", "error");
+            }
 
         } catch (Exception e) {
-            session.setAttribute("cartMessage", "Failed to remove item.");
+            e.printStackTrace();
+            session.setAttribute("cartMessage", "An error occurred while processing your request.");
             session.setAttribute("messageType", "error");
         }
 

@@ -272,11 +272,6 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label style="font-weight: bold; display: block;">Initial Quantity <span style="color:red;">*</span></label>
-                        <input type="number" name="quantity" class="form-control" value="${not empty productCreate ? productCreate.stockQuantity : 0}" min="0" required style="width: 100%;">
-                    </div>
-
-                    <div class="form-group mb-3">
                         <label style="font-weight: bold; display: block;">Image Upload</label>
                         <input type="file" name="imageFile" class="form-control" accept="image/*" style="width: 100%;">
                     </div>
@@ -296,7 +291,7 @@
                         <select name="bookCategoryId" class="form-control" style="width: 100%;">
                             <option value="">-- Select Book Category --</option>
                             <c:forEach var="c" items="${bookCategories}">
-                                <option value="${c.categoryId}" ${productCreate.categoryId.categoryId == c.categoryId ? 'selected' : ''}>${c.categoryName}</option>
+                                <option value="${c.categoryId}" ${(not empty productCreate.categoryId) and (productCreate.categoryId.categoryId == c.categoryId) ? 'selected' : ''}>${c.categoryName}</option>
                             </c:forEach>
                         </select>
                     </div>
@@ -306,7 +301,7 @@
                         <select name="stationeryCategoryId" class="form-control" style="width: 100%;">
                             <option value="">-- Select Stationery Category --</option>
                             <c:forEach var="c" items="${stationeryCategories}">
-                                <option value="${c.categoryId}" ${productCreate.categoryId.categoryId == c.categoryId ? 'selected' : ''}>${c.categoryName}</option>
+                                <option value="${c.categoryId}" ${(not empty productCreate.categoryId) and (productCreate.categoryId.categoryId == c.categoryId) ? 'selected' : ''}>${c.categoryName}</option>
                             </c:forEach>
                         </select>
                     </div>
@@ -317,7 +312,7 @@
                             <select name="genreId" class="form-control" style="width: 100%;">
                                 <option value="">-- Select Genre --</option>
                                 <c:forEach var="g" items="${genres}">
-                                    <option value="${g.genreId}" ${productCreate.genreId.genreId == g.genreId ? 'selected' : ''}>${g.genreName}</option>
+                                    <option value="${g.genreId}" ${(not empty productCreate.genreId) and (productCreate.genreId.genreId == g.genreId) ? 'selected' : ''}>${g.genreName}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -333,9 +328,22 @@
                                 </c:forEach>
                             </select>
                         </div>
+
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">ISBN</label>
+                            <input type="text" name="isbn" class="form-control" value="${productCreate.isbn}" style="width: 100%;">
+                        </div>
                         <div class="form-group mb-3">
                             <label style="font-weight: bold; display: block;">Publisher</label>
                             <input type="text" name="publisher" class="form-control" value="${productCreate.publisher}" style="width: 100%;">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Translator</label>
+                            <input type="text" name="translator" class="form-control" value="${productCreate.translator}" style="width: 100%;">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Published Year</label>
+                            <input type="number" name="publishedYear" class="form-control" value="${productCreate.publishedYear}" style="width: 100%;">
                         </div>
                     </div>
 

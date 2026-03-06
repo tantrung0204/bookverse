@@ -72,7 +72,15 @@ public class CartService {
         }
     }
 
-    public void removeCartItem(int cartId) {
-        cartDAO.delete(cartId);
+    public boolean removeCartItem(int cartId, int customerId) {
+        Cart item = cartDAO.findById(cartId);
+
+        if (item != null && item.getCustomerId() != null
+                && item.getCustomerId().getCustomerId() == customerId) {
+            cartDAO.delete(cartId);
+            return true;
+        }
+
+        return false;
     }
 }

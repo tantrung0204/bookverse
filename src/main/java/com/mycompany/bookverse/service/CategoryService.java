@@ -134,10 +134,12 @@ public class CategoryService {
     public void editCategory(String idRaw,
             String name,
             String desc,
-            String statusRaw) {
+            String statusRaw,
+            String parentRaw) {
 
         // ===== Validate ID =====
         int id;
+        int parentId = 1;
         try {
             id = Integer.parseInt(idRaw);
         } catch (Exception e) {
@@ -146,6 +148,14 @@ public class CategoryService {
 
         // ===== Validate status =====
         int status = 1;
+        if (statusRaw != null && !statusRaw.isEmpty()) {
+            try {
+                status = Integer.parseInt(statusRaw);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid status value");
+            }
+        }
+
         if (statusRaw != null && !statusRaw.isEmpty()) {
             try {
                 status = Integer.parseInt(statusRaw);
@@ -187,6 +197,8 @@ public class CategoryService {
         category.setCategoryName(name);
         category.setDescriptionText(desc);
         category.setStatus(status);
+        Category parent = categoryDAO.findByCategoryId(parentId);
+        category.setParent(parent);
 
         categoryDAO.edit(category);
     }

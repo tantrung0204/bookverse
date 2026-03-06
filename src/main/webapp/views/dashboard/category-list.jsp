@@ -90,7 +90,8 @@ Author : NganTTK-CE190411 --%>
                                                                 '${c.categoryId}',
                                                                 '${c.categoryName}',
                                                                 '${c.descriptionText}',
-                                                                '${c.status}'
+                                                                '${c.status}',
+                                                                '${c.parent.categoryId}'
                                                                 )">
                                             <i class="bi bi-pencil"></i>
                                         </button>
@@ -301,6 +302,14 @@ Author : NganTTK-CE190411 --%>
                     <option value="0">Inactive</option>
                 </select>
             </div>
+            
+            <div class="form-group">
+                <label>Parent</label>
+                <select name="parent" id="editParent" class="form-control">
+                    <option value="1">BOOK</option>
+                    <option value="2">Văn phòng phẩm</option>
+                </select>
+            </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
@@ -344,11 +353,12 @@ Author : NganTTK-CE190411 --%>
         document.getElementById("detailPopup").style.display = "none";
     }
     // Hàm mở Popup và điền dữ liệu
-    function openEditPopup(id, name, description, status) {
+    function openEditPopup(id, name, description, status, parent) {
         document.getElementById("editCategoryId").value = id;
         document.getElementById("editCategoryName").value = name;
         document.getElementById("editDescription").value = description;
         document.getElementById("editStatus").value = status;
+        document.getElementById("editParent").value = parent;
 
         // Ẩn thông báo lỗi cũ nếu có
         const err = document.getElementById("editErrorMsg");
@@ -409,7 +419,8 @@ Author : NganTTK-CE190411 --%>
                         '${editId}',
                         '${editName}',
                         '${editDesc}',
-                        '${editStatus}'
+                        '${editStatus}',
+                        '${editParent}'
                         );
                 // Hiển thị lại lỗi
                 const err = document.getElementById("editErrorMsg");

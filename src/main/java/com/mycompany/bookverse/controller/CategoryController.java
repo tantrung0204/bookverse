@@ -200,10 +200,11 @@ public class CategoryController extends HttpServlet {
         String name = request.getParameter("categoryName");
         String desc = request.getParameter("descriptionText");
         String statusRaw = request.getParameter("status");
+        String parentRaw = request.getParameter("parent");
 
         try {
 
-            categoryService.editCategory(idRaw, name, desc, statusRaw);
+            categoryService.editCategory(idRaw, name, desc, statusRaw, parentRaw);
 
             request.getSession().setAttribute("successMsg",
                     "Edit category successfully");
@@ -218,6 +219,7 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editName", name);
             request.setAttribute("editDesc", desc);
             request.setAttribute("editStatus", statusRaw);
+            request.setAttribute("editParent", parentRaw);
             request.setAttribute("categories",categoryService.getAllCategoriesPage(1));
             request.setAttribute("contentPage", "category-list.jsp");
             request.setAttribute("activeMenu", "category");

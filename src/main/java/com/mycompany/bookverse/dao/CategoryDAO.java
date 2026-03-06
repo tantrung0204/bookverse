@@ -153,4 +153,26 @@ public class CategoryDAO {
         }
     }
 
+    public List<Category> findActiveSubCategories() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String sql = "SELECT c FROM Category c WHERE c.parent IS NOT NULL AND c.status = 1";
+            return em.createQuery(sql, Category.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Category> findActiveSubCategoriesByParentId(int parentId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String sql = "SELECT c FROM Category c WHERE c.parent.categoryId = :parentId AND c.status = 1";
+
+            return em.createQuery(sql, Category.class)
+                    .setParameter("parentId", parentId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

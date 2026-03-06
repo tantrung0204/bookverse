@@ -24,6 +24,10 @@ public class GenreService {
         return genreDAO.findById(id);
     }
 
+    public List<Genre> getActiveGenres() {
+        return genreDAO.findActiveGenres();
+    }
+
     public List<Genre> searchGenres(String keyword) {
         return genreDAO.searchByName(keyword);
     }

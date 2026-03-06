@@ -28,6 +28,14 @@ public class CategoryService {
         return categoryDAO.findByCategoryId(categoryId);
     }
 
+    public List<Category> getActiveSubCategories() {
+        return categoryDAO.findActiveSubCategories();
+    }
+    
+    public List<Category> getActiveSubCategoriesByParentId(int parentId) {
+        return categoryDAO.findActiveSubCategoriesByParentId(parentId);
+    }
+
     public void createCategory(Category category) {
         categoryDAO.create(category);
     }

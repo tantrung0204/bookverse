@@ -9,6 +9,7 @@ import com.mycompany.bookverse.model.*;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
 
 /**
  *
@@ -102,6 +103,74 @@ public class ProductDAO {
                     .setParameter("categoryId", categoryId)
                     .getSingleResult();
             return count;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean isProductNameExists(String name, int excludeProductId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) = LOWER(:name) AND p.productId != :id";
+            Long count = em.createQuery(jpql, Long.class)
+                    .setParameter("name", name.trim())
+                    .setParameter("id", excludeProductId)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean createProduct(Product product) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            if (product.getCategoryId() != null) {
+                product.setCategoryId(em.getReference(Category.class, product.getCategoryId().getCategoryId()));
+            }
+
+            if (product instanceof Book) {
+                Book book = (Book) product;
+                if (book.getGenreId() != null) {
+                    book.setGenreId(em.getReference(Genre.class, book.getGenreId().getGenreId()));
+                }
+                if (book.getAuthorCollection() != null) {
+                    List<Author> attachedAuthors = new ArrayList<>();
+                    for (Author a : book.getAuthorCollection()) {
+                        attachedAuthors.add(em.getReference(Author.class, a.getAuthorId()));
+                    }
+                    book.setAuthorCollection(attachedAuthors);
+                }
+            }
+
+            em.persist(product);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean updateProduct(Product product) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(product);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
         } finally {
             em.close();
         }

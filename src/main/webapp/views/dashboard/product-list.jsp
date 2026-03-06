@@ -19,7 +19,19 @@
     </div>
 
     <div class="content-card">
+        <c:if test="${not empty successMsg}">
+            <div class="alert alert-success">
+                ${successMsg}
+            </div>
+            <c:remove var="successMsg" scope="session" />
+        </c:if>
 
+        <c:if test="${not empty errorMsg}">
+            <div class="alert alert-error">
+                ${errorMsg}
+            </div>
+            <c:remove var="errorMsg" scope="session" />
+        </c:if>
         <div class="tab-container">
             <a href="${pageContext.request.contextPath}/product?tab=book" 
                class="tab-item ${currentTab == 'book' ? 'active' : ''}">
@@ -80,15 +92,18 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button type="button" class="btn-action btn-detail" title="View Detail" 
-                                                onclick="openProductDetail('${product.productId}')">
+                                        <a href="${pageContext.request.contextPath}/product?action=detail&id=${product.productId}&tab=${currentTab}&keyword=${currentKeyword}&page=${currentPage}" 
+                                           class="btn-action btn-detail" title="View Detail" 
+                                           style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
                                             <i class="bi bi-eye"></i>
-                                        </button>
+                                        </a>
 
-                                        <button type="button" class="btn-action btn-edit" title="Edit" 
-                                                onclick="openProductEdit('${product.productId}')">
+
+                                        <a href="${pageContext.request.contextPath}/product?action=edit&id=${product.productId}&tab=${currentTab}&keyword=${currentKeyword}&page=${currentPage}" 
+                                           class="btn-action btn-edit" title="Edit" 
+                                           style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
                                             <i class="bi bi-pencil"></i>
-                                        </button>
+                                        </a>
 
                                         <form action="${pageContext.request.contextPath}/product" method="post" style="display:inline;" 
                                               onsubmit="return confirm('Are you sure you want to delete product:\n${product.name} (ID: ${product.productId})')">
@@ -137,21 +152,371 @@
     </div>
 </div>
 
+<!-- ================= DETAIL POPUP ================= -->
+<c:if test="${not empty productDetail}">
+    <div id="detailPopup" class="modal-overlay" style="display: flex;">
+        <div class="modal-content" style="width: 700px; max-width: 90%;">
+            <div class="modal-header">
+                <h3>Product Detail</h3>
+            </div>
+
+            <div style="display: flex; gap: 20px; text-align: left; padding: 10px 0;">
+                <div style="flex: 0 0 200px;">
+                    <c:choose>
+                        <c:when test="${not empty productDetail.imageUrl}">
+                            <img src="${productDetail.imageUrl}" style="width: 100%; border-radius: 5px; border: 1px solid #ccc;"
+                                 onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';">
+                        </c:when>
+                    </c:choose>
+                </div>
+
+                <div style="flex: 1;">
+                    <table class="detail-table" style="width: 100%;">
+                        <tr><th width="30%">ID:</th><td>${productDetail.productId}</td></tr>
+                        <tr><th>Name:</th><td style="font-weight: bold;">${productDetail.name}</td></tr>
+                        <tr><th>Type:</th><td>${productDetail.type}</td></tr>
+                        <tr><th>Category:</th><td>${productDetail.categoryId != null ? productDetail.categoryId.categoryName : 'N/A'}</td></tr>
+                        <tr><th>Price:</th><td style="color: #d9534f; font-weight: bold;"><fmt:formatNumber value="${productDetail.price}" pattern="#,###"/> đ</td></tr>
+                        <tr><th>Quantity:</th><td>${productDetail.stockQuantity}</td></tr>
+                        <tr><th>Rating:</th><td><fmt:formatNumber value="${productDetail.averageRating}" maxFractionDigits="1"/> <i style="color: #ffc107;" class="bi bi-star-fill"></i> (${productDetail.reviewCount} reviews)</td></tr>
+                        <tr><th>Sold:</th><td>${productDetail.soldQuantity} items</td></tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${productDetail.status == 1}"><span class="badge-status badge-active">Active</span></c:when>
+                                    <c:otherwise><span class="badge-status badge-inactive">Inactive</span></c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <c:if test="${productDetail.type == 'Stationery'}">
+                        <table class="detail-table" style="width: 100%; margin-top: 5px;">
+                            <tr><th width="30%">Color:</th><td>${not empty productDetail.color ? productDetail.color : 'N/A'}</td></tr>
+                            <tr><th>Material:</th><td>${not empty productDetail.material ? productDetail.material : 'N/A'}</td></tr>
+                        </table>
+                    </c:if>
+
+                    <c:if test="${productDetail.type == 'Book'}">
+                        <table class="detail-table" style="width: 100%; margin-top: 5px;">
+                            <tr><th width="30%">Genre:</th><td>${productDetail.genreId != null ? productDetail.genreId.genreName : 'N/A'}</td></tr>
+                            <tr>
+                                <th>Author(s):</th>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty productDetail.authorCollection}">
+                                            <c:forEach var="author" items="${productDetail.authorCollection}" varStatus="st">
+                                                ${author.authorName}${!st.last ? ', ' : ''}
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>N/A</c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </table>
+                    </c:if>
+                </div>
+            </div>
+
+            <div style="text-align: left; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;">
+                <strong>Description:</strong>
+                <p style="font-size: 14px; color: #555; margin-top: 5px;">${not empty productDetail.descriptionText ? productDetail.descriptionText : 'No description available.'}</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('detailPopup').style.display = 'none';">Close</button>
+            </div>
+        </div>
+    </div>
+</c:if>
+<!-- ================= CREATE POPUP ================= -->
+<div id="createPopup" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="width: 700px; max-width: 90%; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+            <h3>Add New Product</h3>
+        </div>
+
+        <c:if test="${not empty createError}">
+            <div class="alert alert-danger" style="margin-bottom: 15px; color: red; background: #fdd; padding: 10px; border-radius: 5px;">
+                ${createError}
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/product" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="create">
+            <input type="hidden" name="tab" value="${currentTab}">
+
+            <div class="form-group mb-3" style="background: #f9f9f9; padding: 10px; border-radius: 5px;">
+                <label style="font-weight: bold; margin-right: 15px;">Product Type <span style="color:red;">*</span></label>
+
+                <input type="radio" name="productType" id="typeBook" value="Book" 
+                       ${empty productCreate or productCreate.type == 'Book' ? 'checked' : ''} 
+                       onchange="toggleCreateFields()"> <label for="typeBook" style="margin-right: 15px;">Book</label>
+
+                <input type="radio" name="productType" id="typeStat" value="Stationery" 
+                       ${productCreate.type == 'Stationery' ? 'checked' : ''} 
+                       onchange="toggleCreateFields()"> <label for="typeStat">Stationery</label>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <div class="form-group mb-3">
+                        <label style="font-weight: bold; display: block;">Name <span style="color:red;">*</span></label>
+                        <input type="text" name="name" class="form-control" value="${productCreate.name}" required style="width: 100%;">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label style="font-weight: bold; display: block;">Price (VND) <span style="color:red;">*</span></label>
+                        <input type="number" name="price" class="form-control" value="${productCreate.price}" min="1" step="0.01" required style="width: 100%;">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label style="font-weight: bold; display: block;">Initial Quantity <span style="color:red;">*</span></label>
+                        <input type="number" name="quantity" class="form-control" value="${not empty productCreate ? productCreate.stockQuantity : 0}" min="0" required style="width: 100%;">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label style="font-weight: bold; display: block;">Image Upload</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div style="flex: 1;">
+                    <div class="form-group mb-3">
+                        <label style="font-weight: bold; display: block;">Status</label>
+                        <select name="status" class="form-control" style="width: 100%;">
+                            <option value="1" ${productCreate.status == 1 ? 'selected' : ''}>Active</option>
+                            <option value="0" ${productCreate.status == 0 ? 'selected' : ''}>Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3" id="bookCategoryGroup">
+                        <label style="font-weight: bold; display: block;">Book Category <span style="color:red;">*</span></label>
+                        <select name="bookCategoryId" class="form-control" style="width: 100%;">
+                            <option value="">-- Select Book Category --</option>
+                            <c:forEach var="c" items="${bookCategories}">
+                                <option value="${c.categoryId}" ${productCreate.categoryId.categoryId == c.categoryId ? 'selected' : ''}>${c.categoryName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3" id="statCategoryGroup" style="display: none;">
+                        <label style="font-weight: bold; display: block;">Stationery Category <span style="color:red;">*</span></label>
+                        <select name="stationeryCategoryId" class="form-control" style="width: 100%;">
+                            <option value="">-- Select Stationery Category --</option>
+                            <c:forEach var="c" items="${stationeryCategories}">
+                                <option value="${c.categoryId}" ${productCreate.categoryId.categoryId == c.categoryId ? 'selected' : ''}>${c.categoryName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <div id="createBookExtra">
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Genre <span style="color:red;">*</span></label>
+                            <select name="genreId" class="form-control" style="width: 100%;">
+                                <option value="">-- Select Genre --</option>
+                                <c:forEach var="g" items="${genres}">
+                                    <option value="${g.genreId}" ${productCreate.genreId.genreId == g.genreId ? 'selected' : ''}>${g.genreName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Authors <span style="color:red;">*</span></label>
+                            <select name="authorIds" class="form-control" multiple size="3" style="width: 100%;">
+                                <c:forEach var="a" items="${authors}">
+                                    <c:set var="isSel" value="false" />
+                                    <c:forEach var="pa" items="${productCreate.authorCollection}">
+                                        <c:if test="${pa.authorId == a.authorId}"><c:set var="isSel" value="true" /></c:if>
+                                    </c:forEach>
+                                    <option value="${a.authorId}" ${isSel ? 'selected' : ''}>${a.authorName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Publisher</label>
+                            <input type="text" name="publisher" class="form-control" value="${productCreate.publisher}" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <div id="createStatExtra" style="display: none;">
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Color</label>
+                            <input type="text" name="color" class="form-control" value="${productCreate.color}" style="width: 100%;">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Material</label>
+                            <input type="text" name="material" class="form-control" value="${productCreate.material}" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label style="font-weight: bold; display: block;">Description</label>
+                <textarea name="description" class="form-control" rows="3" style="width: 100%; resize: vertical;">${productCreate.descriptionText}</textarea>
+            </div>
+
+            <div class="modal-footer" style="text-align: right; border-top: 1px solid #eee; padding-top: 15px;">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('createPopup').style.display = 'none';">Cancel</button>
+                <button type="submit" class="btn-save">Add Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ================= EDIT POPUP ================= -->
+<c:if test="${not empty productEdit}">
+    <div id="editPopup" class="modal-overlay" style="display: flex;">
+        <div class="modal-content" style="width: 700px; max-width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>Edit Product (#${productEdit.productId})</h3>
+            </div>
+
+            <c:if test="${not empty editError}">
+                <div class="alert alert-danger" style="margin-bottom: 15px; color: red; background: #fdd; padding: 10px; border-radius: 5px;">
+                    ${editError}
+                </div>
+            </c:if>
+
+            <form action="${pageContext.request.contextPath}/product" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="id" value="${productEdit.productId}">
+                <input type="hidden" name="tab" value="${currentTab}">
+                <input type="hidden" name="productType" value="${productEdit.type}">
+                <input type="hidden" name="oldImageUrl" value="${productEdit.imageUrl}">
+
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Name <span style="color:red;">*</span></label>
+                            <input type="text" name="name" class="form-control" value="${productEdit.name}" required style="width: 100%;">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Price (VND) <span style="color:red;">*</span></label>
+                            <input type="number" name="price" class="form-control" value="${productEdit.price}" min="1" step="0.01" required style="width: 100%;">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Category <span style="color:red;">*</span></label>
+                            <select name="categoryId" class="form-control" required style="width: 100%;">
+                                <option value="">-- Select Category --</option>
+                                <c:forEach var="c" items="${categories}">
+                                    <option value="${c.categoryId}" ${productEdit.categoryId.categoryId == c.categoryId ? 'selected' : ''}>
+                                        ${c.categoryName}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Product Image</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/png, image/jpeg, image/webp" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <div style="flex: 1;">
+                        <div class="form-group mb-3">
+                            <label style="font-weight: bold; display: block;">Status <span style="color:red;">*</span></label>
+                            <select name="status" class="form-control" style="width: 100%;">
+                                <option value="1" ${productEdit.status == 1 ? 'selected' : ''}>Active</option>
+                                <option value="0" ${productEdit.status == 0 ? 'selected' : ''}>Inactive</option>
+                            </select>
+                        </div>
+
+                        <c:if test="${productEdit.type == 'Book'}">
+                            <div class="form-group mb-3">
+                                <label style="font-weight: bold; display: block;">Genre</label>
+                                <select name="genreId" class="form-control" style="width: 100%;">
+                                    <option value="">-- Select Genre --</option>
+                                    <c:forEach var="g" items="${genres}">
+                                        <option value="${g.genreId}" ${productEdit.genreId.genreId == g.genreId ? 'selected' : ''}>
+                                            ${g.genreName}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label style="font-weight: bold; display: block;">Authors (Hold Ctrl to select multiple)</label>
+                                <select name="authorIds" class="form-control" multiple size="4" style="width: 100%;">
+                                    <c:forEach var="a" items="${authors}">
+                                        <c:set var="isSelected" value="false" />
+                                        <c:forEach var="pa" items="${productEdit.authorCollection}">
+                                            <c:if test="${pa.authorId == a.authorId}">
+                                                <c:set var="isSelected" value="true" />
+                                            </c:if>
+                                        </c:forEach>
+                                        <option value="${a.authorId}" ${isSelected ? 'selected' : ''}>${a.authorName}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </c:if>
+
+                        <c:if test="${productEdit.type == 'Stationery'}">
+                            <div class="form-group mb-3">
+                                <label style="font-weight: bold; display: block;">Color</label>
+                                <input type="text" name="color" class="form-control" value="${productEdit.color}" style="width: 100%;">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label style="font-weight: bold; display: block;">Material</label>
+                                <input type="text" name="material" class="form-control" value="${productEdit.material}" style="width: 100%;">
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label style="font-weight: bold; display: block;">Description</label>
+                    <textarea name="description" class="form-control" rows="4" style="width: 100%; resize: vertical;">${productEdit.descriptionText}</textarea>
+                </div>
+
+                <div class="modal-footer" style="text-align: right; border-top: 1px solid #eee; padding-top: 15px;">
+                    <button type="button" class="btn-cancel" onclick="document.getElementById('editPopup').style.display = 'none';">Cancel</button>
+                    <button type="submit" class="btn-save">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</c:if>
+
 <script>
-    // Placeholder functions for the action buttons. 
-    // You can implement the popups similarly to how you did in category-list.jsp
+// 1. Hàm bật modal Create
     function openCreateProductPopup() {
-        console.log("Open Create Product Popup");
-        // Logic to open create modal
+        document.getElementById("createPopup").style.display = "flex";
+        toggleCreateFields(); // Chạy ngay lần đầu để set đúng layout
     }
 
-    function openProductDetail(id) {
-        console.log("View detail for product ID:", id);
-        // Logic to fetch and show details
+    // 2. Hàm Toggle Ẩn Hiện các trường theo Product Type
+    function toggleCreateFields() {
+        var isBook = document.getElementById("typeBook").checked;
+
+        if (isBook) {
+            document.getElementById("bookCategoryGroup").style.display = "block";
+            document.getElementById("statCategoryGroup").style.display = "none";
+            document.getElementById("createBookExtra").style.display = "block";
+            document.getElementById("createStatExtra").style.display = "none";
+        } else {
+            document.getElementById("bookCategoryGroup").style.display = "none";
+            document.getElementById("statCategoryGroup").style.display = "block";
+            document.getElementById("createBookExtra").style.display = "none";
+            document.getElementById("createStatExtra").style.display = "block";
+        }
     }
 
-    function openProductEdit(id) {
-        console.log("Edit product ID:", id);
-        // Logic to open edit modal and populate data
+    // 3. Tự động bật lại Modal nếu Controller báo có lỗi Validate
+    <c:if test="${openCreateModal == true}">
+    window.onload = function () {
+        setTimeout(function () {
+            openCreateProductPopup();
+        }, 100);
+    };
+    </c:if>
+
+// Đóng Popup khi click ra ngoài vùng xám (overlay)
+    window.onclick = function (event) {
+        var detailModal = document.getElementById("detailPopup");
+        if (detailModal && event.target == detailModal) {
+            detailModal.style.display = "none";
+        }
     }
 </script>

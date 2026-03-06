@@ -25,10 +25,16 @@ public class CartService {
         BigDecimal total = BigDecimal.ZERO;
         if (cartItems != null && !cartItems.isEmpty()) {
             for (Cart item : cartItems) {
-                BigDecimal price = item.getProductId().getPrice();
-                BigDecimal quantity = new BigDecimal(item.getCartQuantity());
+                Product p = item.getProductId();
 
-                total = total.add(price.multiply(quantity));
+                if (p.getStatus() != null && p.getStatus() == 1
+                        && p.getStockQuantity() != null && p.getStockQuantity() > 0) {
+
+                    BigDecimal price = p.getPrice();
+                    BigDecimal quantity = new BigDecimal(item.getCartQuantity());
+
+                    total = total.add(price.multiply(quantity));
+                }
             }
         }
         return total;
@@ -54,9 +60,13 @@ public class CartService {
         }
     }
 
-    public void updateCartQuantity(int cartId, int newQuantity) {
+    public void updateCartQuantity(int cartId, int newQuantity) throws Exception {
         Cart item = cartDAO.findById(cartId);
         if (item != null) {
+            int stock = item.getProductId().getStockQuantity();
+            if (newQuantity > stock) {
+                throw new Exception("Exceeds available stock quantity.");
+            }
             item.setCartQuantity(newQuantity);
             cartDAO.save(item);
         }

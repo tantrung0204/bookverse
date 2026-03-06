@@ -80,7 +80,7 @@ public class CartDAO {
         try {
             em.getTransaction().begin();
 
-            Cart cartItem = findById(cartId);
+            Cart cartItem = em.find(Cart.class, cartId);
 
             if (cartItem != null) {
                 em.remove(cartItem);
@@ -91,5 +91,6 @@ public class CartDAO {
         } finally {
             em.close();
         }
+
     }
 }

@@ -11,14 +11,6 @@
     font-size:28px;
 }
 
-.header-subtitle {
-    font-family: "Lato", serif;
-    color: #666666;
-    font-weight: 400;
-    font-size: 20px;
-    margin-bottom: 0;
-}
-
 .user-profile-btn {
     cursor: pointer;
     transition: background-color 0.2s;

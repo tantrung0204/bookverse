@@ -18,7 +18,7 @@
 
         <link href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        
+
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
@@ -59,12 +59,19 @@
                             </thead>
                             <tbody>
                                 <c:set var="grandTotal" value="0" />
+                                <c:set var="validItemCount" value="0" />
 
                                 <c:forEach items="${requestScope.cartList}" var="item">
                                     <c:set var="lineTotal" value="${item.productId.price * item.cartQuantity}"/>
-                                    <c:set var="grandTotal" value="${grandTotal + lineTotal}" />
 
-                                    <tr>
+                                    <c:set var="isAvailable" value="${item.productId.status == 1 && item.productId.stockQuantity > 0}" />
+
+                                    <c:if test="${isAvailable}">
+                                        <c:set var="grandTotal" value="${grandTotal + lineTotal}" />
+                                        <c:set var="validItemCount" value="${validItemCount + item.cartQuantity}" />
+                                    </c:if>
+
+                                    <tr class="${!isAvailable ? 'product-disabled' : ''}">
                                         <td>
                                             <a href="product-detail?id=${item.productId.productId}">
                                                 <img src="${item.productId.imageUrl}" alt="${item.productId.name}" class="img-product"
@@ -73,9 +80,14 @@
                                         </td>
 
                                         <td>
-                                            <a href="product-detail?id=${item.productId.productId}" class="product-name-link">
+                                            <a href="product-detail?id=${item.productId.productId}" class="product-name-link fw-bold">
                                                 ${item.productId.name}
                                             </a>
+                                            <c:if test="${!isAvailable}">
+                                                <div class="text-danger mt-1" style="font-size: 0.85rem; font-weight: bold;">
+                                                    <i class="fa-solid fa-circle-xmark"></i> Unavailable / Out of stock
+                                                </div>
+                                            </c:if>
                                         </td>
 
                                         <td class="price-text">
@@ -85,20 +97,31 @@
                                         <td class="text-center">
                                             <div class="input-group qty-group d-flex justify-content-center">
                                                 <button class="btn qty-btn-custom" type="button" 
-                                                        onclick="updateQuantity(${item.cartId}, -1)">-</button>
+                                                        onclick="updateByButton(${item.cartId}, -1, ${item.productId.stockQuantity})"
+                                                        ${!isAvailable ? 'disabled' : ''}>-</button>
 
-                                                <input type="text" class="form-control text-center p-0 qty-input-custom" 
+                                                <input type="number" min="1" class="form-control text-center p-0 qty-input-custom" 
                                                        id="qty-${item.cartId}" 
-                                                       value="${item.cartQuantity}" readonly>
+                                                       value="${item.cartQuantity}" 
+                                                       onchange="handleManualInput(${item.cartId}, this.value, ${item.productId.stockQuantity})"
+                                                       ${!isAvailable ? 'disabled' : ''}>
 
                                                 <button class="btn qty-btn-custom" type="button" 
-                                                        onclick="updateQuantity(${item.cartId}, 1)">+</button>
+                                                        onclick="updateByButton(${item.cartId}, 1, ${item.productId.stockQuantity})"
+                                                        ${!isAvailable ? 'disabled' : ''}>+</button>
                                             </div>
                                         </td>
 
                                         <td class="price-text">
                                             <span id="item-total-${item.cartId}">
-                                                <fmt:formatNumber value="${lineTotal}" pattern="#,###"/>
+                                                <c:choose>
+                                                    <c:when test="${!isAvailable}">
+                                                        <del class="text-muted"><fmt:formatNumber value="${lineTotal}" pattern="#,###"/></del>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <fmt:formatNumber value="${lineTotal}" pattern="#,###"/>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </span> đ
                                         </td>
 
@@ -129,14 +152,14 @@
                                 </a>
                             </div>
                             <div class="col-md-6 text-end">
-                                <span class="grand-total-label me-2">Grand Total:</span>
+                                <span class="grand-total-label me-2">Grand Total (<span id="valid-item-count">${validItemCount}</span> items):</span>
                                 <span class="grand-total-amount">
                                     <span id="grand-total">
                                         <fmt:formatNumber value="${grandTotal}" pattern="#,###"/>
                                     </span> đ
                                 </span>
                                 <br><br>
-                                <a href="checkout" class="btn-brand-solid btn-lg px-5">
+                                <a href="checkout" class="btn-brand-solid btn-lg px-5 ${validItemCount == 0 ? 'disabled' : ''}">
                                     Place Order
                                 </a>
                             </div>
@@ -146,27 +169,14 @@
             </c:if>
         </div>
 
+        <div id="toast"></div>
+
         <c:if test="${not empty sessionScope.cartMessage}">
-            <div id="toast" class="${sessionScope.messageType == 'error' ? 'toast-error' : 'toast-success'}">
-                <c:if test="${sessionScope.messageType != 'error'}">
-                    <i class="fa-solid fa-circle-check"></i>
-                </c:if>
-                <c:if test="${sessionScope.messageType == 'error'}">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                </c:if>
-                <span>${sessionScope.cartMessage}</span>
-            </div>
-
             <script>
-                window.onload = function () {
-                    var x = document.getElementById("toast");
-                    x.className += " show";
-                    setTimeout(function () {
-                        x.className = x.className.replace(" show", "");
-                    }, 3000);
-                };
+                document.addEventListener("DOMContentLoaded", function () {
+                    showToastJS('${sessionScope.cartMessage}', '${sessionScope.messageType}');
+                });
             </script>
-
             <c:remove var="cartMessage" scope="session"/>
             <c:remove var="messageType" scope="session"/>
         </c:if>
@@ -174,41 +184,109 @@
         <jsp:include page="../public/footer-index.jsp" />
 
         <script>
+            function showToastJS(message, type) {
+                var toast = document.getElementById("toast");
+
+                if (!toast) {
+                    toast = document.createElement("div");
+                    toast.id = "toast";
+                    document.body.appendChild(toast);
+                }
+
+                // Set nội dung và màu sắc
+                toast.innerHTML = (type === 'error' ? '<i class="fa-solid fa-circle-exclamation"></i> ' : '<i class="fa-solid fa-circle-check"></i> ') + "<span>" + message + "</span>";
+                toast.className = type === 'error' ? 'toast-error show' : 'toast-success show';
+
+                // Tự động tắt sau 3 giây
+                setTimeout(function () {
+                    toast.className = toast.className.replace(" show", "");
+                }, 1000);
+            }
+
             function formatCurrency(number) {
                 return new Intl.NumberFormat('vi-VN').format(number);
             }
 
-            function updateQuantity(cartId, change) {
+            function updateByButton(cartId, change, maxStock) {
                 let qtyInput = document.getElementById("qty-" + cartId);
-                let currentQty = parseInt(qtyInput.value);
+                let currentQty = parseInt(qtyInput.value) || 1;
                 let newQty = currentQty + change;
 
                 if (newQty < 1)
                     return;
 
+                if (newQty > maxStock) {
+                    newQty = maxStock;
+                    showToastJS("Maximum available stock reached (" + maxStock + ")!", "error");
+                }
+
+                // Gọi hàm gửi AJAX
+                sendAjaxUpdate(cartId, newQty, currentQty, qtyInput);
+            }
+
+            function handleManualInput(cartId, typedValue, maxStock) {
+                let qtyInput = document.getElementById("qty-" + cartId);
+                let currentQty = parseInt(qtyInput.getAttribute("data-current") || qtyInput.defaultValue);
+                let newQty = parseInt(typedValue);
+
+                if (isNaN(newQty) || newQty < 1) {
+                    newQty = 1;
+                    showToastJS("Quantity must be at least 1!", "error");
+                }
+
+                if (newQty > maxStock) {
+                    newQty = maxStock;
+                    showToastJS("Only " + maxStock + " items left in stock. Adjusted to maximum!", "error");
+                }
+
+                // Gọi hàm gửi AJAX
+                sendAjaxUpdate(cartId, newQty, currentQty, qtyInput);
+            }
+
+            function sendAjaxUpdate(cartId, newQty, currentQty, qtyInput) {
+                qtyInput.value = newQty; // Tạm thời update UI cho mượt
+
                 fetch('cart', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     body: 'action=update&cartId=' + cartId + '&quantity=' + newQty
                 })
                         .then(response => {
-                            if (response.ok) {
+                            if (response.ok)
                                 return response.json();
-                            }
                             throw new Error('Network response was not ok');
                         })
                         .then(data => {
                             if (data.status === 'success') {
-                                qtyInput.value = newQty;
                                 document.getElementById("item-total-" + cartId).innerText = formatCurrency(data.itemTotal);
                                 document.getElementById("grand-total").innerText = formatCurrency(data.grandTotal);
+
+                                // CẬP NHẬT TỔNG SỐ ITEM
+                                let countSpan = document.getElementById("valid-item-count");
+                                if (countSpan) {
+                                    if (data.totalItems !== undefined) {
+                                        countSpan.innerText = data.totalItems;
+                                    } else {
+                                        // Tự quét tất cả các ô input (không bị mờ) và cộng lại nếu Server lỗi
+                                        let total = 0;
+                                        document.querySelectorAll(".qty-input-custom:not([disabled])").forEach(input => {
+                                            total += parseInt(input.value) || 0;
+                                        });
+                                        countSpan.innerText = total;
+                                    }
+                                }
+
+                                qtyInput.setAttribute("data-current", newQty);
+
+                            } else if (data.status === 'error') {
+                                showToastJS(data.message, "error");
+                                qtyInput.value = currentQty;
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            alert("Error!");
+                            showToastJS("An error occurred!", "error");
+                            qtyInput.value = currentQty;
                         });
             }
         </script>

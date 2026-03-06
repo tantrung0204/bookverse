@@ -1,3 +1,4 @@
+/* ================= PAGE LAYOUT ================= */
 .page-header {
     margin-bottom: 25px;
 }
@@ -24,6 +25,37 @@
     padding: 25px;
 }
 
+/* ================= TABS NAVIGATION ================= */
+.tab-container {
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+    border-bottom: 2px solid #f1f1f1;
+    padding-bottom: 10px;
+}
+
+.tab-item {
+    text-decoration: none;
+    color: #888;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.tab-item.active {
+    color: #a68a6d;
+    background-color: #fcf9f5;
+    font-weight: 600;
+}
+
+.tab-item:hover {
+    color: #a68a6d;
+    background-color: #fcf9f5;
+}
+
+/* ================= TOOLBAR & SEARCH ================= */
 .toolbar {
     display: flex;
     justify-content: space-between;
@@ -66,6 +98,7 @@
     border: none;
     text-decoration: none;
     transition: opacity 0.2s;
+    cursor: pointer;
 }
 
 .btn-add:hover {
@@ -73,6 +106,7 @@
     color: #2c3e50;
 }
 
+/* ================= TABLE STYLES ================= */
 .custom-table {
     width: 100%;
     border-collapse: separate;
@@ -102,6 +136,7 @@
     background-color: #fafafa;
 }
 
+/* ================= BADGES ================= */
 .badge-status {
     padding: 5px 10px;
     border-radius: 20px;
@@ -119,6 +154,7 @@
     color: #c62828;
 }
 
+/* ================= ACTION BUTTONS ================= */
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -160,6 +196,36 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* ================= PAGINATION ================= */
+.pagination-container {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-link {
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #555;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.page-link.active {
+    background-color: #a68a6d;
+    color: white;
+    border-color: #a68a6d;
+}
+
+.page-link:hover:not(.active) {
+    background-color: #f9f9f9;
+}
+
+/* ================= MODALS & POPUPS (Dự phòng cho các popup sau này) ================= */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -184,15 +250,8 @@
 }
 
 @keyframes slideDown {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-header h3 {
@@ -256,54 +315,6 @@
     border-radius: 4px;
 }
 
-.popup-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.popup-box {
-    background: #fff;
-    padding: 20px 28px;
-    min-width: 300px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-    animation: scaleIn 0.25s ease;
-}
-
-.popup-box h4 {
-    margin-bottom: 8px;
-    font-size: 18px;
-}
-
-.popup-box p {
-    font-size: 14px;
-}
-
-.popup-success h4 {
-    color: #198754;
-}
-
-.popup-error h4 {
-    color: #dc3545;
-}
-
-@keyframes scaleIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1
-    }
-}
 .detail-table {
     width: 100%;
     border-collapse: collapse;
@@ -319,59 +330,4 @@
 .detail-table td {
     padding: 10px 0;
     color: #333;
-}
-.toolbar {
-    margin-bottom: 20px;
-}
-
-.filter-buttons {
-    display: flex;
-    gap: 12px;
-}
-
-.btn-filter {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 500;
-    color: #444;
-    background-color: #f2f2f2;
-    transition: all 0.2s ease;
-}
-
-.btn-filter:hover {
-    background-color: #e0e0e0;
-}
-
-.btn-filter.active {
-    background-color: #4f46e5; /* xanh tím hiện đại */
-    color: #fff;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-    background: #fff;
-    width: 500px;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.close {
-    float: right;
-    cursor: pointer;
-    font-size: 22px;
 }

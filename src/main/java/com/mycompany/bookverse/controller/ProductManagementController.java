@@ -91,11 +91,13 @@ public class ProductManagementController extends HttpServlet {
         }
 
         // 3. Đẩy dữ liệu trạng thái về JSP
+        request.setAttribute("contentPage", "product-list.jsp");
+        request.setAttribute("activeMenu", "product");
         request.setAttribute("currentTab", tab);
         request.setAttribute("currentKeyword", keyword);
         request.setAttribute("currentPage", page);
 
-        request.getRequestDispatcher("/views/dashboard/product-list.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
 
     }
 

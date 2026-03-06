@@ -42,7 +42,7 @@ body {
 }
 
 .cart-table th {
-    background-color: #f4f0ec; /* Nền nâu rất nhạt */
+    background-color: #f4f0ec;
     color: #8B6B4C;
     font-weight: 700;
     border-bottom: 2px solid #8B6B4C !important;
@@ -56,7 +56,6 @@ body {
     border-bottom: 1px solid #eee;
 }
 
-/* Ảnh sản phẩm trong giỏ */
 .img-product {
     width: 80px;
     height: 100px;
@@ -67,7 +66,6 @@ body {
     padding: 5px;
 }
 
-/* Tên và giá sản phẩm */
 .product-name-link {
     color: #2c2c2c;
     text-decoration: none;
@@ -81,7 +79,7 @@ body {
 }
 
 .price-text {
-    color: #d35400; /* Màu cam đất đặc trưng của giá */
+    color: #d35400;
     font-weight: bold;
     font-size: 1.15rem;
 }
@@ -104,7 +102,7 @@ body {
     transition: background-color 0.2s;
 }
 
-.qty-btn-custom:hover {
+.qty-btn-custom:hover:not(:disabled) {
     background-color: #eee;
 }
 
@@ -165,10 +163,17 @@ body {
     display: inline-block;
 }
 
-.btn-brand-solid:hover {
+.btn-brand-solid:hover:not(.disabled) {
     background-color: #6e5238;
     border-color: #6e5238;
     color: #fff;
+}
+
+/* Thêm hiệu ứng cho nút khi bị disabled */
+.btn-brand-solid.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
 }
 
 .btn-brand-outline {
@@ -188,6 +193,25 @@ body {
     background-color: #8B6B4C;
     color: #fff;
 }
+
+/* ================= SẢN PHẨM KHÔNG KHẢ DỤNG (DISABLED) ================= */
+.product-disabled {
+    background-color: #f8f9fa;
+}
+
+.product-disabled .img-product,
+.product-disabled .product-name-link,
+.product-disabled .price-text,
+.product-disabled .qty-group {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.product-disabled .btn-remove-item {
+    pointer-events: auto;
+    opacity: 1;
+}
+
 
 /* ================= TOAST NOTIFICATION ================= */
 #toast {
@@ -209,8 +233,12 @@ body {
     gap: 12px;
 }
 
-#toast.toast-success { background-color: #27ae60; }
-#toast.toast-error { background-color: #e74c3c; }
+#toast.toast-success {
+    background-color: #27ae60;
+}
+#toast.toast-error {
+    background-color: #e74c3c;
+}
 
 #toast.show {
     visibility: visible;
@@ -218,5 +246,23 @@ body {
     animation: slidein 0.5s, slideout 0.5s 2.5s;
 }
 
-@keyframes slidein { from { right: -50px; opacity: 0; } to { right: 30px; opacity: 1; } }
-@keyframes slideout { from { right: 30px; opacity: 1; } to { right: -50px; opacity: 0; } }
+@keyframes slidein {
+    from {
+        right: -50px;
+        opacity: 0;
+    }
+    to {
+        right: 30px;
+        opacity: 1;
+    }
+}
+@keyframes slideout {
+    from {
+        right: 30px;
+        opacity: 1;
+    }
+    to {
+        right: -50px;
+        opacity: 0;
+    }
+}

@@ -172,28 +172,41 @@ public class CartController extends HttpServlet {
             throws IOException {
 
         response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
 
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
             int newQuantity = Integer.parseInt(request.getParameter("quantity"));
 
-            cartService.updateCartQuantity(cartId, newQuantity);
+            try {
+                cartService.updateCartQuantity(cartId, newQuantity);
+            } catch (Exception ex) {
+                // NẾU LỖI DO VƯỢT QUÁ KHO -> Trả về JSON báo lỗi
+                out.print("{");
+                out.print("\"status\": \"error\",");
+                out.print("\"message\": \"The quantity exceeds the available stock!\"");
+                out.print("}");
+                out.flush();
+                return;
+            }
 
             int customerId = 1;
             List<Cart> cartItems = cartService.getCustomerCart(customerId);
             BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);
 
             BigDecimal itemTotal = BigDecimal.ZERO;
+            int totalItems = 0;
             for (Cart c : cartItems) {
+                Product p = c.getProductId();
+                if (p.getStatus() != null && p.getStatus() == 1 && p.getStockQuantity() != null && p.getStockQuantity() > 0) {
+                    totalItems += c.getCartQuantity();
+                }
                 if (c.getCartId() == cartId) {
-                    BigDecimal price = c.getProductId().getPrice();
-                    itemTotal = price.multiply(new BigDecimal(newQuantity));
-                    break;
+                    itemTotal = p.getPrice().multiply(new BigDecimal(newQuantity));
                 }
             }
 
-            //Trả về JSON thủ công: {"status":"success", "itemTotal": 100000, "grandTotal": 500000}
-            PrintWriter out = response.getWriter();
+            //Trả về JSON thành công: {"status":"success", "itemTotal": 100000, "grandTotal": 500000}
             out.print("{");
             out.print("\"status\": \"success\",");
             out.print("\"itemTotal\": " + itemTotal + ",");

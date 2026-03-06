@@ -37,7 +37,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
+            <a href="${pageContext.request.contextPath}/product" 
                class="sidebar-link ${activeMenu == 'product'? 'active':''}">
                 <i class="bi bi-book"></i> Products
             </a>
@@ -61,13 +61,13 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
+            <a href="${pageContext.request.contextPath}/voucher" 
                class="sidebar-link ${activeMenu == 'voucher'? 'active':''}">
                 <i class="bi bi-percent"></i> Vouchers
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
+            <a href="${pageContext.request.contextPath}/notification" 
                class="sidebar-link ${activeMenu == 'notification'? 'active':''}">
                 <i class="bi bi-bell"></i> Notifications
             </a>

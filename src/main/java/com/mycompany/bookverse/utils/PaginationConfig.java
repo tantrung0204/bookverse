@@ -18,5 +18,6 @@ public class PaginationConfig {
 
     // Cấu hình số lượng nút bấm phân trang hiển thị
     public static final int MAX_PAGE_NODES = 5;
+    public static int FEEDBACK_ITEMS_PER_PAGE;
 
 }

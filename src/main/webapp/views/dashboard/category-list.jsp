@@ -77,21 +77,21 @@ Author : NganTTK-CE190411 --%>
                                     <div class="action-buttons">
                                         <button type="button" class="btn-action btn-detail"
                                                 title="View Detail" onclick="openDetailPopup(
-                                                                        '${c.categoryId}',
-                                                                        '${c.categoryName}',
-                                                                        '${c.descriptionText}',
-                                                                        '${c.status}'
-                                                                        )">
+                                                                '${c.categoryId}',
+                                                                '${c.categoryName}',
+                                                                '${c.descriptionText}',
+                                                                '${c.status}'
+                                                                )">
                                             <i class="bi bi-eye"></i>
                                         </button>
 
                                         <button type="button" class="btn-action btn-edit" title="Edit"
                                                 onclick="openEditPopup(
-                                                                        '${c.categoryId}',
-                                                                        '${c.categoryName}',
-                                                                        '${c.descriptionText}',
-                                                                        '${c.status}'
-                                                                        )">
+                                                                '${c.categoryId}',
+                                                                '${c.categoryName}',
+                                                                '${c.descriptionText}',
+                                                                '${c.status}'
+                                                                )">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
@@ -111,7 +111,7 @@ Author : NganTTK-CE190411 --%>
                         </c:forEach>
                     </tbody>
                 </table>
-                
+
                 <c:if test="${totalPages > 1}">
                     <div class="pagination-container">
 
@@ -202,7 +202,7 @@ Author : NganTTK-CE190411 --%>
 
             <div class="form-group">
                 <label>Description</label>
-                <input type="text" name="descriptionText" class="form-control" value="${createDes}">
+                <input type="text" name="descriptionText" class="form-control" value="${createDesc}">
             </div>
 
             <div class="form-group">
@@ -212,6 +212,17 @@ Author : NganTTK-CE190411 --%>
                     <option value="0" ${createStatus==0 ? "selected" : "" }>Inactive</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label>Parent</label>
+                <select name="parent" class="form-control">
+                    <option value="">-- Select Parent Category --</option>
+
+                    <option value="1" ${createParent == 1 ? "selected" : ""}>Book</option>
+                    <option value="2" ${createParent == 2 ? "selected" : ""}>Văn phòng phẩm</option>
+                </select>
+            </div>
+
 
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
@@ -377,7 +388,8 @@ Author : NganTTK-CE190411 --%>
                 openCreatePopup(
                         '${createName}',
                         '${createDesc}',
-                        '${createStatus}'
+                        '${createStatus}',
+                        '${createParent}'
                         );
                 // Hiển thị lại lỗi
                 const err = document.getElementById("createErrorMsg");

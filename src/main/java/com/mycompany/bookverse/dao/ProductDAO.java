@@ -8,9 +8,7 @@ import java.util.List;
 import com.mycompany.bookverse.model.*;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import org.hibernate.Hibernate;
 
 /**
  *
@@ -18,56 +16,80 @@ import org.hibernate.Hibernate;
  */
 public class ProductDAO {
 
-    public List<Product> findAll() {
+    // ==========================================
+    // CÁC HÀM DÀNH CHO TRANG QUẢN TRỊ (ADMIN)
+    // ==========================================
+    public List<Book> findAdminBooks(String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            List<Product> list = em.createNamedQuery("Product.findAll", Product.class)
-                    .getResultList();
-
-            for (Product p : list) {
-                Hibernate.initialize(p.getFeedbackCollection());
-                Hibernate.initialize(p.getOrderItemCollection());
+            StringBuilder sql = new StringBuilder("SELECT b FROM Book b WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
             }
-
-            return list;
+            // Sắp xếp ID lớn đến nhỏ
+            sql.append(" ORDER BY b.productId DESC");
+            TypedQuery<Book> query = em.createQuery(sql.toString(), Book.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            return query.getResultList();
         } finally {
             em.close();
         }
     }
 
-    public Product findById(Integer id) {
+    public long countAdminBooks(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Product p = em.find(Product.class, id);
-            if (p != null) {
-                Hibernate.initialize(p.getFeedbackCollection());
-                Hibernate.initialize(p.getOrderItemCollection());
-
-                if (p instanceof Book) {
-                    Book b = (Book) p;
-                    Hibernate.initialize(b.getAuthorCollection());
-                }
+            StringBuilder sql = new StringBuilder("SELECT COUNT(b) FROM Book b WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
             }
-            return p;
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public List<Product> findByName(String keyword) {
+    public List<Stationery> findAdminStationeries(String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Product> query = em.createNamedQuery("Product.findByName", Product.class);
-            query.setParameter("keyword", "%" + keyword + "%");
-
-            List<Product> list = query.getResultList();
-
-            for (Product p : list) {
-                Hibernate.initialize(p.getFeedbackCollection());
-                Hibernate.initialize(p.getOrderItemCollection());
+            StringBuilder sql = new StringBuilder("SELECT s FROM Stationery s WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
             }
+            sql.append(" ORDER BY s.productId DESC");
+            TypedQuery<Stationery> query = em.createQuery(sql.toString(), Stationery.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
 
-            return list;
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countAdminStationeries(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE 1=1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
+            }
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            return query.getSingleResult();
         } finally {
             em.close();
         }
@@ -83,98 +105,273 @@ public class ProductDAO {
         } finally {
             em.close();
         }
-
     }
 
-    public List<Product> findProductsHaveBook() {
+    // ==========================================
+    // CÁC HÀM DÀNH CHO TRANG HOME
+    // ==========================================
+    public List<Book> findTopSellingBooks(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery(
-                    "SELECT p FROM Product p WHERE TYPE(p) = Book",
-                    Product.class
-            ).getResultList();
+            String sql = "SELECT b FROM Book b WHERE b.status = 1"
+                    + "ORDER BY (SELECT COALESCE(SUM(item.orderQuantity), 0) "
+                    + "          FROM OrderItem item "
+                    + "          WHERE item.productId = b) DESC";
+            TypedQuery<Book> query = em.createQuery(sql, Book.class);
+            query.setMaxResults(limit);
+            List<Book> books = query.getResultList();
+            for (Book b : books) {
+                b.getOrderItemCollection().size();
+                b.getFeedbackCollection().size();
+            }
+            return books;
         } finally {
             em.close();
         }
     }
 
-    public List<Product> findProductsHaveStationery() {
+    public List<Stationery> findTopSellingStationery(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery(
-                    "SELECT p FROM Stationery p WHERE TYPE(p) = Stationery",
-                    Product.class
-            ).getResultList();
+            String sql = "SELECT s FROM Stationery s WHERE s.status = 1"
+                    + "ORDER BY (SELECT COALESCE(SUM(item.orderQuantity), 0) "
+                    + "          FROM OrderItem item "
+                    + "          WHERE item.productId = s) DESC";
+
+            TypedQuery<Stationery> query = em.createQuery(sql, Stationery.class);
+            query.setMaxResults(limit);
+
+            List<Stationery> stationeries = query.getResultList();
+
+            for (Stationery s : stationeries) {
+                s.getOrderItemCollection().size();
+                s.getFeedbackCollection().size();
+            }
+            return stationeries;
         } finally {
             em.close();
         }
     }
 
-    public Product insert(Product product) {
+    public long countBooks(List<Integer> genreIds, String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            em.getTransaction().begin();
-            em.persist(product);     // INSERT PRODUCT
-            em.getTransaction().commit();
-            return product;          // có product_id
+            StringBuilder sql = new StringBuilder("SELECT COUNT(b) FROM Book b WHERE b.status = 1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
+            }
+
+            if (genreIds != null && !genreIds.isEmpty()) {
+                sql.append(" AND b.genreId.genreId IN :genreIds");
+            }
+
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+
+            if (genreIds != null && !genreIds.isEmpty()) {
+                query.setParameter("genreIds", genreIds);
+            }
+
+            return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public Product getProductDetailById(int productId) {
+    public List<Book> findBooksWithFilter(List<Integer> genreIds, String sortPrice, String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery(
-                    "SELECT p FROM Product p "
-                    + "LEFT JOIN FETCH p.category "
-                    + "LEFT JOIN FETCH p.feedbackCollection "
-                    + "LEFT JOIN FETCH p.book b "
-                    + "LEFT JOIN FETCH b.genre "
-                    + "LEFT JOIN FETCH b.authorCollection "
-                    + "LEFT JOIN FETCH p.stationery s "
-                    + "WHERE p.productId = :id", Product.class)
-                    .setParameter("id", productId)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+            StringBuilder sql = new StringBuilder("SELECT b FROM Book b WHERE b.status = 1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(b.name) LIKE LOWER(:keyword)");
+            }
+
+            if (genreIds != null && !genreIds.isEmpty()) {
+                sql.append(" AND b.genreId.genreId IN :genreIds");
+            }
+
+            if ("asc".equalsIgnoreCase(sortPrice)) {
+                sql.append(" ORDER BY b.price ASC");
+            } else if ("desc".equalsIgnoreCase(sortPrice)) {
+                sql.append(" ORDER BY b.price DESC");
+            } else {
+                sql.append(" ORDER BY b.productId DESC");
+            }
+            TypedQuery<Book> query = em.createQuery(sql.toString(), Book.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+
+            if (genreIds != null && !genreIds.isEmpty()) {
+                query.setParameter("genreIds", genreIds);
+            }
+
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+
+            List<Book> books = query.getResultList();
+
+            for (Book b : books) {
+                b.getOrderItemCollection().size();
+                b.getFeedbackCollection().size();
+            }
+            return books;
         } finally {
             em.close();
         }
     }
 
-    public Product findById(int id) {
+    public long countStationery(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(Product.class, id);
+            StringBuilder sql = new StringBuilder("SELECT COUNT(s) FROM Stationery s WHERE s.status = 1");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
+            }
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public double getAverageRating(int productId) {
+    public List<Stationery> findStationeryWithFilter(String sortPrice, String keyword, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Double avg = em.createQuery(
-                    "SELECT AVG(f.rating) FROM Feedback f WHERE f.product.productId = :pid",
-                    Double.class)
-                    .setParameter("pid", productId)
-                    .getSingleResult();
-            return avg == null ? 0 : avg;
+            StringBuilder sql = new StringBuilder("SELECT s FROM Stationery s WHERE s.status = 1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(s.name) LIKE LOWER(:keyword)");
+            }
+
+            if ("asc".equalsIgnoreCase(sortPrice)) {
+                sql.append(" ORDER BY s.price ASC");
+            } else if ("desc".equalsIgnoreCase(sortPrice)) {
+                sql.append(" ORDER BY s.price DESC");
+            } else {
+                sql.append(" ORDER BY s.productId DESC");
+            }
+
+            TypedQuery<Stationery> query = em.createQuery(sql.toString(), Stationery.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+
+            List<Stationery> list = query.getResultList();
+            for (Stationery s : list) {
+                s.getOrderItemCollection().size();
+                s.getFeedbackCollection().size();
+            }
+            return list;
         } finally {
             em.close();
         }
     }
 
-    public int getSoldQuantity(int productId) {
+    public long countAllProducts(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Long total = em.createQuery(
-                    "SELECT SUM(oi.quantity) FROM OrderItem oi WHERE oi.product.productId = :pid",
-                    Long.class)
-                    .setParameter("pid", productId)
-                    .getSingleResult();
-            return total == null ? 0 : total.intValue();
+            StringBuilder sql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE p.status = 1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
+            }
+
+            TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Product> searchAllProducts(String sortPrice, String keyword, int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE p.status = 1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
+            }
+
+            if ("asc".equalsIgnoreCase(sortPrice)) {
+                sql.append(" ORDER BY p.price ASC");
+            } else if ("desc".equalsIgnoreCase(sortPrice)) {
+                sql.append(" ORDER BY p.price DESC");
+            } else {
+                sql.append(" ORDER BY p.productId DESC");
+            }
+
+            TypedQuery<Product> query = em.createQuery(sql.toString(), Product.class);
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                query.setParameter("keyword", "%" + keyword + "%");
+            }
+
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+
+            List<Product> list = query.getResultList();
+
+            for (Product p : list) {
+                p.getOrderItemCollection().size();
+                p.getFeedbackCollection().size();
+            }
+            return list;
+        } finally {
+            em.close();
+        }
+    }
+
+    public Product findProductById(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Product product = em.find(Product.class, productId);
+
+            if (product != null) {
+                if (product.getCategoryId() != null) {
+                    product.getCategoryId().getCategoryName();
+                }
+
+                product.getOrderItemCollection().size();
+                product.getFeedbackCollection().size();
+
+                if (product instanceof Book) {
+                    ((Book) product).getAuthorCollection().size();
+                }
+            }
+            return product;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Product> findRelatedProducts(Product product, int limit) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String sql = "SELECT p FROM Product p WHERE p.status = 1 AND p.categoryId = :category AND p.productId != :id";
+            TypedQuery<Product> query = em.createQuery(sql, Product.class);
+            query.setParameter("category", product.getCategoryId());
+            query.setParameter("id", product.getProductId());
+            query.setMaxResults(limit);
+            return query.getResultList();
         } finally {
             em.close();
         }

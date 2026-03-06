@@ -8,6 +8,7 @@ import com.mycompany.bookverse.model.Category;
 import com.mycompany.bookverse.service.CategoryService;
 import com.mycompany.bookverse.service.ProductService;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -98,7 +99,7 @@ public class CategoryController extends HttpServlet {
             page = Integer.parseInt(pageParam);
         }
 
-        List<Category> list = categoryService.getAllCategories(page);
+        List<Category> list = categoryService.getAllCategoriesPage(page);
 
         long totalPages = categoryService.getTotalPages();
 
@@ -163,10 +164,11 @@ public class CategoryController extends HttpServlet {
         String name = request.getParameter("categoryName");
         String desc = request.getParameter("descriptionText");
         String statusRaw = request.getParameter("status");
+        String parentRaw = request.getParameter("parent");
 
         try {
 
-            categoryService.createCategory(name, desc, statusRaw);
+            categoryService.createCategory(name, desc, statusRaw, parentRaw);
 
             request.getSession().setAttribute("successMsg",
                     "Create category successfully");
@@ -180,7 +182,8 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("createName", name);
             request.setAttribute("createDesc", desc);
             request.setAttribute("createStatus", statusRaw);
-            request.setAttribute("categories", categoryService.getAllCategories(1));
+            request.setAttribute("createParent", parentRaw);
+            request.setAttribute("categories", categoryService.getAllCategoriesPage(1));
             request.setAttribute("contentPage", "category-list.jsp");
             request.setAttribute("activeMenu", "category");
 
@@ -215,7 +218,7 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editName", name);
             request.setAttribute("editDesc", desc);
             request.setAttribute("editStatus", statusRaw);
-            request.setAttribute("categories",categoryService.getAllCategories(1));
+            request.setAttribute("categories",categoryService.getAllCategoriesPage(1));
             request.setAttribute("contentPage", "category-list.jsp");
             request.setAttribute("activeMenu", "category");
 

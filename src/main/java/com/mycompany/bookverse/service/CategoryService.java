@@ -16,12 +16,16 @@ import java.util.List;
 public class CategoryService {
 
     private CategoryDAO categoryDAO = new CategoryDAO();
+    public List<Category> getAllCategories;
 
+    public List<Category> getAllCategories() {
+        return categoryDAO.findAll();
+    }
 
-    public List<Category> getAllCategories(int page) {
+    public List<Category> getAllCategoriesPage(int page) {
         return categoryDAO.getCategoriesPaging(page, PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
-    
+
     public long getTotalPages() {
 
         long total = categoryDAO.countAllCategories();
@@ -51,14 +55,14 @@ public class CategoryService {
         );
     }
 
-
     public Category getCategoryById(int categoryId) {
         return categoryDAO.findByCategoryId(categoryId);
     }
 
-    public void createCategory(String name, String desc, String statusRaw) {
+    public void createCategory(String name, String desc, String statusRaw, String parentRaw) {
 
         int status = 1;
+        int parentId = 1;
 
         // Validate status
         if (statusRaw != null && !statusRaw.isEmpty()) {
@@ -67,6 +71,17 @@ public class CategoryService {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Invalid status value");
             }
+        }
+
+// Validate parent
+        if (parentRaw == null || parentRaw.trim().isEmpty()) {
+            throw new IllegalArgumentException("Please select parent category");
+        }
+
+        try {
+            parentId = Integer.parseInt(parentRaw);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid parent category");
         }
 
         // Validate name
@@ -101,6 +116,9 @@ public class CategoryService {
         category.setCategoryName(name);
         category.setDescriptionText(desc);
         category.setStatus(status);
+
+        Category parent = categoryDAO.findByCategoryId(parentId);
+        category.setParent(parent);
 
         categoryDAO.create(category);
     }

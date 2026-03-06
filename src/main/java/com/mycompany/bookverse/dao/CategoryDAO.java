@@ -15,6 +15,17 @@ import java.util.List;
  * @author NganTTK-CE190411
  */
 public class CategoryDAO {
+    
+    public List<Category> findAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Category.findAll", Category.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
 
     public List<Category> getCategoriesPaging(int page, int pageSize) {
 

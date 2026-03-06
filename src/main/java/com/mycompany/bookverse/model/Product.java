@@ -40,7 +40,7 @@ import java.util.Collection;
     @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:keyword)"),
     @NamedQuery(
             name = "Product.countByCategoryId",
-            query = "SELECT COUNT(p) FROM Product p WHERE p.categoryId = :categoryId"
+            query = "SELECT COUNT(p) FROM Product p WHERE p.categoryId.categoryId = :categoryId"
     )
 })
 

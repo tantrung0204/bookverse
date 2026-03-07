@@ -142,6 +142,9 @@ public class SupplierController extends HttpServlet {
         }
 
         request.setAttribute("keyword", keyword);
+         request.setAttribute("currentPage", 1);
+         request.setAttribute("totalPages", totalPages);
+         
         request.setAttribute("contentPage", "supplier-list.jsp");
         request.setAttribute("activeMenu", "supplier");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);

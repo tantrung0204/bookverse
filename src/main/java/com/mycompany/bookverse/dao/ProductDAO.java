@@ -176,6 +176,28 @@ public class ProductDAO {
         }
     }
 
+    public boolean deleteProduct(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Product product = em.find(Product.class, productId);
+
+            if (product != null) {
+                em.remove(product);
+            }
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
     // ==========================================
     // CÁC HÀM DÀNH CHO TRANG HOME
     // ==========================================

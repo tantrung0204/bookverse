@@ -32,51 +32,16 @@ import java.util.List;
         maxRequestSize = 1024 * 1024 * 50
 )
 public class ProductManagementController extends HttpServlet {
-
+    
     private ProductService productService = new ProductService();
     private CategoryService categoryService = new CategoryService();
     private GenreService genreService = new GenreService();
     private AuthorService authorService = new AuthorService();
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProductManagementController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProductManagementController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String action = (String) request.getAttribute("action");
         if (action == null) {
             action = request.getParameter("action");
@@ -84,7 +49,7 @@ public class ProductManagementController extends HttpServlet {
         if (action == null || action.isEmpty()) {
             action = "list";
         }
-
+        
         switch (action) {
             case "detail":
                 showProductDetail(request, response);
@@ -98,15 +63,7 @@ public class ProductManagementController extends HttpServlet {
                 break;
         }
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -118,16 +75,14 @@ public class ProductManagementController extends HttpServlet {
             case "update":
                 updateProductLogic(request, response);
                 break;
+            case "delete":
+                deleteProductLogic(request, response);
+                break;
             default:
                 doGet(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    
     private void showProductList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -136,12 +91,12 @@ public class ProductManagementController extends HttpServlet {
         if (tab == null || tab.isEmpty()) {
             tab = "book"; // Mặc định là Book
         }
-
+        
         String keyword = request.getParameter("keyword");
         if (keyword == null) {
             keyword = "";
         }
-
+        
         int page = 1;
         String pageStr = request.getParameter("page");
         if (pageStr != null && !pageStr.isEmpty()) {
@@ -173,32 +128,32 @@ public class ProductManagementController extends HttpServlet {
         request.setAttribute("stationeryCategories", categoryService.getActiveSubCategoriesByParentId(2));
         request.setAttribute("genres", genreService.getActiveGenres());
         request.setAttribute("authors", authorService.getAllAuthors());
-
+        
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
     }
-
+    
     private void showProductDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int productId = Integer.parseInt(request.getParameter("id"));
             Product productDetail = productService.getProductDetail(productId);
-
+            
             if (productDetail != null) {
                 request.setAttribute("productDetail", productDetail);
             }
         } catch (NumberFormatException e) {
             // Bỏ qua lỗi parse ID, hiển thị danh sách bình thường
         }
-
+        
         showProductList(request, response);
     }
-
+    
     private void showProductEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int productId = Integer.parseInt(request.getParameter("id"));
             Product productEdit = productService.getProductDetail(productId);
-
+            
             if (productEdit != null) {
                 request.setAttribute("productEdit", productEdit);
 
@@ -209,7 +164,7 @@ public class ProductManagementController extends HttpServlet {
                 }
                 // Gọi hàm lấy Category đã lọc
                 request.setAttribute("categories", categoryService.getActiveSubCategoriesByParentId(parentId));
-
+                
                 if ("Book".equals(productEdit.getType())) {
                     request.setAttribute("genres", genreService.getActiveGenres());
                     request.setAttribute("authors", authorService.getAllAuthors());
@@ -219,15 +174,15 @@ public class ProductManagementController extends HttpServlet {
         }
         showProductList(request, response);
     }
-
+    
     private void createProductLogic(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String tab = request.getParameter("tab");
         if (tab == null) {
             tab = "book";
         }
-
+        
         String name = request.getParameter("name") != null ? request.getParameter("name").trim() : "";
         String priceStr = request.getParameter("price") != null ? request.getParameter("price").trim() : "";
         String statusStr = request.getParameter("status");
@@ -236,7 +191,7 @@ public class ProductManagementController extends HttpServlet {
 
         // Lấy Category tùy theo type
         String categoryIdStr = "Book".equals(type) ? request.getParameter("bookCategoryId") : request.getParameter("stationeryCategoryId");
-
+        
         String genreId = request.getParameter("genreId");
         String[] authorIds = request.getParameterValues("authorIds");
         String color = request.getParameter("color");
@@ -286,7 +241,7 @@ public class ProductManagementController extends HttpServlet {
             }
             tempProduct = b;
         }
-
+        
         tempProduct.setName(name);
         tempProduct.setDescriptionText(description);
         tempProduct.setStatus(statusStr != null ? Integer.parseInt(statusStr) : 1);
@@ -306,7 +261,7 @@ public class ProductManagementController extends HttpServlet {
             }
         } catch (NumberFormatException e) {
         }
-
+        
         try {
             // 2. Validate Dữ Liệu
             if (name.isEmpty()) {
@@ -318,12 +273,12 @@ public class ProductManagementController extends HttpServlet {
             if (priceStr.isEmpty()) {
                 throw new Exception("Price is required.");
             }
-
+            
             BigDecimal price = new BigDecimal(priceStr);
             if (price.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new Exception("Invalid price.");
             }
-
+            
             if ("Book".equals(type)) {
                 if (genreId == null || genreId.isEmpty()) {
                     throw new Exception("Please select a genre.");
@@ -355,15 +310,15 @@ public class ProductManagementController extends HttpServlet {
             // 5. Thành công
             request.getSession().setAttribute("successMsg", "Product added successfully.");
             response.sendRedirect(request.getContextPath() + "/product?tab=" + type.toLowerCase());
-
+            
         } catch (Exception e) {
             returnToCreateFormWithError(request, response, tempProduct, type, e.getMessage());
         }
     }
-
+    
     private void updateProductLogic(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
         String tab = request.getParameter("tab");
         if (tab == null) {
             tab = "book";
@@ -372,19 +327,19 @@ public class ProductManagementController extends HttpServlet {
         // 1. Lấy thông số thô từ request
         String idStr = request.getParameter("id");
         int id = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : 0;
-
+        
         String name = request.getParameter("name") != null ? request.getParameter("name").trim() : "";
         String priceStr = request.getParameter("price") != null ? request.getParameter("price").trim() : "";
         String categoryIdStr = request.getParameter("categoryId");
         int status = Integer.parseInt(request.getParameter("status"));
         String description = request.getParameter("description") != null ? request.getParameter("description").trim() : "";
         String type = request.getParameter("productType");
-
+        
         String genreId = request.getParameter("genreId");
         String[] authorIds = request.getParameterValues("authorIds");
         String color = request.getParameter("color") != null ? request.getParameter("color").trim() : "";
         String material = request.getParameter("material") != null ? request.getParameter("material").trim() : "";
-
+        
         String oldImageUrl = request.getParameter("oldImageUrl");
         String finalImageUrl = oldImageUrl;
         try {
@@ -424,13 +379,13 @@ public class ProductManagementController extends HttpServlet {
         } else {
             Book b = new Book();
             b.setProductId(id);
-
+            
             if (genreId != null && !genreId.trim().isEmpty()) {
                 Genre g = new Genre();
                 g.setGenreId(Integer.parseInt(genreId));
                 b.setGenreId(g);
             }
-
+            
             List<Author> tempAuthors = new ArrayList<>();
             if (authorIds != null) {
                 for (String aId : authorIds) {
@@ -442,7 +397,7 @@ public class ProductManagementController extends HttpServlet {
             b.setAuthorCollection(tempAuthors);
             tempProduct = b;
         }
-
+        
         tempProduct.setName(name);
         tempProduct.setDescriptionText(description);
         tempProduct.setStatus(status);
@@ -453,7 +408,7 @@ public class ProductManagementController extends HttpServlet {
             c.setCategoryId(Integer.parseInt(categoryIdStr));
             tempProduct.setCategoryId(c);
         }
-
+        
         try {
             tempProduct.setPrice(new BigDecimal(priceStr));
         } catch (Exception e) {
@@ -479,7 +434,7 @@ public class ProductManagementController extends HttpServlet {
                 returnToEditFormWithError(request, response, tempProduct, type, "Price is required.");
                 return;
             }
-
+            
             BigDecimal price;
             try {
                 price = new BigDecimal(priceStr);
@@ -509,13 +464,13 @@ public class ProductManagementController extends HttpServlet {
             // 5. Thành công
             request.getSession().setAttribute("successMsg", "Product updated successfully.");
             response.sendRedirect(request.getContextPath() + "/product?tab=" + tab);
-
+            
         } catch (Exception e) {
             // Bắt lỗi trùng tên từ Service ném ra
             returnToEditFormWithError(request, response, tempProduct, type, e.getMessage());
         }
     }
-
+    
     private void returnToCreateFormWithError(HttpServletRequest request, HttpServletResponse response,
             Product tempProduct, String type, String errorMsg)
             throws ServletException, IOException {
@@ -524,7 +479,7 @@ public class ProductManagementController extends HttpServlet {
         request.setAttribute("openCreateModal", true);
         showProductList(request, response);
     }
-
+    
     private void returnToEditFormWithError(HttpServletRequest request, HttpServletResponse response,
             Product tempProduct, String type, String errorMsg)
             throws ServletException, IOException {
@@ -536,7 +491,7 @@ public class ProductManagementController extends HttpServlet {
         // 2. Load lại các danh sách cho thẻ <select>
         int targetParentId = "Stationery".equals(type) ? 2 : 1;
         request.setAttribute("categories", categoryService.getActiveSubCategoriesByParentId(targetParentId));
-
+        
         if ("Book".equals(type)) {
             request.setAttribute("genres", genreService.getActiveGenres());
             request.setAttribute("authors", authorService.getAllAuthors());
@@ -545,7 +500,24 @@ public class ProductManagementController extends HttpServlet {
         // 3. Render lại trang danh sách
         showProductList(request, response);
     }
-
+    
+    private void deleteProductLogic(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String tab = request.getParameter("tab");
+        if (tab == null) {
+            tab = "book";
+        }
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            productService.deleteProduct(id);
+            
+            request.getSession().setAttribute("successMsg", "Product deleted successfully.");
+        } catch (Exception e) {
+            request.getSession().setAttribute("errorMsg", "Cannot delete the product.");
+        }
+        response.sendRedirect(request.getContextPath() + "/product?tab=" + tab);
+    }
+    
     @Override
     public String getServletInfo() {
         return "Short description";

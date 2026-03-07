@@ -19,19 +19,6 @@
     </div>
 
     <div class="content-card">
-        <c:if test="${not empty successMsg}">
-            <div class="alert alert-success">
-                ${successMsg}
-            </div>
-            <c:remove var="successMsg" scope="session" />
-        </c:if>
-
-        <c:if test="${not empty errorMsg}">
-            <div class="alert alert-error">
-                ${errorMsg}
-            </div>
-            <c:remove var="errorMsg" scope="session" />
-        </c:if>
         <div class="tab-container">
             <a href="${pageContext.request.contextPath}/product?tab=book" 
                class="tab-item ${currentTab == 'book' ? 'active' : ''}">
@@ -57,6 +44,19 @@
                 <button type="submit" hidden></button>
             </form>
         </div>
+        <c:if test="${not empty successMsg}">
+            <div class="alert alert-success">
+                ${successMsg}
+            </div>
+            <c:remove var="successMsg" scope="session" />
+        </c:if>
+
+        <c:if test="${not empty errorMsg}">
+            <div class="alert alert-error">
+                ${errorMsg}
+            </div>
+            <c:remove var="errorMsg" scope="session" />
+        </c:if>
 
         <table class="custom-table">
             <thead>

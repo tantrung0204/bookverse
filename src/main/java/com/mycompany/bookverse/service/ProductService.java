@@ -113,6 +113,13 @@ public class ProductService {
         }
     }
 
+    public void deleteProduct(int id) throws Exception {
+        boolean isSuccess = productDao.deleteProduct(id);
+        if (!isSuccess) {
+            throw new Exception("Error deleting product from database.");
+        }
+    }
+
     // ==========================================
     // CÁC HÀM DÀNH CHO TRANG HOME
     // ==========================================

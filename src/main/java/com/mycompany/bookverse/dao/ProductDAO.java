@@ -350,7 +350,7 @@ public class ProductDAO {
         }
     }
 
-    public long countAllProducts(String keyword) {
+    public long countAllProducts(String keyword, Integer categoryId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             StringBuilder sql = new StringBuilder("SELECT COUNT(p) FROM Product p WHERE p.status = 1");
@@ -359,10 +359,18 @@ public class ProductDAO {
                 sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
             }
 
+            if (categoryId != null && categoryId > 0) {
+                sql.append(" AND p.categoryId.categoryId = :categoryId");
+            }
+
             TypedQuery<Long> query = em.createQuery(sql.toString(), Long.class);
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 query.setParameter("keyword", "%" + keyword + "%");
+            }
+
+            if (categoryId != null && categoryId > 0) {
+                query.setParameter("categoryId", categoryId);
             }
 
             return query.getSingleResult();
@@ -371,13 +379,17 @@ public class ProductDAO {
         }
     }
 
-    public List<Product> searchAllProducts(String sortPrice, String keyword, int page, int pageSize) {
+    public List<Product> searchAllProducts(String sortPrice, String keyword, Integer categoryId, int page, int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE p.status = 1");
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 sql.append(" AND LOWER(p.name) LIKE LOWER(:keyword)");
+            }
+
+            if (categoryId != null && categoryId > 0) {
+                sql.append(" AND p.categoryId.categoryId = :categoryId");
             }
 
             if ("asc".equalsIgnoreCase(sortPrice)) {
@@ -392,6 +404,10 @@ public class ProductDAO {
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 query.setParameter("keyword", "%" + keyword + "%");
+            }
+
+            if (categoryId != null && categoryId > 0) {
+                query.setParameter("categoryId", categoryId);
             }
 
             query.setFirstResult((page - 1) * pageSize);

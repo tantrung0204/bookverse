@@ -36,8 +36,13 @@
                 <form id="filterForm" action="shop" method="GET">
                     <input type="hidden" name="type" value="${selectedType}" />
                     <input type="hidden" id="pageInput" name="page" value="1" />
+
                     <c:if test="${not empty searchKeyword}">
                         <input type="hidden" name="keyword" value="${searchKeyword}" />
+                    </c:if>
+
+                    <c:if test="${not empty selectedCategoryId}">
+                        <input type="hidden" name="categoryId" value="${selectedCategoryId}" />
                     </c:if>
 
                     <div class="filter-group mb-4">
@@ -64,7 +69,7 @@
                             </div>
                         </div>
                     </c:if>
-                    <button type="button" onclick="submitFilter()" class="btn btn-filter-apply w-100 text-white mt-3">Apply Filter</button>
+                    <button type="submit" class="btn btn-filter-apply w-100 text-white mt-3">Apply Filter</button>
                 </form>
             </aside>
 
@@ -93,7 +98,7 @@
                         <a href="product-detail?id=${p.productId}" class="custom-card">
                             <div class="card-img-wrapper">
                                 <img src="${p.imageUrl}" alt="${p.name}"
-                                    onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';"/>
+                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';"/>
                             </div>
                             <div class="card-body-custom">
                                 <div class="product-title" title="${p.name}">${p.name}</div>
@@ -144,11 +149,6 @@
         <script>
                                    function goToPage(pageNum) {
                                        document.getElementById('pageInput').value = pageNum;
-                                       document.getElementById('filterForm').submit();
-                                   }
-
-                                   function submitFilter() {
-                                       document.getElementById('pageInput').value = 1;
                                        document.getElementById('filterForm').submit();
                                    }
         </script>

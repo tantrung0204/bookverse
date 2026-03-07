@@ -65,7 +65,7 @@ public class HomeController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Category> categories = categoryService.getAllCategories();
+        List<Category> categories = categoryService.getActiveSubCategories();
         List<Book> topBooks = productService.getTopBestSellingBooks();
         List<Stationery> topStationery = productService.getTopBestSellingStationery();
 

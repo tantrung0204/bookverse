@@ -39,7 +39,7 @@
 
                     <ul class="dropdown-menu brand-dropdown-menu" aria-labelledby="categoriesDropdown">
                         <c:forEach items="${categories}" var="cat">
-                            <li><a class="dropdown-item" href="#">${cat.categoryName}</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/shop?type=all&categoryId=${cat.categoryId}">${cat.categoryName}</a></li>
                             </c:forEach>
                     </ul>
                 </li>

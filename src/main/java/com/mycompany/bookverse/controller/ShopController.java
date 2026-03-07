@@ -102,17 +102,27 @@ public class ShopController extends HttpServlet {
             keyword = keyword.trim();
         }
 
+        String categoryIdStr = request.getParameter("categoryId");
+        Integer categoryId = null;
+        if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+            try {
+                categoryId = Integer.parseInt(categoryIdStr);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Lấy danh sách sản phẩm
-        List<? extends Product> productList = productService.getFilteredProducts(type, genreIds, sort, keyword, page);
+        List<? extends Product> productList = productService.getFilteredProducts(type, genreIds, sort, keyword, categoryId, page);
         // Lấy tổng số lượng để tính phân trang
-        long totalItems = productService.getTotalCount(type, genreIds, keyword);
+        long totalItems = productService.getTotalCount(type, genreIds, keyword, categoryId);
         // Tính toán tổng số trang
         int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE;
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
         // Lấy danh sách Genre cho filter
-        List<Genre> allGenres = productService.getAllGenres();
-        List<Category> categories = categoryService.getAllCategories();
+        List<Genre> allGenres = productService.getAllActiveGenre();
+        List<Category> categories = categoryService.getActiveSubCategories();
 
         // Đẩy dữ liệu sang JSP
         request.setAttribute("categories", categories);
@@ -127,6 +137,8 @@ public class ShopController extends HttpServlet {
         request.setAttribute("selectedSort", sort);
         request.setAttribute("selectedGenres", genreIds);
         request.setAttribute("searchKeyword", keyword);
+        
+        request.setAttribute("selectedCategoryId", categoryId);
 
         request.getRequestDispatcher("/views/public/shop.jsp").forward(request, response);
     }

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.service.CategoryService;
 import java.math.BigDecimal;
 
 /**
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 public class CartController extends HttpServlet {
 
     private CartService cartService = new CartService();
+    private CategoryService categoryService = new CategoryService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -124,9 +126,11 @@ public class CartController extends HttpServlet {
 
         List<Cart> cartItems = cartService.getCustomerCart(customerId);
         BigDecimal cartTotal = cartService.calculateCartTotal(cartItems);
+        List<Category> categories = categoryService.getActiveSubCategories();
 
         request.setAttribute("cartList", cartItems);
         request.setAttribute("cartTotal", cartTotal);
+        request.setAttribute("categories", categories);
 
         request.getRequestDispatcher("/views/customer/cart.jsp").forward(request, response);
     }

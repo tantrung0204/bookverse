@@ -270,7 +270,13 @@
 }
 
 .page-btn.active {
-    background: #4f46e5;
+    background: #a68a6d;
     color: white;
-    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.notification-img {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
 }

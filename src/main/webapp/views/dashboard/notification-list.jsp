@@ -24,7 +24,7 @@
         <div class="toolbar">
 
             <button class="btn-add" onclick="openPopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add new Notification
+                <i class="bi bi-plus-lg me-1"></i> Add New Notification
             </button>
 
             <form class="search-form"
@@ -78,7 +78,7 @@
                                     <c:if test="${not empty n.imageUrl}">
                                         <img src="${pageContext.request.contextPath}/${n.imageUrl}"
                                              alt="Notification Image"
-                                             style="width:100px; height:auto; border-radius:6px;">
+                                             class="notification-img">
                                     </c:if>
                                 </td>
 

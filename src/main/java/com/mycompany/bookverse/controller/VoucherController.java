@@ -167,12 +167,25 @@ public class VoucherController extends HttpServlet {
             case "create":
                 try {
                     Voucher vCreate = new Voucher();
+                    vCreate.setVoucherName(request.getParameter("voucherName"));
                     vCreate.setVoucherCode(request.getParameter("code"));
-                    vCreate.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
-                    vCreate.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
-                    vCreate.setStatus(Integer.parseInt(request.getParameter("status")));
+
+                    BigDecimal discount = new BigDecimal(request.getParameter("discount"));
+                    BigDecimal minOrder = new BigDecimal(request.getParameter("minOrderValue"));
+
+                    vCreate.setDiscountValue(discount);
+                    vCreate.setMinOrderValue(minOrder);
+                    vCreate.setDiscountType(Integer.parseInt(request.getParameter("discountType")));
+
+                    vCreate.setAvailableQuantity(
+                            Integer.parseInt(request.getParameter("quantity")));
+
+                    vCreate.setStatus(
+                            Integer.parseInt(request.getParameter("status")));
+
                     vCreate.setStartDate(new java.util.Date());
-                    vCreate.setExpiryDate(Date.valueOf(request.getParameter("expiryDate")));
+                    vCreate.setExpiryDate(
+                            Date.valueOf(request.getParameter("expiryDate")));
 
                     String msg = voucherService.createVoucher(vCreate);
 
@@ -191,7 +204,10 @@ public class VoucherController extends HttpServlet {
                         request.setAttribute("totalPages", totalPages);
 
                         //  Lưu lại dữ liệu user đã nhập
+                        request.setAttribute("voucherName", request.getParameter("voucherName"));
                         request.setAttribute("code", request.getParameter("code"));
+                        request.setAttribute("minOrderValue", request.getParameter("minOrderValue"));
+                        request.setAttribute("discountType", request.getParameter("discountType"));
                         request.setAttribute("discount", request.getParameter("discount"));
                         request.setAttribute("quantity", request.getParameter("quantity"));
                         request.setAttribute("status", request.getParameter("status"));
@@ -211,7 +227,10 @@ public class VoucherController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/voucher");
 
                 } catch (Exception e) {
-                    List<Voucher> vouchers = voucherService.getVouchers();
+                    int page = 1;
+                    int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                    List<Voucher> vouchers = voucherService.getVouchersPaging(page, pageSize);
                     request.setAttribute("vouchers", vouchers);
 
                     request.setAttribute("createError", "Invalid input data");
@@ -224,6 +243,7 @@ public class VoucherController extends HttpServlet {
                 break;
 
             case "edit":
+                Voucher vEdit = new Voucher();
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
                     Voucher old = voucherService.getVoucherById(id);
@@ -234,14 +254,30 @@ public class VoucherController extends HttpServlet {
                         return;
                     }
 
-                    Voucher vEdit = new Voucher();
                     vEdit.setVoucherId(id);
+
+                    vEdit.setVoucherName(request.getParameter("voucherName"));
                     vEdit.setVoucherCode(request.getParameter("code"));
-                    vEdit.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
-                    vEdit.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
-                    vEdit.setStatus(Integer.parseInt(request.getParameter("status")));
+
+                    vEdit.setMinOrderValue(
+                            new BigDecimal(request.getParameter("minOrderValue")));
+
+                    vEdit.setDiscountType(
+                            Integer.parseInt(request.getParameter("discountType")));
+
+                    vEdit.setDiscountValue(
+                            new BigDecimal(request.getParameter("discount")));
+
+                    vEdit.setAvailableQuantity(
+                            Integer.parseInt(request.getParameter("quantity")));
+
+                    vEdit.setStatus(
+                            Integer.parseInt(request.getParameter("status")));
+
                     vEdit.setStartDate(old.getStartDate());
-                    vEdit.setExpiryDate(Date.valueOf(request.getParameter("expiryDate")));
+
+                    vEdit.setExpiryDate(
+                            Date.valueOf(request.getParameter("expiryDate")));
 
                     String msg = voucherService.updateVoucher(vEdit);
 
@@ -258,7 +294,7 @@ public class VoucherController extends HttpServlet {
                         request.setAttribute("currentPage", page);
                         request.setAttribute("totalPages", totalPages);
                         request.setAttribute("editError", msg);
-                        request.setAttribute("voucher", old);
+                        request.setAttribute("voucher", vEdit);
 
                         request.setAttribute("openEdit", true);
                         request.setAttribute("contentPage", "voucher-list.jsp");
@@ -272,14 +308,17 @@ public class VoucherController extends HttpServlet {
 
                 } catch (Exception e) {
 
-                    List<Voucher> vouchers = voucherService.getVouchers();
+                    int page = 1;
+                    int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                    List<Voucher> vouchers = voucherService.getVouchersPaging(page, pageSize);
                     request.setAttribute("vouchers", vouchers);
 
                     int id = Integer.parseInt(request.getParameter("id"));
                     Voucher old = voucherService.getVoucherById(id);
 
                     request.setAttribute("message", "Invalid input data");
-                    request.setAttribute("voucher", old);
+                    request.setAttribute("voucher", vEdit);
                     request.setAttribute("openEdit", true);
 
                     request.setAttribute("contentPage", "voucher-list.jsp");
@@ -297,7 +336,7 @@ public class VoucherController extends HttpServlet {
                     request.getSession().setAttribute("successMessage", deleteMsg);
 
                 } catch (Exception e) {
-                    request.getSession().setAttribute("errorMessage", "Invalid voucher ID");
+                    request.getSession().setAttribute("errorMessage", "Cannot delete this voucher !");
                 }
 
                 response.sendRedirect(request.getContextPath() + "/voucher");

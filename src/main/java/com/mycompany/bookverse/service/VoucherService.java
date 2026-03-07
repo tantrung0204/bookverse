@@ -17,15 +17,6 @@ public class VoucherService {
 
     private final VoucherDAO voucherDAO = new VoucherDAO();
 
-    public List<Voucher> getVouchers() {
-        List<Voucher> list = voucherDAO.getAllVouchers();
-        for (Voucher v : list) {
-            long used = voucherDAO.countUsedVoucher(v.getVoucherId());
-            v.setUsedCount(used);
-        }
-        return list;
-    }
-
     public Voucher getVoucherById(int id) {
         return voucherDAO.findById(id);
     }
@@ -36,10 +27,28 @@ public class VoucherService {
             return "Quantity cannot be less than 0";
         }
 
-        if (voucher.getDiscountPercent() == null
-                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
-                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
-            return "Discount must be between 0 and 100";
+        if (voucher.getDiscountType() == 1) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0
+                    || voucher.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
+
+                return "Discount percent must be between 0 and 100";
+            }
+
+        } else if (voucher.getDiscountType() == 2) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0) {
+
+                return "Discount amount must be greater than 0";
+            }
+
+            if (voucher.getDiscountValue().compareTo(
+                    voucher.getMinOrderValue()) >= 0) {
+
+                return "Discount amount must be less than minimum order value";
+            }
         }
 
         if (voucher.getExpiryDate() == null) {
@@ -66,7 +75,7 @@ public class VoucherService {
     }
 
     public List<Voucher> searchVouchers(String keyword) {
-        return voucherDAO.searchByCode(keyword);
+        return voucherDAO.searchVoucher(keyword);
     }
 
     public String updateVoucher(Voucher voucher) {
@@ -76,14 +85,32 @@ public class VoucherService {
             return "Voucher does not exist";
         }
 
-        if (voucher.getAvailableQuantity() <= 0) {
-            return "Quantity cannot be less than or equal to 0";
+        if (voucher.getAvailableQuantity() < 0) {
+            return "Quantity cannot be less than 0";
         }
 
-        if (voucher.getDiscountPercent() == null
-                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
-                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
-            return "Discount must be between 0 and 100";
+        if (voucher.getDiscountType() == 1) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0
+                    || voucher.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
+
+                return "Discount percent must be between 0 and 100";
+            }
+
+        } else if (voucher.getDiscountType() == 2) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0) {
+
+                return "Discount amount must be greater than 0";
+            }
+
+            if (voucher.getDiscountValue().compareTo(
+                    voucher.getMinOrderValue()) >= 0) {
+
+                return "Discount amount must be less than minimum order value";
+            }
         }
 
         if (voucher.getExpiryDate().before(old.getStartDate())) {

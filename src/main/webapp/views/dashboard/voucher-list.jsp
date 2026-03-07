@@ -63,10 +63,11 @@
                     <thead>
                         <tr>
                             <th width="10%">ID</th>
-                            <th width="20%">Code</th>
+                            <th width="20%">Name</th>
+                            <th width="10%">Code</th>
                             <th width="15%">Discount</th>
-                            <th width="17%">Quantity</th>
-                            <th width="18%">Status</th>
+                            <th width="10%">Quantity</th>
+                            <th width="15%">Status</th>
                             <th width="20%">Actions</th>
                         </tr>
                     </thead>
@@ -75,8 +76,18 @@
                         <c:forEach var="v" items="${vouchers}">
                             <tr>
                                 <td><strong>${v.voucherId}</strong></td>
+                                <td>${v.voucherName}</td>
                                 <td>${v.voucherCode}</td>
-                                <td>${v.discountPercent}%</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${v.discountType == 1}">
+                                            ${v.discountValue.intValue()}%
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${v.discountValue.intValue()}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td>${v.availableQuantity}</td>
 
                                 <td>
@@ -97,8 +108,11 @@
                                         <button class="btn-action btn-detail" title="View Detail"
                                                 onclick="openDetailModal(
                                                                 '${v.voucherId}',
+                                                                '${v.voucherName}',
                                                                 '${v.voucherCode}',
-                                                                '${v.discountPercent}',
+                                                                '${v.minOrderValue.intValue()}',
+                                                                '${v.discountType}',
+                                                                '${v.discountValue.intValue()}',
                                                                 '${v.availableQuantity}',
                                                                 '${v.status}',
                                                                 '${v.startDate}',
@@ -112,8 +126,11 @@
                                         <button class="btn-action btn-edit" title="Edit"
                                                 onclick="openEditModal(
                                                                 '${v.voucherId}',
+                                                                '${v.voucherName}',
                                                                 '${v.voucherCode}',
-                                                                '${v.discountPercent}',
+                                                                '${v.minOrderValue.intValue()}',
+                                                                '${v.discountType}',
+                                                                '${v.discountValue.intValue()}',
                                                                 '${v.availableQuantity}',
                                                                 '${v.status}',
                                                                 '${v.expiryDate}'
@@ -197,6 +214,17 @@
 
                     <input type="hidden" name="action" value="create"/>
 
+
+                    <!-- VOUCHER NAME -->
+                    <div class="form-group">
+                        <label>Voucher Name</label>
+                        <input type="text"
+                               name="voucherName"
+                               class="form-control"
+                               value="${voucherName}"
+                               required>
+                    </div>
+
                     <!-- CODE -->
                     <div class="form-group">
                         <label>Code</label>
@@ -207,12 +235,40 @@
                                required>
                     </div>
 
-                    <!-- DISCOUNT -->
+                    <!-- MIN ORDER VALUE -->
                     <div class="form-group">
-                        <label>Discount (%)</label>
+                        <label>Minimum Order Value</label>
                         <input type="number"
-                               step="0.1"
+                               step="0.01"
+                               name="minOrderValue"
+                               class="form-control"
+                               value="${minOrderValue}"
+                               required>
+                    </div>
+
+                    <!-- DISCOUNT TYPE -->
+                    <div class="form-group">
+                        <label>Discount Type</label>
+                        <select name="discountType"
+                                id="discountType"
+                                class="form-control"
+                                onchange="handleDiscountTypeChange()">
+                            <option value="1" ${discountType == '1' ? 'selected' : ''}>
+                                Percent (%)
+                            </option>
+                            <option value="2" ${discountType == '2' ? 'selected' : ''}>
+                                Fixed Amount
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- DISCOUNT VALUE -->
+                    <div class="form-group">
+                        <label id="discountLabel">Discount Value</label>
+                        <input type="number"
+                               step="0.01"
                                name="discount"
+                               id="discountInput"
                                class="form-control"
                                value="${discount}"
                                required>
@@ -283,76 +339,25 @@
             </script>
         </c:if>
 
-        <style>
-            .modal-overlay {
-                display: none;
-                position: fixed;
-                z-index: 1000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.5);
-                justify-content: center;
-                align-items: center;
+        <script>
+            function handleDiscountTypeChange() {
+                const type = document.getElementById("discountType").value;
+                const input = document.getElementById("discountInput");
+                const label = document.getElementById("discountLabel");
+
+                if (type == "1") {
+                    label.innerText = "Discount Percent (%)";
+                    input.max = 100;
+                    input.min = 0.01;
+                } else {
+                    label.innerText = "Discount Amount";
+                    input.removeAttribute("max");
+                    input.min = 0.01;
+                }
             }
 
-            .modal-content {
-                background: #fff;
-                width: 500px;
-                padding: 25px;
-                border-radius: 12px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            }
-
-            .modal-header h3 {
-                margin-bottom: 20px;
-            }
-
-            .form-group {
-                margin-bottom: 18px;
-            }
-
-            .form-group label {
-                display: block;
-                margin-bottom: 6px;
-                font-weight: 500;
-            }
-
-            .form-control {
-                width: 100%;
-                padding: 10px;
-                border-radius: 8px;
-                border: 1px solid #ddd;
-            }
-
-            .modal-footer {
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-                margin-top: 20px;
-            }
-
-            .btn-cancel {
-                padding: 8px 18px;
-                background: #e9ecef;
-                border: none;
-                border-radius: 8px;
-            }
-
-            .btn-save {
-                padding: 8px 18px;
-                background: #a67c52;
-                color: white;
-                border: none;
-                border-radius: 8px;
-            }
-            .close {
-                float: right;
-                font-size: 22px;
-                cursor: pointer;
-            }
-        </style>
+            document.addEventListener("DOMContentLoaded", handleDiscountTypeChange);
+        </script>
 
         <!-- EDIT VOUCHER POPUP -->
         <div id="editModal" class="modal-overlay">
@@ -363,8 +368,7 @@
                 </div>
 
                 <c:if test="${not empty editError}">
-                    <div class="alert alert-danger p-2 mb-3" 
-                         id="editErrorMsg" 
+                    <div class="alert alert-danger p-2 mb-3"
                          style="font-size:13px;">
                         ${editError}
                     </div>
@@ -377,6 +381,17 @@
                     <input type="hidden" id="editId" name="id"
                            value="${voucher.voucherId}"/>
 
+                    <!-- NAME -->
+                    <div class="form-group">
+                        <label>Voucher Name</label>
+                        <input type="text"
+                               id="editName"
+                               name="voucherName"
+                               class="form-control"
+                               value="${voucher.voucherName}"
+                               required>
+                    </div>
+
                     <!-- CODE -->
                     <div class="form-group">
                         <label>Code</label>
@@ -388,15 +403,48 @@
                                required>
                     </div>
 
-                    <!-- DISCOUNT -->
+                    <!-- MIN ORDER VALUE -->
                     <div class="form-group">
-                        <label>Discount (%)</label>
+                        <label>Minimum Order Value</label>
                         <input type="number"
-                               step="0.1"
+                               step="0.01"
+                               id="editMinOrder"
+                               name="minOrderValue"
+                               class="form-control"
+                               value="${voucher.minOrderValue.intValue()}"
+                               required>
+                    </div>
+
+                    <!-- DISCOUNT TYPE -->
+                    <div class="form-group">
+                        <label>Discount Type</label>
+                        <select id="editDiscountType"
+                                name="discountType"
+                                class="form-control"
+                                onchange="handleEditDiscountTypeChange()">
+
+                            <option value="1"
+                                    ${voucher.discountType == 1 ? 'selected' : ''}>
+                                Percent (%)
+                            </option>
+
+                            <option value="2"
+                                    ${voucher.discountType == 2 ? 'selected' : ''}>
+                                Fixed Amount
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <!-- DISCOUNT VALUE -->
+                    <div class="form-group">
+                        <label id="editDiscountLabel">Discount Value</label>
+                        <input type="number"
+                               step="0.01"
                                id="editDiscount"
                                name="discount"
                                class="form-control"
-                               value="${voucher.discountPercent}"
+                               value="${voucher.discountValue.intValue()}"
                                required>
                     </div>
 
@@ -439,7 +487,6 @@
                                required>
                     </div>
 
-                    <!-- FOOTER -->
                     <div class="modal-footer">
                         <button type="button"
                                 class="btn-cancel"
@@ -457,14 +504,36 @@
             </div>
         </div>
         <script>
-            function openEditModal(id, code, discount, quantity, status, expiry) {
+            function handleEditDiscountTypeChange() {
+                const type = document.getElementById("editDiscountType").value;
+                const label = document.getElementById("editDiscountLabel");
+                const input = document.getElementById("editDiscount");
+
+                if (type == "1") {
+                    label.innerText = "Discount Percent (%)";
+                    input.max = 100;
+                    input.min = 0.01;
+                } else {
+                    label.innerText = "Discount Amount";
+                    input.removeAttribute("max");
+                    input.min = 0.01;
+                }
+            }
+
+            function openEditModal(id, name, code, minOrder, type, discount, quantity, status, expiry) {
 
                 document.getElementById("editId").value = id;
+                document.getElementById("editName").value = name;
                 document.getElementById("editCode").value = code;
+                document.getElementById("editMinOrder").value = minOrder;
+                document.getElementById("editDiscountType").value = type;
                 document.getElementById("editDiscount").value = discount;
                 document.getElementById("editQuantity").value = quantity;
                 document.getElementById("editStatus").value = status;
                 document.getElementById("editExpiry").value = expiry.split(" ")[0];
+
+                handleEditDiscountTypeChange();
+
                 document.getElementById("editModal").style.display = "flex";
             }
 
@@ -476,6 +545,7 @@
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("editModal").style.display = "flex";
+                    handleEditDiscountTypeChange();
                 });
             </script>
         </c:if>
@@ -490,7 +560,10 @@
 
                 <table class="detail-table">
                     <tr><th>ID:</th><td id="detailId"></td></tr>
+                    <tr><th>Name:</th><td id="detailName"></td></tr>
                     <tr><th>Code:</th><td id="detailCode"></td></tr>
+                    <tr><th>Minimum Order:</th><td id="detailMinOrder"></td></tr>
+                    <tr><th>Type:</th><td id="detailType"></td></tr>
                     <tr><th>Discount:</th><td id="detailDiscount"></td></tr>
                     <tr><th>Quantity:</th><td id="detailQuantity"></td></tr>
                     <tr><th>Status:</th><td id="detailStatus"></td></tr>
@@ -507,11 +580,20 @@
         </div>
 
         <script>
-            function openDetailModal(id, code, discount, quantity, status, start, expiry, used) {
+            function openDetailModal(id, name, code, minOrder, type, discount, quantity, status, start, expiry, used) {
 
                 document.getElementById("detailId").innerText = id;
+                document.getElementById("detailName").innerText = name;
                 document.getElementById("detailCode").innerText = code;
-                document.getElementById("detailDiscount").innerText = discount + "%";
+                document.getElementById("detailMinOrder").innerText = minOrder;
+                // Hiển thị Type đẹp hơn
+                if (type == 1) {
+                    document.getElementById("detailType").innerText = "Percent (%)";
+                    document.getElementById("detailDiscount").innerText = discount + "%";
+                } else {
+                    document.getElementById("detailType").innerText = "Fixed Amount";
+                    document.getElementById("detailDiscount").innerText = discount;
+                }
                 document.getElementById("detailQuantity").innerText = quantity;
                 document.getElementById("detailStatus").innerText =
                         status == 1 ? "Active" : "Inactive";

@@ -32,11 +32,10 @@
         <p class="subtitle">Create and manage book Genre for your library</p>
     </div>
     <div class="content-card">
-
         <div class="toolbar">
             <%-- Add Genre --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add genre
+                <i class="bi bi-plus-lg me-1"></i> Add New Genre
             </button>
             <%-- Search Genre --%>
             <form action="genre" method="get" class="search-form">
@@ -98,6 +97,7 @@
                                                             )">
                                         <i class="bi bi-pencil"></i>
                                     </button>
+
                                     <%-- Delete Genre --%>
                                     <form action="${pageContext.request.contextPath}/genre" method="post" style="display:inline;"
                                           onsubmit="return confirmDelete('${g.genreId}', '${g.genreName}')">
@@ -113,9 +113,7 @@
                     </c:forEach>
                 </table>
             </c:when>
-
-
-
+            <%-- pagination --%>
         </c:choose>
         <c:set var="startPage" value="${currentPage - 1}" />
         <c:set var="endPage" value="${currentPage + 1}" />
@@ -136,12 +134,12 @@
         <nav class="d-flex justify-content-center">
             <ul class="pagination">
 
-                <%-- Nút Previous --%>
+
                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                     <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
                 </li>
 
-                <%-- Nếu tổng <= 5 thì hiển thị hết --%>
+
                 <c:if test="${totalPages <= 5}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
@@ -150,49 +148,40 @@
                     </c:forEach>
                 </c:if>
 
-                <%-- Nếu tổng > 5 --%>
-                <c:if test="${totalPages > 5}">
 
-                    <%-- Trang 1 luôn hiện --%>
+                <c:if test="${totalPages > 5}">
                     <li class="page-item ${currentPage == 1 ? 'active' : ''}">
                         <a class="page-link" href="genre?page=1">1</a>
                     </li>
 
-                    <%-- Dấu ... đầu --%>
                     <c:if test="${startPage > 2}">
                         <li class="page-item disabled">
                             <span class="page-link">...</span>
                         </li>
                     </c:if>
 
-                    <%-- Trang giữa --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
                             <a class="page-link" href="genre?page=${i}">${i}</a>
                         </li>
                     </c:forEach>
 
-                    <%-- Dấu ... cuối --%>
                     <c:if test="${endPage < totalPages - 1}">
                         <li class="page-item disabled">
                             <span class="page-link">...</span>
                         </li>
                     </c:if>
 
-                    <%-- Trang cuối luôn hiện --%>
                     <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
                         <a class="page-link" href="genre?page=${totalPages}">
                             ${totalPages}
                         </a>
                     </li>
-
                 </c:if>
 
-                <%-- Nút Next --%>
                 <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
                     <a class="page-link" href="genre?page=${currentPage + 1}">&raquo;</a>
                 </li>
-
             </ul>
         </nav>
     </div>
@@ -209,12 +198,9 @@
     function closeCreatePopup() {
         document.getElementById("createPopup").style.display = "none";
     }
-
-
     function closeDetailPopup() {
         document.getElementById("detailPopup").style.display = "none";
     }
-    // Hàm mở Popup và điền dữ liệu
     function openDetailPopup(id, name, desc, status) {
         document.getElementById("detailId").innerText = id;
         document.getElementById("detailName").innerText = name;
@@ -230,40 +216,27 @@
                 .catch(error => {
                     document.getElementById("detailQuantity").innerText = "Error";
                 });
-
-
         document.getElementById("detailPopup").style.display = "flex";
     }
-    // Hàm mở Popup và điền dữ liệu
     function openEditPopup(id, name, description, status) {
         document.getElementById("editGenreId").value = id;
         document.getElementById("editGenreName").value = name;
         document.getElementById("editDescription").value = description;
         document.getElementById("editStatus").value = status;
 
-        // Ẩn thông báo lỗi cũ nếu có
         const err = document.getElementById("editErrorMsg");
         if (err)
             err.style.display = 'none';
 
-        // Hiển thị modal (sử dụng Flex để căn giữa)
         document.getElementById("editPopup").style.display = "flex";
     }
-
-    // Hàm đóng Popup
     function closeEditPopup() {
         document.getElementById("editPopup").style.display = "none";
     }
-
-    // Xử lý confirm xóa
     function confirmDelete(id, name) {
         return confirm("Are you sure you want to delete Genre:\n" + name + " (ID: " + id + ")");
     }
-
     let popupTimer = null;
-
-
-    // Đóng Popup khi click ra ngoài vùng trắng
     window.onclick = function (event) {
         var modal = document.getElementById("editPopup");
         if (event.target == modal) {
@@ -300,7 +273,6 @@
                         '${editDesc}',
                         '${editStatus}'
                         );
-                // Hiển thị lại lỗi
                 const err = document.getElementById("editErrorMsg");
                 if (err)
                     err.style.display = 'block';

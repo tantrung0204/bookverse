@@ -28,12 +28,12 @@ public class GenreService {
         String error = "";
         if (des == null || des.trim().isEmpty()) {
             error += "Description can not be empty.\n";
-        } else if (!des.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+        } else if (!des.matches("^[a-zA-ZÀ-ỹ0-9\\s]+$")) {
             error += "Description contains invalid characters.\n";
         }
         if (name == null || name.trim().isEmpty()) {
             error += "Name cannot be left blank.\n";
-        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s]+$")) {
             error += "Name contains invalid characters.\n";
         }
         if (status != 0 && status != 1) {
@@ -67,7 +67,7 @@ public class GenreService {
         }
         if (description == null || description.trim().isEmpty()) {
             error += "Description can not be empty.\n";
-        } else if (!description.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+        } else if (!description.matches("^[a-zA-ZÀ-ỹ]+[.]?((\\s[a-zA-ZÀ-ỹ0-9]+)+\\s?[.,-]?)*$")) {
             error += "Description contains invalid characters.\n";
         }
         if (name == null || name.trim().isEmpty()) {

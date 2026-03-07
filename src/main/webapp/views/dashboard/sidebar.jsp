@@ -79,15 +79,21 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
-               class="sidebar-link ${activeMenu == 'genre'? 'active':''}">
+            <a href="${pageContext.request.contextPath}/genre" 
+               class="sidebar-link list.">
                 <i class="bi bi-bar-chart-steps"></i> Genre
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
+            <a href="${pageContext.request.contextPath}/author" 
                class="sidebar-link ${activeMenu == 'author'? 'active':''}">
                 <i class="bi bi-bar-chart-steps"></i> Author
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="${pageContext.request.contextPath}/inventory" 
+               class="sidebar-link ${activeMenu == 'inventory'? 'active':''}">
+                <i class="bi bi-bar-chart-steps"></i> Inventory
             </a>
         </li>
     </ul>

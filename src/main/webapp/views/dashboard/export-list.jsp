@@ -1,6 +1,6 @@
 <%-- 
-    Document   : author-list
-    Created on : Feb 25, 2026, 7:47:00 PM
+    Document   : export-list
+    Created on : Mar 3, 2026, 5:05:34 PM
     Author     : LECOO
 --%>
 
@@ -28,15 +28,23 @@
         <c:remove var="deleteError" scope="session"/>
     </c:if>
     <div class="page-header">
-        <p class="title">Manage Author</p>
-        <p class="subtitle">Create and manage author for your library</p>
+        <p class="title">Manage Inventory</p>
+        <p class="subtitle">Create and manage inventory for your library</p>
     </div>
+
+    <a href="inventory">
+        <button type="button" class="btn-add">Import</button>
+    </a>
+    <a href="inventory?view=export-list">
+        <button type="button" class="btn-add">Export</button>
+    </a>
+
     <div class="content-card">
 
         <div class="toolbar">
-            <%-- Add author --%>
+            <%-- Add import --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Author
+                <i class="bi bi-plus-lg me-1"></i> Add New Import
             </button>
             <%-- Search author --%>
             <form action="author" method="get" class="search-form">
@@ -49,25 +57,23 @@
         </div>
         <c:choose>
             <%-- Author List --%>
-            <c:when test="${not empty authors}">
+            <c:when test="${not empty exports}">
                 <table class="custom-table">                 
                     <tr>
                         <th width="10%">ID</th>
 
-                        <th width="20%">Author name</th>
+                        <th width="35%">Staff</th>
 
-                        <th width="20%">Nationality</th>
+                        <th width="15%">Total cost</th>   
 
-                        <th width="20%">Biography</th>   
-                        
-                        <th width="20%">Action</th>
+                        <th width="15%">Creation date</th>
                     </tr>
-                    <c:forEach var="a" items="${authors}"> 
+                    <c:forEach var="e" items="${exports}"> 
                         <tr>
-                            <td><Strong>${a.authorId}</strong></td>
-                            <td>${a.authorName}</td>
-                            <td>${a.nationality}</td>
-                            <td>${a.biographyText}</td>
+                            <td><Strong>${e.orderId}</strong></td>
+                            <td>${e.staffId.fullName}</td>
+                            <td>${e.totalAmount}</td>
+                            <td>${e.createdAt}</td>
                             <td>
                                 <%-- Detail author --%>
                                 <div class="action-buttons">
@@ -101,7 +107,7 @@
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
-                                </div>
+                                </div> 
                             </td>   
                         </tr>
                     </c:forEach>
@@ -129,13 +135,13 @@
             <ul class="pagination">
                 <%-- Previous button --%>
                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="author?page=${currentPage - 1}">&laquo;</a>
+                    <a class="page-link" href="inventory?page=${currentPage - 1}">&laquo;</a>
                 </li>
                 <%-- If the total <= 5, display all pages. --%>
                 <c:if test="${totalPages <= 5}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="author?page=${i}">${i}</a>
+                            <a class="page-link" href="inventory?page=${i}">${i}</a>
                         </li>
                     </c:forEach>
                 </c:if>
@@ -143,7 +149,7 @@
                 <c:if test="${totalPages > 5}">
                     <%-- Page 1 always appears --%>
                     <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                        <a class="page-link" href="author?page=1">1</a>
+                        <a class="page-link" href="inventory?page=1">1</a>
                     </li>
                     <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
@@ -154,7 +160,7 @@
                     <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="author?page=${i}">${i}</a>
+                            <a class="page-link" href="inventory?page=${i}">${i}</a>
                         </li>
                     </c:forEach>
                     <%-- The final ellipsis --%>
@@ -165,14 +171,14 @@
                     </c:if>
                     <%-- The last page always appears --%>
                     <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                        <a class="page-link" href="author?page=${totalPages}">
+                        <a class="page-link" href="inventory?page=${totalPages}">
                             ${totalPages}
                         </a>
                     </li>
                 </c:if>
                 <%-- Next button --%>
                 <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="author?page=${currentPage + 1}">&raquo;</a>
+                    <a class="page-link" href="inventory?page=${currentPage + 1}">&raquo;</a>
                 </li>
             </ul>
         </nav>
@@ -215,7 +221,7 @@
             document.getElementById("editAuthorBirth").value = birth;
             document.getElementById("editNat").value = nat;
             document.getElementById("editBio").value = bio;
-            
+
             const err = document.getElementById("editErrorMsg");
             if (err)
                 err.style.display = 'none';

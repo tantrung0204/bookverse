@@ -65,7 +65,7 @@ public class CategoryDAO {
         try {
             return em.createQuery(
                     "SELECT c FROM Category c "
-                    + "WHERE LOWER(c.name) LIKE LOWER(:kw) "
+                    + "WHERE LOWER(c.categoryName) LIKE LOWER(:kw) "
                     + "ORDER BY c.categoryId DESC",
                     Category.class)
                     .setParameter("kw", "%" + keyword + "%")
@@ -84,7 +84,7 @@ public class CategoryDAO {
         try {
             return em.createQuery(
                     "SELECT COUNT(c) FROM Category c "
-                    + "WHERE LOWER(c.name) LIKE LOWER(:kw)",
+                    + "WHERE LOWER(c.categoryName) LIKE LOWER(:kw)",
                     Long.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .getSingleResult();

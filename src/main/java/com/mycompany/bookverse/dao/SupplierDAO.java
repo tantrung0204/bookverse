@@ -54,7 +54,7 @@ public class SupplierDAO {
         try {
             return em.createQuery(
                     "SELECT s FROM Supplier s "
-                    + "WHERE LOWER(c.name) LIKE LOWER(:kw) "
+                    + "WHERE LOWER(s.supplierName) LIKE LOWER(:kw) "
                     + "ORDER BY s.supplierId DESC",
                     Supplier.class)
                     .setParameter("kw", "%" + keyword + "%")
@@ -73,7 +73,7 @@ public class SupplierDAO {
         try {
             return em.createQuery(
                     "SELECT COUNT(s) FROM Supplier s "
-                    + "WHERE LOWER(s.name) LIKE LOWER(:kw)",
+                    + "WHERE LOWER(s.supplierName) LIKE LOWER(:kw)",
                     Long.class)
                     .setParameter("kw", "%" + keyword + "%")
                     .getSingleResult();

@@ -119,7 +119,6 @@ public class VoucherController extends HttpServlet {
                 try {
                     Voucher vCreate = new Voucher();
                     vCreate.setVoucherCode(request.getParameter("code"));
-                    vCreate.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
                     vCreate.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
                     vCreate.setStatus(Integer.parseInt(request.getParameter("status")));
                     vCreate.setStartDate(new java.util.Date());
@@ -170,7 +169,6 @@ public class VoucherController extends HttpServlet {
                     Voucher vEdit = new Voucher();
                     vEdit.setVoucherId(id);
                     vEdit.setVoucherCode(request.getParameter("code"));
-                    vEdit.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
                     vEdit.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
                     vEdit.setStatus(Integer.parseInt(request.getParameter("status")));
                     vEdit.setStartDate(old.getStartDate());

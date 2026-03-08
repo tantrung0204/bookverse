@@ -9,24 +9,6 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 <div class="container-fluid">
-    <c:if test="${not empty message}">
-        <div style="padding:10px;margin:10px 0;
-             background:#f8d7da;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${message}
-        </div>
-    </c:if>
-    <c:if test="${not empty success}">
-        <div style="padding:10px;margin:10px 0;
-             background:#28a745;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${success}
-        </div>
-    </c:if>
-    <c:if test="${not empty deleteError}">
-        <div class="alert alert-danger mt-3">${deleteError}</div>
-        <c:remove var="deleteError" scope="session"/>
-    </c:if>
     <div class="page-header">
         <p class="title">Manage Inventory</p>
         <p class="subtitle">Create and manage inventory for your library</p>
@@ -55,6 +37,16 @@
                 </div>
             </form>
         </div>
+        <c:if test="${not empty message}">
+            <div class="alert alert-error">
+                ${message}
+            </div>
+        </c:if>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">
+                ${success}
+            </div>
+        </c:if>
         <c:choose>
             <%-- Author List --%>
             <c:when test="${not empty exports}">
@@ -135,13 +127,13 @@
             <ul class="pagination">
                 <%-- Previous button --%>
                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="inventory?page=${currentPage - 1}">&laquo;</a>
+                    <a class="page-link" href="inventory?view=export-list&page=${currentPage - 1}">&laquo;</a>
                 </li>
                 <%-- If the total <= 5, display all pages. --%>
                 <c:if test="${totalPages <= 5}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="inventory?page=${i}">${i}</a>
+                            <a class="page-link" href="inventory?view=export-list&page=${i}">${i}</a>
                         </li>
                     </c:forEach>
                 </c:if>
@@ -149,7 +141,7 @@
                 <c:if test="${totalPages > 5}">
                     <%-- Page 1 always appears --%>
                     <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                        <a class="page-link" href="inventory?page=1">1</a>
+                        <a class="page-link" href="inventory?view=export-list&page=1">1</a>
                     </li>
                     <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
@@ -160,7 +152,7 @@
                     <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
                         <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="inventory?page=${i}">${i}</a>
+                            <a class="page-link" href="inventory?view=export-list&page=${i}">${i}</a>
                         </li>
                     </c:forEach>
                     <%-- The final ellipsis --%>
@@ -171,14 +163,14 @@
                     </c:if>
                     <%-- The last page always appears --%>
                     <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                        <a class="page-link" href="inventory?page=${totalPages}">
+                        <a class="page-link" href="inventory?view=export-list&page=${totalPages}">
                             ${totalPages}
                         </a>
                     </li>
                 </c:if>
                 <%-- Next button --%>
                 <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="inventory?page=${currentPage + 1}">&raquo;</a>
+                    <a class="page-link" href="inventory?view=export-list&page=${currentPage + 1}">&raquo;</a>
                 </li>
             </ul>
         </nav>
@@ -197,50 +189,134 @@
         function closeDetailPopup() {
             document.getElementById("detailPopup").style.display = "none";
         }
-        function openDetailPopup(id, name, birth, nat, bio) {
-            document.getElementById("detailId").innerText = id;
-            document.getElementById("detailName").innerText = name;
-            document.getElementById("detailBirth").innerText = birth;
-            document.getElementById("detailNat").innerText = nat;
-            document.getElementById("detailBio").innerText = bio;
-            document.getElementById("detailQuantity").innerText = "Loading...";
-
-            fetch('${pageContext.request.contextPath}/author?view=detail&id=' + id)
+         function openDetailPopup(importId, page) {
+            fetch("inventory?view=importDetail&importId=" + importId + "&page=" + page)
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                        console.log("DATA:", data);
+                        //ép data thành array để dùng forEach.
+                        if (!Array.isArray(data)) {
+                            data = [data];
+                        }
+                        //xem data ở console chơi.
+                        console.log("DATA:", data);
+                        let currentPage = data[0].currentPage;
+                        let totalPages = data[0].totalPages;
+                        var html = `
+        <table class="detail-table">
+            <tr>
+                <th style="width: 10%">ID</th>
+                <th style="width: 20%">Product Name</th>
+                <th style="width: 20%">Quantity</th>
+                <th style="width: 20%">Unit Price</th>
+                <th style="width: 10%">Note</th>
+            </tr>
+    `;
+                        if (data.length === 0) {
+                            html += `<tr><td colspan="5">No import details found</td></tr>`;
+                        } else {
+                            data.forEach(iteam => {
+                                let id = iteam.importDetailId;
+                                let name = iteam.product ? iteam.product.name : "";
+                                let quan = iteam.importedQuantity;
+                                let unitPri = iteam.unitPrice;
+                                let note = iteam.note || "empty";
+                                html += `           
+                                <tr>
+                                    <td>` + id + `</td>
+                                    <td>` + name + `</td>
+                                    <td>` + quan + `</td>
+                                    <td>` + unitPri + `</td>
+                                    <td>` + note + `</td></tr>       
+    `;
+                            });
+                        }
+                        html += `</table>`;
+                        //Phân trang
+                        let startPage = currentPage - 1;//là page số 2 trở về sau
+                        let endPage = currentPage + 1;//là page kề page cuối
+                        //Nếu currentPage = 1 thì hiển thị từ trang 2 trở đi
+                        if (startPage < 2) {
+                            startPage = 2;
+                            endPage = 4;
+                        }
+                        //Nếu currentPage = page cuối
+                        if (endPage > totalPages - 1) {
+                            endPage = totalPages - 1;
+                            startPage = totalPages - 3;
+                        }
+                        //Luôn luôn đặt startPage=2.
+                        if (startPage < 2) {
+                            startPage = 2;
+                        }
+
+                        let pagination = `<nav class="d-flex justify-content-center">
+                <ul class="pagination">`;
+
+                        // Previous
+                        pagination += `
+            <li class="page-item ` + (currentPage === 1 ? 'disabled' : '') + `">
+                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage - 1 < 1 ? 1 : currentPage - 1) + `)">&laquo;</button>
+            </li>`;
+
+                        // Nếu total <= 5
+                        if (totalPages <= 5) {
+                            for (let i = 1; i <= totalPages; i++) {
+                                pagination += `
+                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
+                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
+                    </li>`;
+                            }
+                        } else {
+
+                            // page 1
+                            pagination += `
+                <li class="page-item ` + (currentPage === 1 ? 'active' : '') + `">
+                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + 1 + `)">1</button>
+                </li>`;
+
+                            if (startPage > 2) {
+                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                            }
+
+                            for (let i = startPage; i <= endPage; i++) {
+                                pagination += `
+                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
+                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
+                    </li>`;
+                            }
+
+                            if (endPage < totalPages - 1) {
+                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                            }
+
+                            pagination += `
+                <li class="page-item ` + (currentPage === totalPages ? 'active' : '') + `">
+                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + totalPages + `)">` + totalPages + `</button>
+                </li>`;
+                        }
+
+                        // Next
+                        pagination += `
+            <li class="page-item ` + (currentPage === totalPages ? 'disabled' : '') + `">
+                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage + 1) + `)">&raquo;</button>
+            </li>`;
+
+                        pagination += `</ul></nav>`;
+
+                        html += pagination;
+                        document.getElementById("popupContent").innerHTML = html;
+                        document.getElementById("detailPopup").style.display = "flex";
                     })
                     .catch(error => {
-                        document.getElementById("detailQuantity").innerText = "Error";
+                        document.getElementById("popupContent").innerHTML =
+                                "<p style='color:red;text-align:center;'>Failed to load data</p>";
+                        document.getElementById("detailPopup").style.display = "flex";
+                        console.error(error);
                     });
-            document.getElementById("detailPopup").style.display = "flex";
-        }
-        function openEditPopup(id, name, birth, nat, bio) {
-            document.getElementById("editAuthorId").value = id;
-            document.getElementById("editAuthorName").value = name;
-            document.getElementById("editAuthorBirth").value = birth;
-            document.getElementById("editNat").value = nat;
-            document.getElementById("editBio").value = bio;
-
-            const err = document.getElementById("editErrorMsg");
-            if (err)
-                err.style.display = 'none';
-
-            document.getElementById("editPopup").style.display = "flex";
-        }
-        function closeEditPopup() {
-            document.getElementById("editPopup").style.display = "none";
         }
         function confirmDelete(id, name) {
             return confirm("Are you sure you want to delete author:\n" + name + " (ID: " + id + ")");
-        }
-        let popupTimer = null;
-
-        window.onclick = function (event) {
-            var modal = document.getElementById("editPopup");
-            if (event.target == modal) {
-                closeEditPopup();
-            }
         }
     </script>
     <c:if test="${openCreatePopup}">
@@ -261,24 +337,6 @@
         </script>
     </c:if>
 
-    <c:if test="${openEditPopup}">
-        <script>
-            window.onload = function () {
-                setTimeout(function () {
-                    openEditPopup(
-                            '${editId}',
-                            '${editName}',
-                            '${editBirth}',
-                            '${editNat}',
-                            '${editBio}'
-                            );
-                    const err = document.getElementById("editErrorMsg");
-                    if (err)
-                        err.style.display = 'block';
-                }, 100);
-            };
-        </script>
-    </c:if>
     <!-- ================= CREATE POPUP ================= -->
     <div id="createPopup" class="modal-overlay">
         <div class="modal-content">
@@ -323,85 +381,18 @@
         </div>
     </div>
 
-    <!-- ================= DETAIL POPUP ================= -->
-    <div id="detailPopup" class="modal-overlay">
-        <div class="modal-content">
+   <!-- ================= DETAIL POPUP ================= -->
+    <div id="detailPopup" class="modal-overlay" >
+        <div class="modal-content" style="width: 700px">
             <div class="modal-header">
                 <h3>Author Detail</h3>
             </div>
-
-            <table class="detail-table">
-                <tr>
-                    <th>ID:</th>
-                    <td id="detailId"></td>
-                </tr>
-                <tr>
-                    <th>Name:</th>
-                    <td id="detailName"></td>
-                </tr>
-                <tr>
-                    <th>BirthDay:</th>
-                    <td id="detailBirth"></td>
-                </tr>
-                <tr>
-                    <th>Nationality:</th>
-                    <td id="detailNat"></td>
-                </tr>
-                <tr>
-                    <th>Biography:</th>
-                    <td id="detailBio"></td>
-                </tr>
-                <tr>
-                    <th>Quantity:</th>
-                    <td id="detailQuantity"></td>
-                </tr>
-            </table>
-
+            <div id="popupContent"></div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
             </div>
+
         </div>
+
     </div>
-    <!-- ================= EDIT POPUP ================= -->
-    <div id="editPopup" class="modal-overlay">
-        <div class="modal-content ">
-            <div class="modal-header">
-                <h3>Edit Author</h3>
-            </div>
-
-            <c:if test="${not empty editError}">
-                <div class="alert alert-danger p-2 mb-3 alert-error" id="editErrorMsg" style="font-size: 13px;">
-                    ${editError}
-                </div>
-            </c:if>
-
-            <form action="${pageContext.request.contextPath}/author" method="post">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="authorId" id="editAuthorId">
-
-                <div class="form-group">
-                    <label>Author Name</label>
-                    <input type="text" name="authorName" id="editAuthorName" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>BirthDay</label>
-                    <input type="text" name="birth" id="editAuthorBirth" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>Nationality</label>
-                    <input type="text" name="nationality" id="editNat" class="form-control">
-                </div>
-
-                <div class="form-group">
-                    <label>Biography</label>
-                    <input type="text" name="biography" id="editBio" class="form-control">
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
-                    <button type="submit" class="btn-save">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
+</div>

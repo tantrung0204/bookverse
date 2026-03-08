@@ -42,7 +42,7 @@ public class GenreService {
         boolean checkExist = genreDAO.checkGenreExistByName(name);
 
         if (checkExist) {
-            return "Genre already exists";
+            return "Genre name already exists";
         }
         if (error.isEmpty()) {
             Genre genre = new Genre();
@@ -63,7 +63,7 @@ public class GenreService {
         boolean checkExist = genreDAO.checkGenreExist(id, name);
         Genre old = genreDAO.findById(id);
         if (checkExist) {
-            return "Genre already exist.";
+            return "Genre name already exist.";
         }
         if (description == null || description.trim().isEmpty()) {
             error += "Description can not be empty.\n";

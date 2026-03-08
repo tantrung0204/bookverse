@@ -121,31 +121,25 @@ public class InventoryController extends HttpServlet {
                     List<ImportStockDetail> importDetails = inventoryServices.getImportDetail(page, pageSize, id);
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-
                     JSONArray jsonArray = new JSONArray();
-
                     if (importDetails != null) {
                         for (ImportStockDetail d : importDetails) {
-
                             JSONObject obj = new JSONObject();
-
+                            obj.put("currentPage", page);
+                            obj.put("totalPages", totalPages);
                             obj.put("importDetailId", d.getImportDetailId());
                             obj.put("importedQuantity", d.getImportedQuantity());
                             obj.put("unitPrice", d.getUnitPrice());
                             obj.put("note", d.getNote() != null ? d.getNote() : "");
-
                             if (d.getProductId() != null) {
                                 JSONObject productObj = new JSONObject();
                                 productObj.put("name", d.getProductId().getName());
                                 obj.put("product", productObj);
                             }
-
                             jsonArray.put(obj);
                         }
                     }
-
                     response.getWriter().write(jsonArray.toString());
-                    return;
                 } catch (IOException | NumberFormatException e) {
                     response.sendRedirect("inventory");
                 }

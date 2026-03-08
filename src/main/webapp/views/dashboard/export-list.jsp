@@ -23,7 +23,7 @@
 
     <div class="content-card">
 
-        <div class="toolbar">
+<!--        <div class="toolbar">
             <%-- Add import --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
                 <i class="bi bi-plus-lg me-1"></i> Add New Import
@@ -36,7 +36,7 @@
                     <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
                 </div>
             </form>
-        </div>
+        </div>-->
         <c:if test="${not empty message}">
             <div class="alert alert-error">
                 ${message}
@@ -66,7 +66,7 @@
                             <td>${e.staffId.fullName}</td>
                             <td>${e.totalAmount}</td>
                             <td>${e.createdAt}</td>
-                            <td>
+<!--                            <td>
                                 <%-- Detail author --%>
                                 <div class="action-buttons">
                                     <button type="button" class="btn-action btn-detail"
@@ -78,29 +78,9 @@
                                                             '${a.biographyText}'
                                                             )">
                                         <i class="bi bi-eye"></i>
-                                    </button>
-                                    <%-- Edit author --%>
-                                    <button type="button" class="btn-action btn-edit" title="Edit"
-                                            onclick="openEditPopup(
-                                                            '${a.authorId}',
-                                                            '${a.authorName}',
-                                                            '${a.birthYear}',
-                                                            '${a.nationality}',
-                                                            '${a.biographyText}'
-                                                            )">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <%-- Delete author --%>
-                                    <form action="${pageContext.request.contextPath}/author" method="post" style="display:inline;"
-                                          onsubmit="return confirmDelete('${a.authorId}', '${a.authorName}')">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="id" value="${a.authorId}">                                       
-                                        <button type="submit" class="btn-action btn-delete" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    </button>                                   
                                 </div> 
-                            </td>   
+                            </td>   -->
                         </tr>
                     </c:forEach>
                 </table>

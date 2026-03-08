@@ -22,12 +22,6 @@ public class InventoryService {
         long totalItems = inventoryDAO.countAllImports();
         return (int) Math.ceil((double) totalItems / pageSize);
     }
-
-    public int getTotalImportDetailPages(int pageSize, int id) {
-        long totalItems = inventoryDAO.countAllImportDetail(id);
-        return (int) Math.ceil((double) totalItems / pageSize);
-    }
-
     public int getTotalExportPages(int pageSize) {
         long totalItems = inventoryDAO.countAllImports();
         return (int) Math.ceil((double) totalItems / pageSize);
@@ -38,9 +32,8 @@ public class InventoryService {
         return inventoryDAO.findByImportPage(offset, pageSize);
     }
 
-    public List<ImportStockDetail> getImportDetail(int page, int pageSize, int id) {
-        int offset = (page - 1) * pageSize;
-        return inventoryDAO.findByImportId(id, offset, pageSize);
+    public List<ImportStockDetail> getImportDetail(int id) {
+        return inventoryDAO.findByImportId(id);
     }
 
     public List<Order> getExportsByPage(int page, int pageSize) {

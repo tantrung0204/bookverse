@@ -90,7 +90,7 @@
         <li class="sidebar-item">
             <a href="${pageContext.request.contextPath}/inventory"
                class="sidebar-link ${activeMenu == 'inventory'? 'active':''}">
-                <i class="bi bi-box-seam"></i> Inventorys
+                <i class="bi bi-box-seam"></i> Inventories
             </a>
         </li>
         <li class="sidebar-item">

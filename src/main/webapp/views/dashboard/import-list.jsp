@@ -11,17 +11,21 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-list.css">
 
 <div class="container-fluid">
+    <div class="page-header">
+        <p class="title">Manage Inventory</p>
+        <p class="subtitle">Create and manage inventory for your library</p>
+    </div>
 
     <div class="tab-container">
-            <a href="${pageContext.request.contextPath}/inventory" 
-               class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
-                <i class="bi bi-book me-1"></i> Imports
-            </a>
-            <a href="${pageContext.request.contextPath}/inventory?view=export-list" 
-               class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
-                <i class="bi bi-pencil-square me-1"></i> Exports
-            </a>
-        </div>
+        <a href="${pageContext.request.contextPath}/inventory" 
+           class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
+            <i class="bi bi-book me-1"></i> Imports
+        </a>
+        <a href="${pageContext.request.contextPath}/inventory?view=export-list" 
+           class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
+            <i class="bi bi-pencil-square me-1"></i> Exports
+        </a>
+    </div>
     <div class="content-card">
 
         <!--        <div class="toolbar">

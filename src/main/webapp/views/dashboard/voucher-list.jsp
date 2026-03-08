@@ -30,6 +30,7 @@
                 <div class="search-box">
                     <i class="bi bi-search"></i>
                     <input type="text" name="keyword"
+                           value="${param.keyword}"
                            placeholder="Search vouchers...">
                 </div>
             </form>
@@ -45,14 +46,6 @@
             <c:remove var="successMessage" scope="session"/>
         </c:if>
 
-        <c:if test="${not empty searchMessage}">
-            <div style="padding:10px;margin:10px 0;
-                 background:#f8d7da;color:#721c24;
-                 border:1px solid #f5c6cb;border-radius:5px;">
-                ${searchMessage}
-            </div>
-        </c:if>
-
         <c:if test="${not empty sessionScope.errorMessage}">
             <div style="padding:10px;margin:10px 0;
                  background:#f8d7da;color:#721c24;
@@ -63,58 +56,61 @@
         </c:if>
 
 
-        <c:if test="${not empty vouchers}">
-            <table class="custom-table">
-                <thead>
-                    <tr>
-                        <th width="10%">ID</th>
-                        <th width="20%">Code</th>
-                        <th width="15%">Discount</th>
-                        <th width="15%">Quantity</th>
-                        <th width="15%">Status</th>
-                        <th width="25%">Actions</th>
-                    </tr>
-                </thead>
+        <c:choose>
 
-                <tbody>
-                    <c:forEach var="v" items="${vouchers}">
+            <c:when test="${not empty vouchers}">
+                <table class="custom-table">
+                    <thead>
                         <tr>
-                            <td><strong>${v.voucherId}</strong></td>
-                            <td>${v.voucherCode}</td>
-                            <td>${v.discountPercent}%</td>
-                            <td>${v.availableQuantity}</td>
+                            <th width="10%">ID</th>
+                            <th width="20%">Code</th>
+                            <th width="15%">Discount</th>
+                            <th width="15%">Quantity</th>
+                            <th width="15%">Status</th>
+                            <th width="25%">Actions</th>
+                        </tr>
+                    </thead>
 
-                            <td>
-                                <c:choose>
-                                    <c:when test="${v.status == 1}">
-                                        <span class="badge-status badge-active">Active</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="badge-status badge-inactive">Inactive</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
+                    <tbody>
+                        <c:forEach var="v" items="${vouchers}">
+                            <tr>
+                                <td><strong>${v.voucherId}</strong></td>
+                                <td>${v.voucherCode}</td>
+                                <td>${v.discountPercent}%</td>
+                                <td>${v.availableQuantity}</td>
 
-                            <td>
-                                <div class="action-buttons">
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${v.status == 1}">
+                                            <span class="badge-status badge-active">Active</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge-status badge-inactive">Inactive</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
 
-                                    <!-- VIEW -->
-                                    <button class="btn-action btn-detail"
-                                            onclick="openDetailModal(
+                                <td>
+                                    <div class="action-buttons">
+
+                                        <!-- VIEW -->
+                                        <button class="btn-action btn-detail"
+                                                onclick="openDetailModal(
                                                             '${v.voucherId}',
                                                             '${v.voucherCode}',
                                                             '${v.discountPercent}',
                                                             '${v.availableQuantity}',
                                                             '${v.status}',
                                                             '${v.startDate}',
-                                                            '${v.expiryDate}'
+                                                            '${v.expiryDate}',
+                                                            '${v.usedCount}'
                                                             )">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
+                                            <i class="bi bi-eye"></i>
+                                        </button>
 
-                                    <!-- EDIT -->
-                                    <button class="btn-action btn-edit"
-                                            onclick="openEditModal(
+                                        <!-- EDIT -->
+                                        <button class="btn-action btn-edit"
+                                                onclick="openEditModal(
                                                             '${v.voucherId}',
                                                             '${v.voucherCode}',
                                                             '${v.discountPercent}',
@@ -122,37 +118,45 @@
                                                             '${v.status}',
                                                             '${v.expiryDate}'
                                                             )">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-
-                                    <!-- DELETE -->
-                                    <form action="${pageContext.request.contextPath}/voucher"
-                                          method="post"
-                                          style="display:inline;">
-                                        <input type="hidden" name="action" value="delete"/>
-                                        <input type="hidden" name="id" value="${v.voucherId}"/>
-
-                                        <button type="submit"
-                                                class="btn-action btn-delete"
-                                                onclick="return confirm('Delete this voucher?')">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-pencil"></i>
                                         </button>
-                                    </form>
 
-                                </div>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </c:if>
+                                        <!-- DELETE -->
+                                        <form action="${pageContext.request.contextPath}/voucher"
+                                              method="post"
+                                              style="display:inline;">
+                                            <input type="hidden" name="action" value="delete"/>
+                                            <input type="hidden" name="id" value="${v.voucherId}"/>
 
+                                            <button type="submit"
+                                                    class="btn-action btn-delete"
+                                                    onclick="return confirm('Delete this voucher?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+
+            <c:otherwise>
+                <div style="text-align:center; padding: 40px; color: #999;">
+                    <i class="bi bi-inbox" style="font-size: 40px;"></i>
+                    <p class="mt-2">No notifications found.</p>
+                </div>
+            </c:otherwise>
+
+        </c:choose>
         <!-- CREATE VOUCHER POPUP -->
         <div id="createModal" class="modal-overlay">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h3>Create Voucher</h3>
+                    <h3>Add new Voucher</h3>
                 </div>
 
                 <c:if test="${not empty createError}">
@@ -463,6 +467,7 @@
                     <tr><th>Status:</th><td id="detailStatus"></td></tr>
                     <tr><th>Start Date:</th><td id="detailStart"></td></tr>
                     <tr><th>Expiry Date:</th><td id="detailExpiry"></td></tr>
+                    <tr><th>Used:</th><td id="detailUsed"></td></tr>
                 </table>
 
                 <div class="modal-footer">
@@ -473,7 +478,7 @@
         </div>
 
         <script>
-            function openDetailModal(id, code, discount, quantity, status, start, expiry) {
+            function openDetailModal(id, code, discount, quantity, status, start, expiry, used) {
 
                 document.getElementById("detailId").innerText = id;
                 document.getElementById("detailCode").innerText = code;
@@ -484,6 +489,7 @@
 
                 document.getElementById("detailStart").innerText = start;
                 document.getElementById("detailExpiry").innerText = expiry;
+                document.getElementById("detailUsed").innerText = used;
 
                 document.getElementById("detailModal").style.display = "flex";
             }

@@ -19,6 +19,10 @@ public class VoucherService {
 
     public List<Voucher> getVouchers() {
         List<Voucher> list = voucherDAO.getAllVouchers();
+        for (Voucher v : list) {
+        long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+        v.setUsedCount(used); 
+    }
         return list;
     }
 
@@ -115,4 +119,8 @@ public class VoucherService {
         return "Delete voucher successfully";
     }
 
+    public long countUsedVoucher(int voucherId) {
+        return voucherDAO.countUsedVoucher(voucherId);
+    }
+    
 }

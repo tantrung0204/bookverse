@@ -23,11 +23,6 @@ public class AuthorService {
     public Author findAuthorById(int id) {
         return authorDAO.findById(id);
     }
-
-    public List<Author> searchAuthors(String keyword) {
-        return authorDAO.searchByName(keyword);
-    }
-
     public String insertAuthor(String name, String birth, String nat, String bio) {
         String error = "";
         if (nat == null || nat.trim().isEmpty()) {
@@ -132,12 +127,7 @@ public class AuthorService {
         } else {
             return "Delete Author false";
         }
-    }
-
-    public Long countBooksByAuthorId(int authorId) {
-        return authorDAO.countBooksByAuthorId(authorId);
-    }
-
+    }  
     public List<Author> getAuthorsByPage(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
         return authorDAO.findByPage(offset, pageSize);

@@ -23,20 +23,20 @@
 
     <div class="content-card">
 
-<!--        <div class="toolbar">
-            <%-- Add import --%>
-            <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Import
-            </button>
-            <%-- Search author --%>
-            <form action="author" method="get" class="search-form">
-                <input type="hidden" name="view" value="search">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>          
-                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
-                </div>
-            </form>
-        </div>-->
+        <!--        <div class="toolbar">
+        <%-- Add import --%>
+        <button type="button" class="btn-add" onclick="openCreatePopup()">
+            <i class="bi bi-plus-lg me-1"></i> Add New Import
+        </button>
+        <%-- Search author --%>
+        <form action="author" method="get" class="search-form">
+            <input type="hidden" name="view" value="search">
+            <div class="search-box">
+                <i class="bi bi-search"></i>          
+                <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+            </div>
+        </form>
+    </div>-->
         <c:if test="${not empty message}">
             <div class="alert alert-error">
                 ${message}
@@ -66,21 +66,21 @@
                             <td>${e.staffId.fullName}</td>
                             <td>${e.totalAmount}</td>
                             <td>${e.createdAt}</td>
-<!--                            <td>
-                                <%-- Detail author --%>
-                                <div class="action-buttons">
-                                    <button type="button" class="btn-action btn-detail"
-                                            title="Detail" onclick="openDetailPopup(
-                                                            '${a.authorId}',
-                                                            '${a.authorName}',
-                                                            '${a.birthYear}',
-                                                            '${a.nationality}',
-                                                            '${a.biographyText}'
-                                                            )">
-                                        <i class="bi bi-eye"></i>
-                                    </button>                                   
-                                </div> 
-                            </td>   -->
+                            <!--                            <td>
+                            <%-- Detail author --%>
+                            <div class="action-buttons">
+                                <button type="button" class="btn-action btn-detail"
+                                        title="Detail" onclick="openDetailPopup(
+                                                        '${a.authorId}',
+                                                        '${a.authorName}',
+                                                        '${a.birthYear}',
+                                                        '${a.nationality}',
+                                                        '${a.biographyText}'
+                                                        )">
+                                    <i class="bi bi-eye"></i>
+                                </button>                                   
+                            </div> 
+                        </td>   -->
                         </tr>
                     </c:forEach>
                 </table>
@@ -169,7 +169,7 @@
         function closeDetailPopup() {
             document.getElementById("detailPopup").style.display = "none";
         }
-         function openDetailPopup(importId, page) {
+        function openDetailPopup(importId, page) {
             fetch("inventory?view=importDetail&importId=" + importId + "&page=" + page)
                     .then(response => response.json())
                     .then(data => {
@@ -361,7 +361,7 @@
         </div>
     </div>
 
-   <!-- ================= DETAIL POPUP ================= -->
+    <!-- ================= DETAIL POPUP ================= -->
     <div id="detailPopup" class="modal-overlay" >
         <div class="modal-content" style="width: 700px">
             <div class="modal-header">

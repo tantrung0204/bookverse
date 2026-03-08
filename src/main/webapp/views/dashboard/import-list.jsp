@@ -181,7 +181,7 @@
                             data = [data];
                         }
                         //xem data ở console chơi.
-                        console.log("DATA:", data);                      
+                        console.log("DATA:", data);
                         var html = `
         <table class="detail-table">
             <tr>

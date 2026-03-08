@@ -160,8 +160,7 @@ public class CartController extends HttpServlet {
             session.setAttribute("cartMessage", "Failed to add product! Invalid quantity.");
             session.setAttribute("messageType", "error");
         } catch (Exception e) {
-
-            session.setAttribute("cartMessage", "An error occurred. Please try again.");
+            session.setAttribute("cartMessage", e.getMessage());
             session.setAttribute("messageType", "error");
         }
 

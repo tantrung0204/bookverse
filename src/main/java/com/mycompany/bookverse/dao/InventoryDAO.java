@@ -7,6 +7,7 @@ package com.mycompany.bookverse.dao;
 import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
+import com.mycompany.bookverse.model.OrderItem;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -115,6 +116,29 @@ public class InventoryDAO {
             query.setParameter("importId", importId);
             return query.getResultList();
 
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<OrderItem> findByExportId(int exportId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+
+            TypedQuery<OrderItem> query
+                    = em.createQuery(
+                            "SELECT oi FROM OrderItem oi "
+                            + "JOIN FETCH oi.orderId o "
+                            + "JOIN FETCH o.customerId c "
+                            + "JOIN FETCH o.staffId s "
+                            + "JOIN FETCH oi.productId p "
+                            + "WHERE o.orderId = :orderId "
+                            + "ORDER BY oi.orderItemId DESC",
+                            OrderItem.class
+                    );
+
+            query.setParameter("orderId", exportId);
+            return query.getResultList();
         } finally {
             em.close();
         }

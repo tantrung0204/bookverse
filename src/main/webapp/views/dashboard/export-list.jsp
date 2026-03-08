@@ -1,7 +1,7 @@
 <%-- 
     Document   : export-list
     Created on : Mar 3, 2026, 5:05:34 PM
-    Author     : LECOO
+    Export     : LECOO
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -28,8 +28,8 @@
         <button type="button" class="btn-add" onclick="openCreatePopup()">
             <i class="bi bi-plus-lg me-1"></i> Add New Import
         </button>
-        <%-- Search author --%>
-        <form action="author" method="get" class="search-form">
+        <%-- Search Export --%>
+        <form action="Export" method="get" class="search-form">
             <input type="hidden" name="view" value="search">
             <div class="search-box">
                 <i class="bi bi-search"></i>          
@@ -48,7 +48,7 @@
             </div>
         </c:if>
         <c:choose>
-            <%-- Author List --%>
+            <%-- Export List --%>
             <c:when test="${not empty exports}">
                 <table class="custom-table">                 
                     <tr>
@@ -67,12 +67,12 @@
                             <td>${e.totalAmount}</td>
                             <td>${e.createdAt}</td>
                             <!--                            <td>
-                            <%-- Detail author --%>
+                            <%-- Detail Export --%>
                             <div class="action-buttons">
                                 <button type="button" class="btn-action btn-detail"
                                         title="Detail" onclick="openDetailPopup(
-                                                        '${a.authorId}',
-                                                        '${a.authorName}',
+                                                        '${a.ExportId}',
+                                                        '${a.ExportName}',
                                                         '${a.birthYear}',
                                                         '${a.nationality}',
                                                         '${a.biographyText}'
@@ -169,8 +169,8 @@
         function closeDetailPopup() {
             document.getElementById("detailPopup").style.display = "none";
         }
-        function openDetailPopup(importId, page) {
-            fetch("inventory?view=importDetail&importId=" + importId + "&page=" + page)
+        function openDetailPopup(exportId, page) {
+            fetch("inventory?view=exportDetail&exportId=" + exportId + "&page=" + page)
                     .then(response => response.json())
                     .then(data => {
                         console.log("DATA:", data);
@@ -180,27 +180,25 @@
                         }
                         //xem data ở console chơi.
                         console.log("DATA:", data);
-                        let currentPage = data[0].currentPage;
-                        let totalPages = data[0].totalPages;
                         var html = `
         <table class="detail-table">
             <tr>
-                <th style="width: 10%">ID</th>
+                <th style="width: 10%">Customer Name</th>
+                <th style="width: 20%">Staff Name</th>
                 <th style="width: 20%">Product Name</th>
                 <th style="width: 20%">Quantity</th>
-                <th style="width: 20%">Unit Price</th>
-                <th style="width: 10%">Note</th>
+                <th style="width: 10%">Create At</th>
             </tr>
     `;
                         if (data.length === 0) {
                             html += `<tr><td colspan="5">No import details found</td></tr>`;
                         } else {
                             data.forEach(iteam => {
-                                let id = iteam.importDetailId;
-                                let name = iteam.product ? iteam.product.name : "";
-                                let quan = iteam.importedQuantity;
-                                let unitPri = iteam.unitPrice;
-                                let note = iteam.note || "empty";
+                                let cusName = iteam.customerName;
+                                let staffName = iteam.staffName;
+                                let proName = iteam.exportedQuantity;
+                                let quantity = iteam.unitPrice;
+                                let createAt = iteam.note || "empty";
                                 html += `           
                                 <tr>
                                     <td>` + id + `</td>
@@ -212,79 +210,6 @@
                             });
                         }
                         html += `</table>`;
-                        //Phân trang
-                        let startPage = currentPage - 1;//là page số 2 trở về sau
-                        let endPage = currentPage + 1;//là page kề page cuối
-                        //Nếu currentPage = 1 thì hiển thị từ trang 2 trở đi
-                        if (startPage < 2) {
-                            startPage = 2;
-                            endPage = 4;
-                        }
-                        //Nếu currentPage = page cuối
-                        if (endPage > totalPages - 1) {
-                            endPage = totalPages - 1;
-                            startPage = totalPages - 3;
-                        }
-                        //Luôn luôn đặt startPage=2.
-                        if (startPage < 2) {
-                            startPage = 2;
-                        }
-
-                        let pagination = `<nav class="d-flex justify-content-center">
-                <ul class="pagination">`;
-
-                        // Previous
-                        pagination += `
-            <li class="page-item ` + (currentPage === 1 ? 'disabled' : '') + `">
-                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage - 1 < 1 ? 1 : currentPage - 1) + `)">&laquo;</button>
-            </li>`;
-
-                        // Nếu total <= 5
-                        if (totalPages <= 5) {
-                            for (let i = 1; i <= totalPages; i++) {
-                                pagination += `
-                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
-                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
-                    </li>`;
-                            }
-                        } else {
-
-                            // page 1
-                            pagination += `
-                <li class="page-item ` + (currentPage === 1 ? 'active' : '') + `">
-                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + 1 + `)">1</button>
-                </li>`;
-
-                            if (startPage > 2) {
-                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                            }
-
-                            for (let i = startPage; i <= endPage; i++) {
-                                pagination += `
-                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
-                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
-                    </li>`;
-                            }
-
-                            if (endPage < totalPages - 1) {
-                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                            }
-
-                            pagination += `
-                <li class="page-item ` + (currentPage === totalPages ? 'active' : '') + `">
-                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + totalPages + `)">` + totalPages + `</button>
-                </li>`;
-                        }
-
-                        // Next
-                        pagination += `
-            <li class="page-item ` + (currentPage === totalPages ? 'disabled' : '') + `">
-                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage + 1) + `)">&raquo;</button>
-            </li>`;
-
-                        pagination += `</ul></nav>`;
-
-                        html += pagination;
                         document.getElementById("popupContent").innerHTML = html;
                         document.getElementById("detailPopup").style.display = "flex";
                     })
@@ -296,7 +221,7 @@
                     });
         }
         function confirmDelete(id, name) {
-            return confirm("Are you sure you want to delete author:\n" + name + " (ID: " + id + ")");
+            return confirm("Are you sure you want to delete Export:\n" + name + " (ID: " + id + ")");
         }
     </script>
     <c:if test="${openCreatePopup}">
@@ -321,7 +246,7 @@
     <div id="createPopup" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add new author</h3>
+                <h3>Add new Export</h3>
             </div>
 
             <c:if test="${not empty createError}">
@@ -330,11 +255,11 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/author" method="post">
+            <form action="${pageContext.request.contextPath}/Export" method="post">
                 <input type="hidden" name="action" value="create">
 
                 <div class="form-group">
-                    <label>Author Name</label>
+                    <label>Export Name</label>
                     <input type="text" name="name" class="form-control" value="${createName}">
                 </div>
 
@@ -365,7 +290,7 @@
     <div id="detailPopup" class="modal-overlay" >
         <div class="modal-content" style="width: 700px">
             <div class="modal-header">
-                <h3>Author Detail</h3>
+                <h3>Export Detail</h3>
             </div>
             <div id="popupContent"></div>
             <div class="modal-footer">

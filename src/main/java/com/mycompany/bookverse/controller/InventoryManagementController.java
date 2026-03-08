@@ -7,6 +7,7 @@ package com.mycompany.bookverse.controller;
 import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
+import com.mycompany.bookverse.model.OrderItem;
 import com.mycompany.bookverse.service.InventoryService;
 import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
@@ -142,6 +143,32 @@ public class InventoryManagementController extends HttpServlet {
                 }
                 break;
             case "exportDetail":
+                 idStr = request.getParameter("exportId");
+                try {
+                    int id = Integer.parseInt(idStr);
+                    List<OrderItem> exportDetails = inventoryServices.getExportDetail(id);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    JSONArray jsonArray = new JSONArray();
+                    if (exportDetails != null) {
+                        for (OrderItem o : exportDetails) {
+                            JSONObject obj = new JSONObject();
+                            obj.put("customerName", o.getOrderId().getCustomerId().getFullName());
+                            obj.put("staffName", o.getOrderId().getStaffId().getUsername());
+                            obj.put("createdAt", o.getOrderId().getCreatedAt());
+                            if (o.getProductId() != null) {
+                                JSONObject productObj = new JSONObject();
+                                productObj.put("quantity", o.getOrderQuantity());
+                                productObj.put("name", o.getProductId().getName());
+                                obj.put("product", productObj);
+                            }
+                            jsonArray.put(obj);
+                        }
+                    }
+                    response.getWriter().write(jsonArray.toString());
+                } catch (IOException | NumberFormatException e) {
+                    response.sendRedirect("inventory");
+                }
                 break;
             default:
                 response.sendRedirect("inventory");

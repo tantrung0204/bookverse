@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.service.ProductService;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.service.CategoryService;
 import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,6 +25,7 @@ import java.util.List;
 public class ProductDetailController extends HttpServlet {
 
     private ProductService productService = new ProductService();
+    private CategoryService categoryService = new CategoryService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -95,6 +97,7 @@ public class ProductDetailController extends HttpServlet {
 
             // Gọi danh sách 5 Feedback hiển thị
             List<Feedback> feedbackList = productService.getProductFeedbacks(productId, page);
+            List<Category> categories = categoryService.getActiveSubCategories();
 
             // Tính toán tổng số trang feedback
             int totalFeedbacks = product.getReviewCount();
@@ -104,6 +107,7 @@ public class ProductDetailController extends HttpServlet {
             request.setAttribute("product", product);
             request.setAttribute("productType", productType);
             request.setAttribute("relatedProducts", relatedProducts);
+            request.setAttribute("categories", categories);
 
             // Gửi dữ liệu Feedback
             request.setAttribute("feedbackList", feedbackList);

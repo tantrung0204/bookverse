@@ -9,24 +9,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 <div class="container-fluid">
-    <c:if test="${not empty message}">
-        <div style="padding:10px;margin:10px 0;
-             background:#f8d7da;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${message}
-        </div>
-    </c:if>
-    <c:if test="${not empty success}">
-        <div style="padding:10px;margin:10px 0;
-             background:#28a745;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${success}
-        </div>
-    </c:if>
-    <c:if test="${not empty deleteError}">
-        <div class="alert alert-danger mt-3">${deleteError}</div>
-        <c:remove var="deleteError" scope="session"/>
-    </c:if>
+
     <div class="page-header">
         <p class="title">Manage Inventory</p>
         <p class="subtitle">Create and manage inventory for your library</p>
@@ -53,6 +36,17 @@
                 </div>
             </form>
         </div>
+        <c:if test="${not empty message}">
+            <div class="alert alert-error">
+                ${message}
+            </div>
+        </c:if>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">
+                ${success}
+            </div>
+        </c:if>
+
         <c:choose>
             <%-- Import List --%>
             <c:when test="${not empty imports}">
@@ -80,7 +74,7 @@
                                 <div class="action-buttons"> 
                                     <button type="button"
                                             class="btn-action btn-detail"
-                                            onclick="openDetailPopup(${i.importId})"
+                                            onclick="openDetailPopup(${i.importId}, 1)"
                                             title="Detail"
                                             >
                                         <i class="bi bi-eye"></i>
@@ -177,16 +171,19 @@
         function closeDetailPopup() {
             document.getElementById("detailPopup").style.display = "none";
         }
-        function openDetailPopup(importId) {
-
-            fetch("inventory?view=importDetail&importId=" + importId)
+        function openDetailPopup(importId, page) {
+            fetch("inventory?view=importDetail&importId=" + importId + "&page=" + page)
                     .then(response => response.json())
                     .then(data => {
                         console.log("DATA:", data);
+                        //ép data thành array để dùng forEach.
                         if (!Array.isArray(data)) {
                             data = [data];
                         }
+                        //xem data ở console chơi.
                         console.log("DATA:", data);
+                        let currentPage = data[0].currentPage;
+                        let totalPages = data[0].totalPages;
                         var html = `
         <table class="detail-table">
             <tr>
@@ -201,22 +198,95 @@
                             html += `<tr><td colspan="5">No import details found</td></tr>`;
                         } else {
                             data.forEach(iteam => {
-                                let id=iteam.importDetailId;
-                                let name=iteam.product ? iteam.product.name : "";
-                                let quan=iteam.importedQuantity;
-                                let unitPri=iteam.unitPrice;
-                                let note=iteam.note || "empty";
-                                html +=`           
+                                let id = iteam.importDetailId;
+                                let name = iteam.product ? iteam.product.name : "";
+                                let quan = iteam.importedQuantity;
+                                let unitPri = iteam.unitPrice;
+                                let note = iteam.note || "empty";
+                                html += `           
                                 <tr>
-                                    <td>`+id+`</td>
-                                    <td>`+name+`</td>
-                                    <td>`+quan+`</td>
-                                    <td>`+unitPri+`</td>
-                                    <td>`+note+`</td></tr>       
+                                    <td>` + id + `</td>
+                                    <td>` + name + `</td>
+                                    <td>` + quan + `</td>
+                                    <td>` + unitPri + `</td>
+                                    <td>` + note + `</td></tr>       
     `;
                             });
                         }
                         html += `</table>`;
+                        //Phân trang
+                        let startPage = currentPage - 1;//là page số 2 trở về sau
+                        let endPage = currentPage + 1;//là page kề page cuối
+                        //Nếu currentPage = 1 thì hiển thị từ trang 2 trở đi
+                        if (startPage < 2) {
+                            startPage = 2;
+                            endPage = 4;
+                        }
+                        //Nếu currentPage = page cuối
+                        if (endPage > totalPages - 1) {
+                            endPage = totalPages - 1;
+                            startPage = totalPages - 3;
+                        }
+                        //Luôn luôn đặt startPage=2.
+                        if (startPage < 2) {
+                            startPage = 2;
+                        }
+
+                        let pagination = `<nav class="d-flex justify-content-center">
+                <ul class="pagination">`;
+
+                        // Previous
+                        pagination += `
+            <li class="page-item ` + (currentPage === 1 ? 'disabled' : '') + `">
+                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage - 1 < 1 ? 1 : currentPage - 1) + `)">&laquo;</button>
+            </li>`;
+
+                        // Nếu total <= 5
+                        if (totalPages <= 5) {
+                            for (let i = 1; i <= totalPages; i++) {
+                                pagination += `
+                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
+                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
+                    </li>`;
+                            }
+                        } else {
+
+                            // page 1
+                            pagination += `
+                <li class="page-item ` + (currentPage === 1 ? 'active' : '') + `">
+                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + 1 + `)">1</button>
+                </li>`;
+
+                            if (startPage > 2) {
+                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                            }
+
+                            for (let i = startPage; i <= endPage; i++) {
+                                pagination += `
+                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
+                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
+                    </li>`;
+                            }
+
+                            if (endPage < totalPages - 1) {
+                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                            }
+
+                            pagination += `
+                <li class="page-item ` + (currentPage === totalPages ? 'active' : '') + `">
+                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + totalPages + `)">` + totalPages + `</button>
+                </li>`;
+                        }
+
+                        // Next
+                        pagination += `
+            <li class="page-item ` + (currentPage === totalPages ? 'disabled' : '') + `">
+                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage + 1) + `)">&raquo;</button>
+            </li>`;
+
+                        pagination += `</ul></nav>`;
+
+                        html += pagination;
                         document.getElementById("popupContent").innerHTML = html;
                         document.getElementById("detailPopup").style.display = "flex";
                     })
@@ -300,5 +370,8 @@
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
             </div>
+
         </div>
+
     </div>
+</div>

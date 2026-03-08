@@ -9,24 +9,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 <div class="container-fluid">
-    <c:if test="${not empty message}">
-        <div style="padding:10px;margin:10px 0;
-             background:#f8d7da;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${message}
-        </div>
-    </c:if>
-    <c:if test="${not empty success}">
-        <div style="padding:10px;margin:10px 0;
-             background:#28a745;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${success}
-        </div>
-    </c:if>
-    <c:if test="${not empty deleteError}">
-        <div class="alert alert-danger mt-3">${deleteError}</div>
-        <c:remove var="deleteError" scope="session"/>
-    </c:if>
+
     <div class="page-header">
         <p class="title">Manage Author</p>
         <p class="subtitle">Create and manage author for your library</p>
@@ -43,10 +26,24 @@
                 <input type="hidden" name="view" value="search">
                 <div class="search-box">
                     <i class="bi bi-search"></i>          
-                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+                    <input type="text" name="keyword" placeholder="Search authors..." value="${keyword}">
                 </div>
             </form>
         </div>
+        <c:if test="${not empty message}">
+            <div class="alert alert-error">
+                ${message}
+            </div>
+        </c:if>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">
+                ${success}
+            </div>
+        </c:if>
+        <c:if test="${not empty deleteError}">
+            <div class="alert alert-error">${deleteError}</div>
+            <c:remove var="deleteError" scope="session"/>
+        </c:if>
         <c:choose>
             <%-- Author List --%>
             <c:when test="${not empty authors}">
@@ -59,7 +56,7 @@
                         <th width="20%">Nationality</th>
 
                         <th width="20%">Biography</th>   
-                        
+
                         <th width="20%">Action</th>
                     </tr>
                     <c:forEach var="a" items="${authors}"> 
@@ -215,7 +212,7 @@
             document.getElementById("editAuthorBirth").value = birth;
             document.getElementById("editNat").value = nat;
             document.getElementById("editBio").value = bio;
-            
+
             const err = document.getElementById("editErrorMsg");
             if (err)
                 err.style.display = 'none';
@@ -295,7 +292,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>BirthDay</label>
+                    <label>Year of birth</label>
                     <input type="text" name="birth" class="form-control" value="${birth}">
                 </div>
 
@@ -334,7 +331,7 @@
                     <td id="detailName"></td>
                 </tr>
                 <tr>
-                    <th>BirthDay:</th>
+                    <th>Year of birth:</th>
                     <td id="detailBirth"></td>
                 </tr>
                 <tr>
@@ -378,7 +375,7 @@
                     <input type="text" name="authorName" id="editAuthorName" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label>BirthDay</label>
+                    <label>Year of birth</label>
                     <input type="text" name="birth" id="editAuthorBirth" class="form-control">
                 </div>
                 <div class="form-group">
@@ -399,3 +396,4 @@
             </form>
         </div>
     </div>
+</div>

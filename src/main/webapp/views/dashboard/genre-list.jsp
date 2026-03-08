@@ -9,24 +9,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 <div class="container-fluid">
-    <c:if test="${not empty message}">
-        <div style="padding:10px;margin:10px 0;
-             background:#f8d7da;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${message}
-        </div>
-    </c:if>
-    <c:if test="${not empty success}">
-        <div style="padding:10px;margin:10px 0;
-             background:#28a745;color:#721c24;
-             border:1px solid #f5c6cb;border-radius:5px;">
-            ${success}
-        </div>
-    </c:if>
-    <c:if test="${not empty deleteError}">
-        <div class="alert alert-danger mt-3">${deleteError}</div>
-        <c:remove var="deleteError" scope="session"/>
-    </c:if>
+
     <div class="page-header">
         <p class="title">Manage Genre</p>
         <p class="subtitle">Create and manage book Genre for your library</p>
@@ -42,10 +25,24 @@
                 <input type="hidden" name="view" value="search">
                 <div class="search-box">
                     <i class="bi bi-search"></i>          
-                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+                    <input type="text" name="keyword" placeholder="Search genres..." value="${keyword}">
                 </div>
             </form>
         </div>
+        <c:if test="${not empty message}">
+            <div class="alert alert-error">
+                ${message}
+            </div>
+        </c:if>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">
+                ${success}
+            </div>
+        </c:if>
+        <c:if test="${not empty deleteError}">
+            <div class="alert alert-error">${deleteError}</div>
+            <c:remove var="deleteError" scope="session"/>
+        </c:if>
         <c:choose>
             <%-- Genre List --%>
             <c:when test="${not empty genres}">

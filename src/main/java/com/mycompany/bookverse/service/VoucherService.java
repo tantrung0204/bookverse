@@ -36,11 +36,11 @@ public class VoucherService {
             return "Quantity cannot be less than 0";
         }
 
-        if (voucher.getDiscountPercent() == null
-                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
-                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
-            return "Discount must be between 0 and 100";
-        }
+//        if (voucher.getDiscountPercent() == null
+//                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
+//                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
+//            return "Discount must be between 0 and 100";
+//        }
 
         if (voucher.getExpiryDate() == null) {
             return "Expiry date is required";
@@ -80,11 +80,11 @@ public class VoucherService {
             return "Quantity cannot be less than or equal to 0";
         }
 
-        if (voucher.getDiscountPercent() == null
-                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
-                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
-            return "Discount must be between 0 and 100";
-        }
+//        if (voucher.getDiscountPercent() == null
+//                || voucher.getDiscountPercent().compareTo(BigDecimal.ZERO) < 0
+//                || voucher.getDiscountPercent().compareTo(new BigDecimal("100")) > 0) {
+//            return "Discount must be between 0 and 100";
+//        }
 
         if (voucher.getExpiryDate().before(old.getStartDate())) {
             return "Expiry date must be after start date";

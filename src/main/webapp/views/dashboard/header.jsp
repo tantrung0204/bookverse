@@ -8,7 +8,6 @@
 
             <div class="header-left">
                 <p class="header-title mb-1">Dashboard</p>
-                <p class="header-subtitle">Create and manage categories for your library</p>
             </div>
 
             <div class="header-right dropdown">

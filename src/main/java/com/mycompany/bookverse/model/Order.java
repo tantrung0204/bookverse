@@ -48,14 +48,25 @@ public class Order implements Serializable {
     @Basic(optional = false)
     @Column(name = "order_id")
     private Integer orderId;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
+    @Size(max = 100)
+    @Column(name = "receiver_name")
+    private String receiverName;
+    @Size(max = 20)
+    @Column(name = "receiver_phone")
+    private String receiverPhone;
     @Size(max = 50)
     @Column(name = "order_status")
     private String orderStatus;
+    @Size(max = 20)
+    @Column(name = "payment_method")
+    private String paymentMethod;       // ONLINE, COD
     @Column(name = "is_paid")
     private Boolean isPaid;
+    @Size(max = 255)
+    @Column(name = "shipping_address")
+    private String shippingAddress;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -108,6 +119,38 @@ public class Order implements Serializable {
 
     public void setIsPaid(Boolean isPaid) {
         this.isPaid = isPaid;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public Date getCreatedAt() {
@@ -175,5 +218,5 @@ public class Order implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Order[ orderId=" + orderId + " ]";
     }
-    
+
 }

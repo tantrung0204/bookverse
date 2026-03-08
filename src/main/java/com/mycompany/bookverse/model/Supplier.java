@@ -34,7 +34,10 @@ import java.util.Collection;
     @NamedQuery(name = "Supplier.findBySupplierEmail", query = "SELECT s FROM Supplier s WHERE s.supplierEmail = :supplierEmail"),
     @NamedQuery(name = "Supplier.findBySupplierPhone", query = "SELECT s FROM Supplier s WHERE s.supplierPhone = :supplierPhone"),
     @NamedQuery(name = "Supplier.findBySupplierAddress", query = "SELECT s FROM Supplier s WHERE s.supplierAddress = :supplierAddress"),
-    @NamedQuery(name = "Supplier.findByStatus", query = "SELECT s FROM Supplier s WHERE s.status = :status")})
+    @NamedQuery(name = "Supplier.findByStatus", query = "SELECT s FROM Supplier s WHERE s.status = :status"),
+    @NamedQuery(name = "Supplier.searchByName", query = "SELECT s FROM Supplier s WHERE LOWER(s.supplierName) LIKE LOWER(:keyword)"),
+    @NamedQuery(name = "Supplier.existsByName", query = "SELECT COUNT(s) FROM Supplier s WHERE LOWER(s.supplierName) = LOWER(:name)"),
+    @NamedQuery(name = "Supplier.existsSupplier", query = "SELECT COUNT(s) FROM Supplier s WHERE LOWER(s.supplierName) = LOWER(:name) AND s.supplierId <> :id")})
 public class Supplier implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -148,5 +151,5 @@ public class Supplier implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Supplier[ supplierId=" + supplierId + " ]";
     }
-    
+
 }

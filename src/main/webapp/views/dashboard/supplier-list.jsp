@@ -1,8 +1,10 @@
-<%-- Document : category-list 
-Created on : 10 Feb 2026, 18:33:04 
-Author : NganTTK-CE190411 --%>
+<%-- 
+    Document   : suppliers
+    Created on : 26 Feb 2026, 18:34:05
+    Author     : NganTTK-CE190411
+--%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
@@ -11,29 +13,29 @@ Author : NganTTK-CE190411 --%>
 <div class="container-fluid">
 
     <div class="page-header">
-        <p class="title">Manage Categories</p>
-        <p class="subtitle">Create and manage book categories for your library</p>
+        <p class="title">Manage Suppliers</p>
+        <p class="subtitle">Create and manage suppliers for your library</p>
     </div>
 
     <div class="content-card">
 
         <div class="toolbar">
             <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Category
+                <i class="bi bi-plus-lg me-1"></i> Add New Supplier
             </button>
 
-            <form action="${pageContext.request.contextPath}/category" method="get">
+            <form action="${pageContext.request.contextPath}/supplier" method="get">
                 <input type="hidden" name="action" value="search" />
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+                    <input type="text" name="keyword" placeholder="Search supplier..." value="${keyword}">
                 </div>
                 <button type="submit" hidden></button>
             </form>
         </div>
 
         <c:choose>
-            <c:when test="${not empty categories}">
+            <c:when test="${not empty suppliers}">
                 <c:if test="${not empty successMsg}">
                     <div class="alert alert-success">
                         ${successMsg}
@@ -50,21 +52,24 @@ Author : NganTTK-CE190411 --%>
                     <thead>
                         <tr>
                             <th width="10%">ID</th>
-                            <th width="20%">Category Name</th>
-                            <th width="35%">Description</th>
-                            <th width="15%">Status</th>
+                            <th width="20%">Supplier Name</th>
+                            <th width="15%">Supplier Email</th>
+                            <th width="15%">Supplier Phone</th>
+                            <th width="35%">Supplier Address</th>
                             <th width="20%">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="c" items="${categories}">
+                        <c:forEach var="s" items="${suppliers}">
                             <tr>
-                                <td><strong>${c.categoryId}</strong></td>
-                                <td>${c.categoryName}</td>
-                                <td>${c.descriptionText}</td>
+                                <td><strong>${s.supplierId}</strong></td>
+                                <td>${s.supplierName}</td>
+                                <td>${s.supplierEmail}</td>
+                                <td>${s.supplierPhone}</td>
+                                <td>${s.supplierAddress}</td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${c.status == 1}">
+                                        <c:when test="${s.status == 1}">
                                             <span class="badge-status badge-active">Active</span>
                                         </c:when>
                                         <c:otherwise>
@@ -77,30 +82,33 @@ Author : NganTTK-CE190411 --%>
                                     <div class="action-buttons">
                                         <button type="button" class="btn-action btn-detail"
                                                 title="View Detail" onclick="openDetailPopup(
-                                                                '${c.categoryId}',
-                                                                '${c.categoryName}',
-                                                                '${c.descriptionText}',
-                                                                '${c.status}'
+                                                                '${s.supplierId}',
+                                                                '${s.supplierName}',
+                                                                '${s.supplierEmail}',
+                                                                '${s.supplierPhone}',
+                                                                '${s.supplierAddress}',
+                                                                '${s.status}'
                                                                 )">
                                             <i class="bi bi-eye"></i>
                                         </button>
 
                                         <button type="button" class="btn-action btn-edit" title="Edit"
                                                 onclick="openEditPopup(
-                                                                '${c.categoryId}',
-                                                                '${c.categoryName}',
-                                                                '${c.descriptionText}',
-                                                                '${c.status}',
-                                                                '${c.parent.categoryId}'
+                                                                '${s.supplierId}',
+                                                                '${s.supplierName}',
+                                                                '${s.supplierEmail}',
+                                                                '${s.supplierPhone}',
+                                                                '${s.supplierAddress}',
+                                                                '${s.status}'
                                                                 )">
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
-                                        <form action="${pageContext.request.contextPath}/category"
+                                        <form action="${pageContext.request.contextPath}/supplier"
                                               method="post" style="display:inline;"
-                                              onsubmit="return confirmDelete('${c.categoryId}', '${c.categoryName}')">
+                                              onsubmit="return confirmDelete('${s.supplierId}', '${s.supplierName}')">
                                             <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="id" value="${c.categoryId}">
+                                            <input type="hidden" name="id" value="${s.supplierId}">
                                             <button type="submit" class="btn-action btn-delete"
                                                     title="Delete">
                                                 <i class="bi bi-trash"></i>
@@ -118,7 +126,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Previous -->
                         <c:if test="${currentPage > 1}">
-                            <c:url var="prevUrl" value="/category">
+                            <c:url var="prevUrl" value="/supplier">
                                 <c:if test="${not empty keyword}">
                                     <c:param name="action" value="search"/>
                                     <c:param name="keyword" value="${keyword}"/>
@@ -133,7 +141,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Page numbers -->
                         <c:forEach begin="1" end="${totalPages}" var="i">
-                            <c:url var="pageUrl" value="/category">
+                            <c:url var="pageUrl" value="/supplier">
                                 <c:if test="${not empty keyword}">
                                     <c:param name="action" value="search"/>
                                     <c:param name="keyword" value="${keyword}"/>
@@ -149,7 +157,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Next -->
                         <c:if test="${currentPage < totalPages}">
-                            <c:url var="nextUrl" value="/category">
+                            <c:url var="nextUrl" value="/supplier">
                                 <c:if test="${not empty keyword}">
                                     <c:param name="action" value="search"/>
                                     <c:param name="keyword" value="${keyword}"/>
@@ -168,7 +176,7 @@ Author : NganTTK-CE190411 --%>
             <c:otherwise>
                 <div style="text-align:center; padding: 40px; color: #999;">
                     <i class="bi bi-inbox" style="font-size: 40px;"></i>
-                    <p class="mt-2">No categories found.</p>
+                    <p class="mt-2">No suppliers found.</p>
                 </div>
             </c:otherwise>
         </c:choose>
@@ -180,64 +188,11 @@ Author : NganTTK-CE190411 --%>
     </div>
 </div>
 
-<!-- ================= CREATE POPUP ================= -->
-<div id="createPopup" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Add new Category</h3>
-        </div>
-
-        <c:if test="${not empty createError}">
-            <div class="alert alert-danger" id="createErrorMsg">
-                ${createError}
-            </div>
-        </c:if>
-
-        <form action="${pageContext.request.contextPath}/category" method="post">
-            <input type="hidden" name="action" value="create">
-
-            <div class="form-group">
-                <label>Category Name</label>
-                <input type="text" name="categoryName" class="form-control" value="${createName}">
-            </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <input type="text" name="descriptionText" class="form-control" value="${createDesc}">
-            </div>
-
-            <div class="form-group">
-                <label>Status</label>
-                <select name="status" class="form-control">
-                    <option value="1" ${createStatus==1 ? "selected" : "" }>Active</option>
-                    <option value="0" ${createStatus==0 ? "selected" : "" }>Inactive</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Parent</label>
-                <select name="parent" class="form-control">
-                    <option value="">-- Select Parent Category --</option>
-
-                    <option value="1" ${createParent == 1 ? "selected" : ""}>Book</option>
-                    <option value="2" ${createParent == 2 ? "selected" : ""}>Văn phòng phẩm</option>
-                </select>
-            </div>
-
-
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
-                <button type="submit" class="btn-save">Create</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ================= DETAIL POPUP ================= -->
+<!--================= DETAIL POPUP =================--> 
 <div id="detailPopup" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Category Detail</h3>
+            <h3>Supplier Detail</h3>
         </div>
 
         <table class="detail-table">
@@ -250,16 +205,20 @@ Author : NganTTK-CE190411 --%>
                 <td id="detailName"></td>
             </tr>
             <tr>
-                <th>Description:</th>
-                <td id="detailDesc"></td>
+                <th>Email:</th>
+                <td id="detailEmail"></td>
+            </tr>
+            <tr>
+                <th>Phone:</th>
+                <td id="detailPhone"></td>
+            </tr>
+            <tr>
+                <th>Address:</th>
+                <td id="detailAddress"></td>
             </tr>
             <tr>
                 <th>Status:</th>
                 <td id="detailStatus"></td>
-            </tr>
-            <tr>
-                <th>Quantity:</th>
-                <td id="detailQuantity"></td>
             </tr>
         </table>
 
@@ -269,10 +228,62 @@ Author : NganTTK-CE190411 --%>
     </div>
 </div>
 
+<!-- ================= CREATE POPUP ================= -->
+<div id="createPopup" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Supplier</h3>
+        </div>
+
+        <c:if test="${not empty createError}">
+            <div class="alert alert-danger" id="createErrorMsg">
+                ${createError}
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/supplier" method="post">
+            <input type="hidden" name="action" value="create">
+
+            <div class="form-group">
+                <label>Supplier Name</label>
+                <input type="text" name="supplierName" class="form-control" value="${createName}">
+            </div>
+
+            <div class="form-group">
+                <label> Email</label>
+                <input type="text" name="supplierEmail" class="form-control" value="${createEmail}">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="supplierPhone" class="form-control" value="${createPhone}">
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="supplierAddress" class="form-control" value="${createAddress}">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="1" ${createStatus==1 ? "selected" : "" }>Active</option>
+                    <option value="0" ${createStatus==0 ? "selected" : "" }>Inactive</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
+                <button type="submit" class="btn-save">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="editPopup" class="modal-overlay">
     <div class="modal-content ">
         <div class="modal-header">
-            <h3>Edit Category</h3>
+            <h3>Edit Supplier</h3>
         </div>
 
         <c:if test="${not empty editError}">
@@ -281,18 +292,28 @@ Author : NganTTK-CE190411 --%>
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/category" method="post">
+        <form action="${pageContext.request.contextPath}/supplier" method="post">
             <input type="hidden" name="action" value="edit">
-            <input type="hidden" name="categoryId" id="editCategoryId">
+            <input type="hidden" name="supplierId" id="editSupplierId">
 
             <div class="form-group">
-                <label>Category Name</label>
-                <input type="text" name="categoryName" id="editCategoryName" class="form-control">
+                <label>Supplier Name</label>
+                <input type="text" name="supplierName" id="editSupplierName" class="form-control">
             </div>
 
             <div class="form-group">
-                <label>Description</label>
-                <input type="text" name="descriptionText" id="editDescription" class="form-control">
+                <label>Email</label>
+                <input type="text" name="supplierEmail" id="editSupplierEmail" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="supplierPhone" id="editSupplierPhone" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="supplierAddress" id="editSupplierAddress" class="form-control">
             </div>
 
             <div class="form-group">
@@ -302,14 +323,6 @@ Author : NganTTK-CE190411 --%>
                     <option value="0">Inactive</option>
                 </select>
             </div>
-            
-            <div class="form-group">
-                <label>Parent</label>
-                <select name="parent" id="editParent" class="form-control">
-                    <option value="1">BOOK</option>
-                    <option value="2">Văn phòng phẩm</option>
-                </select>
-            </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
@@ -317,9 +330,26 @@ Author : NganTTK-CE190411 --%>
             </div>
         </form>
     </div>
-</div>
+</div>               
+
 
 <script>
+    function openDetailPopup(id, name, email, phone, address, status) {
+        document.getElementById("detailId").innerText = id;
+        document.getElementById("detailName").innerText = name;
+        document.getElementById("detailEmail").innerText = email;
+        document.getElementById("detailPhone").innerText = phone;
+        document.getElementById("detailAddress").innerText = address;
+        document.getElementById("detailStatus").innerText = status == 1 ? "Active" : "Inactive";
+
+
+
+        document.getElementById("detailPopup").style.display = "flex";
+    }
+    function closeDetailPopup() {
+        document.getElementById("detailPopup").style.display = "none";
+    }
+
     function openCreatePopup() {
         document.getElementById("createPopup").style.display = "flex";
         const err = document.getElementById("createErrorMsg");
@@ -330,35 +360,13 @@ Author : NganTTK-CE190411 --%>
         document.getElementById("createPopup").style.display = "none";
     }
 
-    function openDetailPopup(id, name, desc, status) {
-        document.getElementById("detailId").innerText = id;
-        document.getElementById("detailName").innerText = name;
-        document.getElementById("detailDesc").innerText = desc;
-        document.getElementById("detailStatus").innerText = status == 1 ? "Active" : "Inactive";
-        document.getElementById("detailQuantity").innerText = "Loading...";
-
-        fetch('${pageContext.request.contextPath}/category?action=detail&categoryId=' + id)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("detailQuantity").innerText = data.quantity + " products";
-                })
-                .catch(error => {
-                    document.getElementById("detailQuantity").innerText = "Error";
-                });
-
-
-        document.getElementById("detailPopup").style.display = "flex";
-    }
-    function closeDetailPopup() {
-        document.getElementById("detailPopup").style.display = "none";
-    }
-    // Hàm mở Popup và điền dữ liệu
-    function openEditPopup(id, name, description, status, parent) {
-        document.getElementById("editCategoryId").value = id;
-        document.getElementById("editCategoryName").value = name;
-        document.getElementById("editDescription").value = description;
+    function openEditPopup(id, name, email, phone, address, status) {
+        document.getElementById("editSupplierId").value = id;
+        document.getElementById("editSupplierName").value = name;
+        document.getElementById("editSupplierEmail").value = email;
+        document.getElementById("editSupplierPhone").value = phone;
+        document.getElementById("editSupplierAddress").value = address;
         document.getElementById("editStatus").value = status;
-        document.getElementById("editParent").value = parent;
 
         // Ẩn thông báo lỗi cũ nếu có
         const err = document.getElementById("editErrorMsg");
@@ -373,33 +381,34 @@ Author : NganTTK-CE190411 --%>
     function closeEditPopup() {
         document.getElementById("editPopup").style.display = "none";
     }
-
-    // Xử lý confirm xóa
+    
+     // Xử lý confirm xóa
     function confirmDelete(id, name) {
-        return confirm("Are you sure you want to delete category:\n" + name + " (ID: " + id + ")");
+        return confirm("Are you sure you want to delete supplier:\n" + name + " (ID: " + id + ")");
     }
+
 
     let popupTimer = null;
 
 
     // Đóng Popup khi click ra ngoài vùng trắng
     window.onclick = function (event) {
-        var modal = document.getElementById("editPopup");
+        var modal = document.getElementById("detailPopup");
         if (event.target == modal) {
             closeEditPopup();
         }
     }
 </script>
-
 <c:if test="${openCreatePopup}">
     <script>
         window.onload = function () {
             setTimeout(function () {
                 openCreatePopup(
                         '${createName}',
-                        '${createDesc}',
-                        '${createStatus}',
-                        '${createParent}'
+                        '${createEmail}',
+                        '${createPhone}',
+                        '${createAddress}',
+                        '${createStatus}'
                         );
                 // Hiển thị lại lỗi
                 const err = document.getElementById("createErrorMsg");
@@ -418,9 +427,10 @@ Author : NganTTK-CE190411 --%>
                 openEditPopup(
                         '${editId}',
                         '${editName}',
-                        '${editDesc}',
-                        '${editStatus}',
-                        '${editParent}'
+                        '${editEmail}',
+                        '${editPhone}',
+                        '${editAddress}',
+                        '${editStatus}'
                         );
                 // Hiển thị lại lỗi
                 const err = document.getElementById("editErrorMsg");

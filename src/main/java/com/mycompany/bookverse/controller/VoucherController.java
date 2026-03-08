@@ -85,17 +85,11 @@ public class VoucherController extends HttpServlet {
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
-                    
+
             case "search":
                 String keyword = request.getParameter("keyword");
                 List<Voucher> searchList = voucherService.searchVouchers(keyword);
-
-                if (searchList == null || searchList.isEmpty()) {
-                    request.setAttribute("searchMessage", "No voucher found");
-                } else {
-                    request.setAttribute("vouchers", searchList);
-                }
-
+                request.setAttribute("vouchers", searchList);
                 request.setAttribute("contentPage", "voucher-list.jsp");
                 request.setAttribute("activeMenu", "voucher");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
@@ -125,7 +119,7 @@ public class VoucherController extends HttpServlet {
                 try {
                     Voucher vCreate = new Voucher();
                     vCreate.setVoucherCode(request.getParameter("code"));
-                    vCreate.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
+                    vCreate.setDiscountValue(new BigDecimal(request.getParameter("discount")));
                     vCreate.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
                     vCreate.setStatus(Integer.parseInt(request.getParameter("status")));
                     vCreate.setStartDate(new java.util.Date());
@@ -176,7 +170,7 @@ public class VoucherController extends HttpServlet {
                     Voucher vEdit = new Voucher();
                     vEdit.setVoucherId(id);
                     vEdit.setVoucherCode(request.getParameter("code"));
-                    vEdit.setDiscountPercent(new BigDecimal(request.getParameter("discount")));
+                    vEdit.setDiscountValue(new BigDecimal(request.getParameter("discount")));
                     vEdit.setAvailableQuantity(Integer.parseInt(request.getParameter("quantity")));
                     vEdit.setStatus(Integer.parseInt(request.getParameter("status")));
                     vEdit.setStartDate(old.getStartDate());

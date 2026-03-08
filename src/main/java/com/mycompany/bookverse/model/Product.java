@@ -40,7 +40,7 @@ import java.util.Collection;
     @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:keyword)"),
     @NamedQuery(
             name = "Product.countByCategoryId",
-            query = "SELECT COUNT(p) FROM Product p WHERE p.categoryId = :categoryId"
+            query = "SELECT COUNT(p) FROM Product p WHERE p.categoryId.categoryId = :categoryId"
     )
 })
 
@@ -65,8 +65,12 @@ public class Product implements Serializable {
     private String imageUrl;
     @Column(name = "status")
     private Integer status;
-    @Column(name = "category_id")
-    private int categoryId;
+    @Size(max = 500)
+    @Column(name = "description_text")
+    private String descriptionText;
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @ManyToOne
+    private Category categoryId;
     @OneToMany(mappedBy = "productId")
     private Collection<ImportStockDetail> importStockDetailCollection;
     @OneToMany(mappedBy = "productId")
@@ -131,11 +135,19 @@ public class Product implements Serializable {
         this.status = status;
     }
 
-    public int getCategoryId() {
+    public String getDescriptionText() {
+        return descriptionText;
+    }
+
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
+    }
+
+    public Category getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Category categoryId) {
         this.categoryId = categoryId;
     }
 

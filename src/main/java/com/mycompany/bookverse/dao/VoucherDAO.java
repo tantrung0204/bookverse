@@ -63,7 +63,7 @@ public class VoucherDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e; // hoặc log
+            throw e; 
         } finally {
             em.close();
         }
@@ -131,6 +131,21 @@ public class VoucherDAO {
                 em.getTransaction().rollback();
             }
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countUsedVoucher(int voucherId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(o) FROM Order o "
+                    + "WHERE o.voucherId.voucherId = :vid "
+                    + "AND o.orderStatus NOT IN ('pending', 'cancelled')",
+                    Long.class)
+                    .setParameter("vid", voucherId)
+                    .getSingleResult();
         } finally {
             em.close();
         }

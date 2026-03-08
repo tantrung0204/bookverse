@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.mycompany.bookverse.model.Notification;
 import com.mycompany.bookverse.service.NotificationService;
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.List;
  * @author Admin
  */
 @WebServlet(name = "NotificationController", urlPatterns = {"/notification"})
+@MultipartConfig
 public class NotificationController extends HttpServlet {
 
     private NotificationService service = new NotificationService();
@@ -95,13 +97,11 @@ public class NotificationController extends HttpServlet {
                 String keyword = request.getParameter("keyword");
                 List<Notification> searchList = service.search(keyword);
 
-                if (searchList == null || searchList.isEmpty()) {
-                    request.setAttribute("searchMessage", "No notification found");
-                } else {
-                    request.setAttribute("notifications", searchList);
-                }
+                request.setAttribute("notifications", searchList);
+
                 request.setAttribute("contentPage", "notification-list.jsp");
                 request.setAttribute("activeMenu", "notification");
+
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                         .forward(request, response);
                 break;
@@ -127,7 +127,25 @@ public class NotificationController extends HttpServlet {
                 Notification nCreate = new Notification();
                 nCreate.setTitle(request.getParameter("title"));
                 nCreate.setContentText(request.getParameter("content"));
-                nCreate.setImageUrl(request.getParameter("image"));
+                Part filePart = request.getPart("image");
+                String fileName = filePart.getSubmittedFileName();
+
+                String imagePath = null;
+
+                if (fileName != null && !fileName.isEmpty()) {
+
+                    String uploadPath = getServletContext().getRealPath("") + "uploads";
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdir();
+                    }
+
+                    filePart.write(uploadPath + java.io.File.separator + fileName);
+
+                    imagePath = "uploads/" + fileName;
+                }
+
+                nCreate.setImageUrl(imagePath);
 
                 String msgCreate = service.create(nCreate);
 
@@ -160,7 +178,23 @@ public class NotificationController extends HttpServlet {
 
                 String newTitle = request.getParameter("title");
                 String newContent = request.getParameter("content");
-                String newImage = request.getParameter("image");
+                Part editFilePart = request.getPart("image");
+                String editFileName = editFilePart.getSubmittedFileName();
+
+                String newImage = old.getImageUrl();
+
+                if (editFileName != null && !editFileName.isEmpty()) {
+
+                    String uploadPath = getServletContext().getRealPath("") + "uploads";
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdir();
+                    }
+
+                    editFilePart.write(uploadPath + java.io.File.separator + editFileName);
+
+                    newImage = "uploads/" + editFileName;
+                }
 
                 if (old.getTitle().equals(newTitle)
                         && old.getContentText().equals(newContent)

@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
 
 <div class="container-fluid">
-
     <div class="page-header">
         <p class="title">Manage Author</p>
         <p class="subtitle">Create and manage author for your library</p>

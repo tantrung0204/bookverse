@@ -23,11 +23,6 @@ public class AuthorService {
     public Author findAuthorById(int id) {
         return authorDAO.findById(id);
     }
-
-    public List<Author> searchAuthors(String keyword) {
-        return authorDAO.searchByName(keyword);
-    }
-
     public String insertAuthor(String name, String birth, String nat, String bio) {
         String error = "";
         if (nat == null || nat.trim().isEmpty()) {

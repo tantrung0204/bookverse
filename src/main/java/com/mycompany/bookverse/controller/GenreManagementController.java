@@ -20,8 +20,8 @@ import java.util.List;
  *
  * @author LECOO
  */
-@WebServlet(name = "GenreController", urlPatterns = {"/genre"})
-public class GenreController extends HttpServlet {
+@WebServlet(name = "GenreManagementController", urlPatterns = {"/genre"})
+public class GenreManagementController extends HttpServlet {
 
     private GenreService genreServices = new GenreService();
 

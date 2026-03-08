@@ -20,8 +20,8 @@ import java.util.List;
  *
  * @author LECOO
  */
-@WebServlet(name = "AuthorController", urlPatterns = {"/author"})
-public class AuthorController extends HttpServlet {
+@WebServlet(name = "AuthorManagementController", urlPatterns = {"/author"})
+public class AuthorManagementController extends HttpServlet {
 
     private AuthorService authorServices = new AuthorService();
 

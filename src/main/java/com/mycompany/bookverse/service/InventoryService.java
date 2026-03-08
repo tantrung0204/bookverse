@@ -8,6 +8,7 @@ import com.mycompany.bookverse.dao.InventoryDAO;
 import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
+import com.mycompany.bookverse.model.OrderItem;
 import java.util.List;
 
 /**
@@ -35,7 +36,9 @@ public class InventoryService {
     public List<ImportStockDetail> getImportDetail(int id) {
         return inventoryDAO.findByImportId(id);
     }
-
+    public List<OrderItem> getExportDetail(int id) {
+        return inventoryDAO.findByExportId(id);
+    }
     public List<Order> getExportsByPage(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
         return inventoryDAO.findByExportPage(offset, pageSize);

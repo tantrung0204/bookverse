@@ -127,7 +127,12 @@ public class AuthorService {
         } else {
             return "Delete Author false";
         }
-    }  
+    }
+
+    public Long countBooksByAuthorId(int authorId) {
+        return authorDAO.countBooksByAuthorId(authorId);
+    }
+
     public List<Author> getAuthorsByPage(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
         return authorDAO.findByPage(offset, pageSize);

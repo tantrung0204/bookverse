@@ -1,0 +1,68 @@
+/* ================= NAVBAR CHÍNH ================= */
+.bookverse-navbar {
+    background-color: #8B6B4C;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ================= CÁC LINK ĐIỀU HƯỚNG ================= */
+.bookverse-nav-list .nav-link {
+    color: #ffffff !important;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.8rem 1.5rem !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.bookverse-nav-list .nav-link:hover {
+    background-color: #6e5238;
+    color: #f4f0ec !important;
+}
+.bookverse-nav-list .nav-link.active {
+    background-color: #6e5238;
+    color: #f4f0ec !important;
+}
+
+/* ================= DROPDOWN CATEGORIES ================= */
+.bookverse-navbar .nav-item.dropdown {
+    position: static;
+}
+
+.brand-dropdown-menu {
+    background-color: #ffffff;
+    border: 1px solid rgba(139, 107, 76, 0.2);
+    border-top: 3px solid #8B6B4C;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+    width: 80%;
+    margin-top: 0;
+    padding: 1.5rem;
+
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important
+}
+
+.brand-dropdown-menu.show {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+}
+
+.brand-dropdown-menu .dropdown-item {
+    color: #2c2c2c;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 4px;
+    white-space: normal;
+}
+
+.brand-dropdown-menu .dropdown-item:hover {
+    background-color: rgba(139, 107, 76, 0.08);
+    color: #8B6B4C;
+}

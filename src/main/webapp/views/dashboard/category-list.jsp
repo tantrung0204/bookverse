@@ -73,7 +73,6 @@
 
                                             <td>
                                                 <div class="action-buttons">
-                                                    <!--<input type="hidden" name="action" value="detail"/>-->
                                                     <button type="button" class="btn-action btn-detail"
                                                         title="View Detail" onclick="openDetailPopup(
                                                                 '${c.categoryId}',
@@ -89,7 +88,8 @@
                                                                 '${c.categoryId}',
                                                                 '${c.categoryName}',
                                                                 '${c.descriptionText}',
-                                                                '${c.status}'
+                                                                '${c.status}',
+                                                                '${c.parent.categoryId}'
                                                                 )">
                                                         <i class="bi bi-pencil"></i>
                                                     </button>
@@ -110,6 +110,58 @@
                                     </c:forEach>
                                 </tbody>
                             </table>
+
+                            <c:if test="${totalPages > 1}">
+                                <div class="pagination-container">
+
+                                    <!-- Previous -->
+                                    <c:if test="${currentPage > 1}">
+                                        <c:url var="prevUrl" value="/category">
+                                            <c:if test="${not empty keyword}">
+                                                <c:param name="action" value="search" />
+                                                <c:param name="keyword" value="${keyword}" />
+                                            </c:if>
+                                            <c:param name="page" value="${currentPage - 1}" />
+                                        </c:url>
+
+                                        <a class="page-btn" href="${prevUrl}">
+                                            &laquo; Previous
+                                        </a>
+                                    </c:if>
+
+                                    <!-- Page numbers -->
+                                    <c:forEach begin="1" end="${totalPages}" var="i">
+                                        <c:url var="pageUrl" value="/category">
+                                            <c:if test="${not empty keyword}">
+                                                <c:param name="action" value="search" />
+                                                <c:param name="keyword" value="${keyword}" />
+                                            </c:if>
+                                            <c:param name="page" value="${i}" />
+                                        </c:url>
+
+                                        <a class="page-number ${i == currentPage ? 'active-page' : ''}"
+                                            href="${pageUrl}">
+                                            ${i}
+                                        </a>
+                                    </c:forEach>
+
+                                    <!-- Next -->
+                                    <c:if test="${currentPage < totalPages}">
+                                        <c:url var="nextUrl" value="/category">
+                                            <c:if test="${not empty keyword}">
+                                                <c:param name="action" value="search" />
+                                                <c:param name="keyword" value="${keyword}" />
+                                            </c:if>
+                                            <c:param name="page" value="${currentPage + 1}" />
+                                        </c:url>
+
+                                        <a class="page-btn" href="${nextUrl}">
+                                            Next &raquo;
+                                        </a>
+                                    </c:if>
+
+                                </div>
+                            </c:if>
                         </c:when>
                         <c:otherwise>
                             <div style="text-align:center; padding: 40px; color: #999;">
@@ -149,7 +201,7 @@
 
                         <div class="form-group">
                             <label>Description</label>
-                            <input type="text" name="descriptionText" class="form-control" value="${createDes}">
+                            <input type="text" name="descriptionText" class="form-control" value="${createDesc}">
                         </div>
 
                         <div class="form-group">
@@ -159,6 +211,17 @@
                                 <option value="0" ${createStatus==0 ? "selected" : "" }>Inactive</option>
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label>Parent</label>
+                            <select name="parent" class="form-control">
+                                <option value="">-- Select Parent Category --</option>
+
+                                <option value="1" ${createParent==1 ? "selected" : "" }>Book</option>
+                                <option value="2" ${createParent==2 ? "selected" : "" }>Văn phòng phẩm</option>
+                            </select>
+                        </div>
+
 
                         <div class="modal-footer">
                             <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
@@ -238,6 +301,14 @@
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label>Parent</label>
+                            <select name="parent" id="editParent" class="form-control">
+                                <option value="1">BOOK</option>
+                                <option value="2">Văn phòng phẩm</option>
+                            </select>
+                        </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
                             <button type="submit" class="btn-save">Save Changes</button>
@@ -280,11 +351,12 @@
                     document.getElementById("detailPopup").style.display = "none";
                 }
                 // Hàm mở Popup và điền dữ liệu
-                function openEditPopup(id, name, description, status) {
+                function openEditPopup(id, name, description, status, parent) {
                     document.getElementById("editCategoryId").value = id;
                     document.getElementById("editCategoryName").value = name;
                     document.getElementById("editDescription").value = description;
                     document.getElementById("editStatus").value = status;
+                    document.getElementById("editParent").value = parent;
 
                     // Ẩn thông báo lỗi cũ nếu có
                     const err = document.getElementById("editErrorMsg");
@@ -324,7 +396,8 @@
                             openCreatePopup(
                                 '${createName}',
                                 '${createDesc}',
-                                '${createStatus}'
+                                '${createStatus}',
+                                '${createParent}'
                             );
                             // Hiển thị lại lỗi
                             const err = document.getElementById("createErrorMsg");
@@ -344,7 +417,8 @@
                                 '${editId}',
                                 '${editName}',
                                 '${editDesc}',
-                                '${editStatus}'
+                                '${editStatus}',
+                                '${editParent}'
                             );
                             // Hiển thị lại lỗi
                             const err = document.getElementById("editErrorMsg");

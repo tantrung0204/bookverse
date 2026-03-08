@@ -7,6 +7,7 @@ package com.mycompany.bookverse.model;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,18 +33,18 @@ import java.util.Date;
 @Table(name = "customer")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c"),
-    @NamedQuery(name = "Customer.findByCustomerId", query = "SELECT c FROM Customer c WHERE c.customerId = :customerId"),
-    @NamedQuery(name = "Customer.findByUsername", query = "SELECT c FROM Customer c WHERE c.username = :username"),
-    @NamedQuery(name = "Customer.findByPasswordHash", query = "SELECT c FROM Customer c WHERE c.passwordHash = :passwordHash"),
-    @NamedQuery(name = "Customer.findByFullName", query = "SELECT c FROM Customer c WHERE c.fullName = :fullName"),
-    @NamedQuery(name = "Customer.findByPhoneNumber", query = "SELECT c FROM Customer c WHERE c.phoneNumber = :phoneNumber"),
-    @NamedQuery(name = "Customer.findByEmail", query = "SELECT c FROM Customer c WHERE c.email = :email"),
-    @NamedQuery(name = "Customer.findByAddress", query = "SELECT c FROM Customer c WHERE c.address = :address"),
-    @NamedQuery(name = "Customer.findByGender", query = "SELECT c FROM Customer c WHERE c.gender = :gender"),
-    @NamedQuery(name = "Customer.findByProfileImageUrl", query = "SELECT c FROM Customer c WHERE c.profileImageUrl = :profileImageUrl"),
-    @NamedQuery(name = "Customer.findByStatus", query = "SELECT c FROM Customer c WHERE c.status = :status"),
-    @NamedQuery(name = "Customer.findByCreatedAt", query = "SELECT c FROM Customer c WHERE c.createdAt = :createdAt")})
+        @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c"),
+        @NamedQuery(name = "Customer.findByCustomerId", query = "SELECT c FROM Customer c WHERE c.customerId = :customerId"),
+        @NamedQuery(name = "Customer.findByUsername", query = "SELECT c FROM Customer c WHERE c.username = :username"),
+        @NamedQuery(name = "Customer.findByPasswordHash", query = "SELECT c FROM Customer c WHERE c.passwordHash = :passwordHash"),
+        @NamedQuery(name = "Customer.findByFullName", query = "SELECT c FROM Customer c WHERE c.fullName = :fullName"),
+        @NamedQuery(name = "Customer.findByPhoneNumber", query = "SELECT c FROM Customer c WHERE c.phoneNumber = :phoneNumber"),
+        @NamedQuery(name = "Customer.findByEmail", query = "SELECT c FROM Customer c WHERE c.email = :email"),
+        @NamedQuery(name = "Customer.findByAddress", query = "SELECT c FROM Customer c WHERE c.address = :address"),
+        @NamedQuery(name = "Customer.findByGender", query = "SELECT c FROM Customer c WHERE c.gender = :gender"),
+        @NamedQuery(name = "Customer.findByProfileImageUrl", query = "SELECT c FROM Customer c WHERE c.profileImageUrl = :profileImageUrl"),
+        @NamedQuery(name = "Customer.findByStatus", query = "SELECT c FROM Customer c WHERE c.status = :status"),
+        @NamedQuery(name = "Customer.findByCreatedAt", query = "SELECT c FROM Customer c WHERE c.createdAt = :createdAt") })
 public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +71,9 @@ public class Customer implements Serializable {
     @Size(max = 15)
     @Column(name = "phone_number")
     private String phoneNumber;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+    // message="Invalid email")//if the field contains email address consider using
+    // this annotation to enforce field validation
     @Size(max = 100)
     @Column(name = "email")
     private String email;
@@ -78,7 +81,7 @@ public class Customer implements Serializable {
     @Column(name = "address")
     private String address;
     @Column(name = "gender")
-    private Integer gender;
+    private Integer gender; // 0 là nữ, 1 là nam
     @Size(max = 255)
     @Column(name = "profile_image_url")
     private String profileImageUrl;
@@ -95,7 +98,7 @@ public class Customer implements Serializable {
     private Collection<Feedback> feedbackCollection;
     @OneToMany(mappedBy = "customerId")
     private Collection<CustomerNotification> customerNotificationCollection;
-    @OneToMany(mappedBy = "customerId")
+    @OneToMany(mappedBy = "customerId", fetch = FetchType.EAGER)
     private Collection<Order> orderCollection;
 
     public Customer() {
@@ -251,7 +254,8 @@ public class Customer implements Serializable {
             return false;
         }
         Customer other = (Customer) object;
-        if ((this.customerId == null && other.customerId != null) || (this.customerId != null && !this.customerId.equals(other.customerId))) {
+        if ((this.customerId == null && other.customerId != null)
+                || (this.customerId != null && !this.customerId.equals(other.customerId))) {
             return false;
         }
         return true;
@@ -261,5 +265,5 @@ public class Customer implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.Customer[ customerId=" + customerId + " ]";
     }
-    
+
 }

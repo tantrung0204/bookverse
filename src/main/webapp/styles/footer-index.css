@@ -1,0 +1,69 @@
+/* ================= BỌC CHUNG CHO FOOTER ================= */
+.bookverse-footer {
+    background-color: #8B6B4C;
+    color: #ffffff;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* ================= CÁC THÀNH PHẦN BÊN TRONG FOOTER ================= */
+
+.bookverse-footer .footer-brand-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.bookverse-footer h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+}
+
+.bookverse-footer p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 0.8rem;
+    line-height: 1.6;
+}
+
+.bookverse-footer a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.bookverse-footer a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.bookverse-footer .footer-socials {
+    margin-top: 1.5rem;
+}
+
+.bookverse-footer .footer-socials a {
+    display: inline-block;
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-right: 15px;
+    transition: opacity 0.3s ease;
+}
+
+.bookverse-footer .footer-socials a:hover {
+    opacity: 0.7;
+    text-decoration: none;
+}
+
+.bookverse-footer .footer-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.bookverse-footer .footer-copyright {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}

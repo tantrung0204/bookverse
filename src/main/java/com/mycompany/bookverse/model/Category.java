@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
@@ -55,6 +57,9 @@ public class Category implements Serializable {
     private String descriptionText;
     @Column(name = "status")
     private Integer status;
+    @JoinColumn(name = "parent_id", referencedColumnName = "category_id")
+    @ManyToOne
+    private Category parent;
     @OneToMany(mappedBy = "categoryId")
     private Collection<Product> productCollection;
 
@@ -95,6 +100,14 @@ public class Category implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Category getParent() {
+        return parent;
+    }
+
+    public void setParent(Category parent) {
+        this.parent = parent;
     }
 
     @XmlTransient

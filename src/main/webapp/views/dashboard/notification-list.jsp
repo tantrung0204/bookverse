@@ -24,7 +24,7 @@
         <div class="toolbar">
 
             <button class="btn-add" onclick="openPopup()">
-                <i class="bi bi-plus-lg me-1"></i> Create Notification
+                <i class="bi bi-plus-lg me-1"></i> Add New Notification
             </button>
 
             <form class="search-form"
@@ -37,6 +37,7 @@
                     <i class="bi bi-search"></i>
                     <input type="text"
                            name="keyword"
+                           value="${param.keyword}"
                            placeholder="Search notifications...">
                 </div>
             </form>
@@ -50,333 +51,284 @@
             </div>
             <c:remove var="successMessage" scope="session"/>
         </c:if>
-        <!--Not found message-->
-        <c:if test="${not empty searchMessage}">
-            <div style="padding:10px;margin:10px 0;
-                 background:#f8d7da;color:#721c24;
-                 border:1px solid #f5c6cb;border-radius:5px;">
-                ${searchMessage}
-            </div>
-        </c:if>
+
 
         <!-- TABLE -->
-        <c:if test="${not empty notifications}">
-            <table class="custom-table">
-                <thead>
-                    <tr>
-                        <th width="10%">ID</th>
-                        <th width="20%">Title</th>
-                        <th width="30%">Content</th>
-                        <th width="15%">Image</th>
-                        <th width="25%">Actions</th>
-                    </tr>
-                </thead>
+        <c:choose>
 
-                <tbody>
-                    <c:forEach var="n" items="${notifications}">
+            <c:when test="${not empty notifications}">
+                <table class="custom-table">
+                    <thead>
                         <tr>
-                            <td><strong>${n.notificationId}</strong></td>
-                            <td>${n.title}</td>
-                            <td>${n.contentText}</td>
-                            <td>${n.imageUrl}</td>
-
-                            <td>
-                                <div class="action-buttons">
-
-                                    <!-- VIEW -->
-                                    <button class="btn-action btn-detail"
-                                            onclick="openDetailModal(
-                                                            '${n.notificationId}',
-                                                            '${n.title}',
-                                                            '${n.contentText}',
-                                                            '${n.imageUrl}',
-                                                            '${n.createdAt}'
-                                                            )">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-
-                                    <!-- EDIT -->
-                                    <button class="btn-action btn-edit"
-                                            onclick="openEditModal(
-                                                            '${n.notificationId}',
-                                                            '${n.title}',
-                                                            '${n.contentText}',
-                                                            '${n.imageUrl}'
-                                                            )">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-
-                                    <!-- DELETE -->
-                                    <form action="${pageContext.request.contextPath}/notification"
-                                          method="post"
-                                          style="display:inline;">
-                                        <input type="hidden" name="action" value="delete"/>
-                                        <input type="hidden" name="id" value="${n.notificationId}"/>
-
-                                        <button type="submit"
-                                                class="btn-action btn-delete"
-                                                onclick="return confirm('Delete this notification?')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-
-                                </div>
-                            </td>
-
+                            <th width="10%">ID</th>
+                            <th width="20%">Title</th>
+                            <th width="30%">Content</th>
+                            <th width="20%">Image</th>
+                            <th width="20%">Actions</th>
                         </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </c:if>
+                    </thead>
 
-    </div>
-</div>
+                    <tbody>
+                        <c:forEach var="n" items="${notifications}">
+                            <tr>
+                                <td><strong>${n.notificationId}</strong></td>
+                                <td>${n.title}</td>
+                                <td>${n.contentText}</td>
+                                <td>
+                                    <c:if test="${not empty n.imageUrl}">
+                                        <img src="${pageContext.request.contextPath}/${n.imageUrl}"
+                                             alt="Notification Image"
+                                             class="notification-img">
+                                    </c:if>
+                                </td>
 
-<!-- CREATE NOTIFICATION POPUP -->
-<div id="createModal" class="modal-overlay">
-    <div class="modal-content">
+                                <td>
+                                    <div class="action-buttons">
 
-        <div class="modal-header">
-            <h3>Create Notification</h3>
-        </div>
+                                        <!-- VIEW -->
+                                        <button class="btn-action btn-detail" title="View Detail"
+                                                onclick="openDetailModal(
+                                                                '${n.notificationId}',
+                                                                '${n.title}',
+                                                                '${n.contentText}',
+                                                                '${n.imageUrl}',
+                                                                '${n.createdAt}',
+                                                                '${n.totalSent}',
+                                                                '${n.totalRead}'
+                                                                )">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
 
-        <c:if test="${not empty createError}">
-            <div class="alert alert-danger p-2 mb-3" style="font-size:13px;">
-                ${createError}
+                                        <!-- DELETE -->
+                                        <form action="${pageContext.request.contextPath}/notification"
+                                              method="post"
+                                              style="display:inline;">
+                                            <input type="hidden" name="action" value="delete"/>
+                                            <input type="hidden" name="id" value="${n.notificationId}"/>
+
+                                            <button type="submit"
+                                                    class="btn-action btn-delete" title="Delete"
+                                                    onclick="return confirm('Delete this notification?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+
+            <c:otherwise>
+                <div style="text-align:center; padding: 40px; color: #999;">
+                    <i class="bi bi-inbox" style="font-size: 40px;"></i>
+                    <p class="mt-2">No notifications found.</p>
+                </div>
+            </c:otherwise>
+
+        </c:choose>
+
+        <c:if test="${totalPages > 1}">
+            <div class="pagination">
+
+                <c:if test="${currentPage > 1}">
+                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage - 1}"
+                       class="page-btn">«</a>
+                </c:if>
+
+                <c:forEach begin="1" end="${totalPages}" var="i">
+                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${i}"
+                       class="page-btn ${i == currentPage ? 'active' : ''}">
+                        ${i}
+                    </a>
+                </c:forEach>
+
+                <c:if test="${currentPage < totalPages}">
+                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage + 1}"
+                       class="page-btn">»</a>
+                </c:if>
+
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/notification"
-              method="post">
+        <!-- CREATE NOTIFICATION POPUP -->
+        <div id="createModal" class="modal-overlay">
+            <div class="modal-content">
 
-            <input type="hidden" name="action" value="create"/>
+                <div class="modal-header">
+                    <h3>Add new Notification</h3>
+                </div>
 
-            <!-- TITLE -->
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text"
-                       name="title"
-                       class="form-control"
-                       required>
+                <c:if test="${not empty createError}">
+                    <div class="alert alert-danger p-2 mb-3" style="font-size:13px;">
+                        ${createError}
+                    </div>
+                </c:if>
+
+                <form action="${pageContext.request.contextPath}/notification"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <input type="hidden" name="action" value="create"/>
+
+                    <!-- TITLE -->
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text"
+                               name="title"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea name="content"
+                                  class="form-control"
+                                  rows="4"
+                                  required></textarea>
+                    </div>
+
+                    <!-- IMAGE -->
+                    <div class="form-group">
+                        <label>Image</label>
+                        <input type="file"
+                               name="image"
+                               class="form-control"
+                               accept="image/*">
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn-cancel"
+                                onclick="closePopup()">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn-save">
+                            Create
+                        </button>
+                    </div>
+
+                </form>
             </div>
-
-            <!-- CONTENT -->
-            <div class="form-group">
-                <label>Content</label>
-                <textarea name="content"
-                          class="form-control"
-                          rows="4"
-                          required></textarea>
-            </div>
-
-            <!-- IMAGE -->
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text"
-                       name="image"
-                       class="form-control">
-            </div>
-
-            <!-- FOOTER -->
-            <div class="modal-footer">
-                <button type="button"
-                        class="btn-cancel"
-                        onclick="closePopup()">
-                    Cancel
-                </button>
-
-                <button type="submit"
-                        class="btn-save">
-                    Create
-                </button>
-            </div>
-
-        </form>
-    </div>
-</div>
-
-<!-- EDIT NOTIFICATION POPUP -->
-<div id="editModal" class="modal-overlay">
-    <div class="modal-content">
-
-        <div class="modal-header">
-            <h3>Edit Notification</h3>
         </div>
 
-        <c:if test="${not empty editError}">
-            <div class="alert alert-danger p-2 mb-3" style="font-size:13px;">
-                ${editError}
+
+        <!-- DETAIL NOTIFICATION MODAL -->
+        <div id="detailModal" class="modal-overlay">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h3>Notification Detail</h3>
+                </div>
+
+                <table class="detail-table">
+                    <tr><th>ID:</th><td id="detailId"></td></tr>
+                    <tr><th>Title:</th><td id="detailTitle"></td></tr>
+                    <tr><th>Content:</th><td id="detailContent"></td></tr>
+                    <tr><th>Total Sent:</th><td id="detailTotalSent"></td></tr>
+                    <tr><th>Total Read:</th><td id="detailTotalRead"></td></tr>
+                    <tr>
+                        <th>Image:</th>
+                        <td>
+                            <img id="detailImage"
+                                 style="max-width:200px; max-height:200px; object-fit:cover; border-radius:6px; display:none;">
+                            <span id="noDetailImage" style="color:gray; display:none;">No image</span>
+                        </td>
+                    </tr>
+                    <tr><th>Created At:</th><td id="detailCreated"></td></tr>
+                </table>
+
+                <div class="modal-footer">
+                    <button class="btn-cancel"
+                            onclick="closeDetailModal()">Close</button>
+                </div>
+
             </div>
+        </div>
+
+        <!-- ================= SCRIPT ================= -->
+
+        <script>
+            function openPopup() {
+                document.getElementById("createModal").style.display = "flex";
+            }
+
+            function closePopup() {
+                document.getElementById("createModal").style.display = "none";
+            }
+        </script>
+
+        <c:if test="${openCreate}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    openPopup();
+                });
+            </script>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/notification"
-              method="post">
+        <script>
+            function openDetailModal(id, title, content, image, created, totalSent, totalRead) {
 
-            <input type="hidden" name="action" value="edit"/>
-            <input type="hidden" id="editId" name="id"/>
+                document.getElementById("detailId").innerText = id;
+                document.getElementById("detailTitle").innerText = title;
+                document.getElementById("detailContent").innerText = content;
+                document.getElementById("detailCreated").innerText = created;
+                document.getElementById("detailTotalSent").innerText = totalSent;
+                document.getElementById("detailTotalRead").innerText = totalRead;
 
-            <!-- TITLE -->
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text"
-                       id="editTitle"
-                       name="title"
-                       class="form-control"
-                       required>
-            </div>
+                const imgTag = document.getElementById("detailImage");
+                const noImgText = document.getElementById("noDetailImage");
 
-            <!-- CONTENT -->
-            <div class="form-group">
-                <label>Content</label>
-                <textarea id="editContent"
-                          name="content"
-                          class="form-control"
-                          rows="4"
-                          required></textarea>
-            </div>
+                if (image && image !== "") {
+                    imgTag.src = "${pageContext.request.contextPath}/" + image;
+                    imgTag.style.display = "block";
+                    noImgText.style.display = "none";
+                } else {
+                    imgTag.style.display = "none";
+                    noImgText.style.display = "block";
+                }
 
-            <!-- IMAGE -->
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text"
-                       id="editImage"
-                       name="image"
-                       class="form-control">
-            </div>
+                document.getElementById("detailModal").style.display = "flex";
+            }
 
-            <!-- FOOTER -->
-            <div class="modal-footer">
-                <button type="button"
-                        class="btn-cancel"
-                        onclick="closeEditModal()">
-                    Cancel
-                </button>
+            function closeDetailModal() {
+                document.getElementById("detailModal").style.display = "none";
+            }
+        </script>
 
-                <button type="submit"
-                        class="btn-save">
-                    Save Changes
-                </button>
-            </div>
+        <!-- ================= STYLE ================= -->
 
-        </form>
-    </div>
-</div>
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+            }
 
-<!-- DETAIL NOTIFICATION MODAL -->
-<div id="detailModal" class="modal-overlay">
-    <div class="modal-content">
+            .modal-content {
+                background: #fff;
+                width: 400px;
+                margin: 10% auto;
+                padding: 20px;
+                border-radius: 8px;
+            }
 
-        <div class="modal-header">
-            <h3>Notification Detail</h3>
-        </div>
-
-        <table class="detail-table">
-            <tr><th>ID:</th><td id="detailId"></td></tr>
-            <tr><th>Title:</th><td id="detailTitle"></td></tr>
-            <tr><th>Content:</th><td id="detailContent"></td></tr>
-            <tr><th>Image URL:</th><td id="detailImage"></td></tr>
-            <tr><th>Created At:</th><td id="detailCreated"></td></tr>
-        </table>
-
-        <div class="modal-footer">
-            <button class="btn-cancel"
-                    onclick="closeDetailModal()">Close</button>
-        </div>
-
-    </div>
-</div>
-
-<!-- ================= SCRIPT ================= -->
-
-<script>
-    function openPopup() {
-        document.getElementById("createModal").style.display = "flex";
-    }
-
-    function closePopup() {
-        document.getElementById("createModal").style.display = "none";
-    }
-
-    function openEditModal(id, title, content, image) {
-
-        document.getElementById("editId").value = id;
-        document.getElementById("editTitle").value = title;
-        document.getElementById("editContent").value = content;
-        document.getElementById("editImage").value = image;
-
-        document.getElementById("editModal").style.display = "flex";
-    }
-
-    function closeEditModal() {
-        document.getElementById("editModal").style.display = "none";
-    }
-</script>
-
-<c:if test="${openCreate}">
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            openPopup();
-        });
-    </script>
-</c:if>
-
-<c:if test="${openEdit}">
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            document.getElementById("editId").value = "${editNotification.notificationId}";
-            document.getElementById("editTitle").value = "${editNotification.title}";
-            document.getElementById("editContent").value = "${editNotification.contentText}";
-            document.getElementById("editImage").value = "${editNotification.imageUrl}";
-
-            document.getElementById("editModal").style.display = "flex";
-        });
-    </script>
-</c:if>
-
-<script>
-    function openDetailModal(id, title, content, image, created) {
-
-        document.getElementById("detailId").innerText = id;
-        document.getElementById("detailTitle").innerText = title;
-        document.getElementById("detailContent").innerText = content;
-        document.getElementById("detailImage").innerText = image;
-        document.getElementById("detailCreated").innerText = created;
-
-        document.getElementById("detailModal").style.display = "flex";
-    }
-
-    function closeDetailModal() {
-        document.getElementById("detailModal").style.display = "none";
-    }
-</script>
-
-<!-- ================= STYLE ================= -->
-
-<style>
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-    }
-
-    .modal-content {
-        background: #fff;
-        width: 400px;
-        margin: 10% auto;
-        padding: 20px;
-        border-radius: 8px;
-    }
-
-    .close {
-        float: right;
-        font-size: 22px;
-        cursor: pointer;
-    }
-</style>
+            .close {
+                float: right;
+                font-size: 22px;
+                cursor: pointer;
+            }
+        </style>
 

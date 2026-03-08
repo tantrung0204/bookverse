@@ -20,8 +20,12 @@ public class CustomerService {
         this.customerDAO = new CustomerDAO();
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerDAO.findAll();
+    public List<Customer> getAllCustomers(int page, int pageSize) {
+        return customerDAO.findAll(page, pageSize);
+    }
+
+    public long getTotalCustomers() {
+        return customerDAO.getTotalCustomers();
     }
 
     public Customer getCustomerById(int id) {
@@ -37,9 +41,9 @@ public class CustomerService {
 
         boolean success = customerDAO.create(customer);
         if (success) {
-            return 0;
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -50,9 +54,9 @@ public class CustomerService {
 
         boolean success = customerDAO.update(customer);
         if (success) {
-            return 0;
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -62,5 +66,9 @@ public class CustomerService {
 
     public List<Customer> searchCustomers(String keyword) {
         return customerDAO.search(keyword);
+    }
+
+    public boolean isEmailExist(String email, int currentId) {
+        return customerDAO.checkDuplicateEmail(email, currentId);
     }
 }

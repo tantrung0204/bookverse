@@ -4,6 +4,7 @@
  */
 package com.mycompany.bookverse.dao;
 
+import com.mycompany.bookverse.model.Customer;
 import com.mycompany.bookverse.model.Notification;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
@@ -55,22 +56,6 @@ public class NotificationDAO {
         }
     }
 
-    public void update(Notification n) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.merge(n);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
-    }
-
     public boolean delete(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -100,4 +85,57 @@ public class NotificationDAO {
             em.close();
         }
     }
+
+    public List<Notification> getByPage(int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT n FROM Notification n ORDER BY n.notificationId DESC", Notification.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(n) FROM Notification n",
+                    Long.class
+            ).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Notification> searchByPage(String keyword, int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT n FROM Notification n WHERE n.title LIKE :kw ORDER BY n.notificationId DESC",
+                    Notification.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countSearch(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(n) FROM Notification n WHERE n.title LIKE :kw",
+                    Long.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
 }

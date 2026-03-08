@@ -28,7 +28,7 @@ import java.util.List;
  * @author Admin
  */
 @WebServlet(name = "VoucherController", urlPatterns = {"/voucher"})
-public class VoucherController extends HttpServlet {
+public class VoucherManagementController extends HttpServlet {
 
     private VoucherService voucherService = new VoucherService();
 

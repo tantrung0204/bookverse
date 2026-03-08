@@ -28,7 +28,7 @@ import java.util.List;
  */
 @WebServlet(name = "NotificationController", urlPatterns = {"/notification"})
 @MultipartConfig
-public class NotificationController extends HttpServlet {
+public class NotificationManagementController extends HttpServlet {
 
     private NotificationService service = new NotificationService();
 

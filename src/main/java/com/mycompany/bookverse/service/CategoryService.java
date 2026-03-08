@@ -32,8 +32,7 @@ public class CategoryService {
 
         return (long) Math.ceil(
                 (double) total
-                / PaginationConfig.ADMIN_ITEMS_PER_PAGE
-        );
+                        / PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
 
     public List<Category> searchPaging(String keyword, int page) {
@@ -41,8 +40,7 @@ public class CategoryService {
         return categoryDAO.searchByNamePaging(
                 keyword,
                 page,
-                PaginationConfig.ADMIN_ITEMS_PER_PAGE
-        );
+                PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
 
     public long getTotalSearchPages(String keyword) {
@@ -51,12 +49,19 @@ public class CategoryService {
 
         return (long) Math.ceil(
                 (double) total
-                / PaginationConfig.ADMIN_ITEMS_PER_PAGE
-        );
+                        / PaginationConfig.ADMIN_ITEMS_PER_PAGE);
     }
 
     public Category getCategoryById(int categoryId) {
         return categoryDAO.findByCategoryId(categoryId);
+    }
+
+    public List<Category> getActiveSubCategories() {
+        return categoryDAO.findActiveSubCategories();
+    }
+
+    public List<Category> getActiveSubCategoriesByParentId(int parentId) {
+        return categoryDAO.findActiveSubCategoriesByParentId(parentId);
     }
 
     public void createCategory(String name, String desc, String statusRaw, String parentRaw) {
@@ -73,7 +78,7 @@ public class CategoryService {
             }
         }
 
-// Validate parent
+        // Validate parent
         if (parentRaw == null || parentRaw.trim().isEmpty()) {
             throw new IllegalArgumentException("Please select parent category");
         }

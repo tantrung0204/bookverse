@@ -1,0 +1,268 @@
+body {
+    background-color: #f9f9f9;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    color: #2c2c2c;
+}
+
+/* ================= TIÊU ĐỀ TRANG ================= */
+.cart-page-title {
+    color: #8B6B4C;
+    font-weight: 700;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+/* ================= TRẠNG THÁI GIỎ HÀNG TRỐNG ================= */
+.empty-cart-box {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 60px 20px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.empty-icon {
+    color: #8B6B4C;
+    opacity: 0.6;
+}
+
+.empty-cart-box h4 {
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-top: 15px;
+}
+
+/* ================= BẢNG GIỎ HÀNG ================= */
+.cart-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 25px;
+    border: 1px solid #e0e0e0;
+}
+
+.cart-table th {
+    background-color: #f4f0ec;
+    color: #8B6B4C;
+    font-weight: 700;
+    border-bottom: 2px solid #8B6B4C !important;
+    padding: 15px 10px;
+    font-size: 1.1rem;
+}
+
+.cart-table td {
+    padding: 15px 10px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.img-product {
+    width: 80px;
+    height: 100px;
+    object-fit: contain;
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.product-name-link {
+    color: #2c2c2c;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+.product-name-link:hover {
+    color: #8B6B4C;
+}
+
+.price-text {
+    color: #d35400;
+    font-weight: bold;
+    font-size: 1.15rem;
+}
+
+/* ================= BỘ NÚT TĂNG GIẢM SỐ LƯỢNG ================= */
+.qty-group {
+    width: 120px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.qty-btn-custom {
+    background-color: #f8f8f8;
+    border: none;
+    color: #8B6B4C;
+    font-weight: bold;
+    width: 35px;
+    transition: background-color 0.2s;
+}
+
+.qty-btn-custom:hover:not(:disabled) {
+    background-color: #eee;
+}
+
+.qty-input-custom {
+    border: none !important;
+    border-left: 1px solid #ccc !important;
+    border-right: 1px solid #ccc !important;
+    font-weight: 600;
+    color: #2c2c2c;
+    box-shadow: none !important;
+}
+
+/* Nút xóa sản phẩm */
+.btn-remove-item {
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.btn-remove-item:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+/* ================= KHU VỰC TỔNG TIỀN ================= */
+.total-area {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px dashed #eee;
+}
+
+.grand-total-label {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c2c2c;
+}
+
+.grand-total-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #d35400;
+}
+
+/* ================= NÚT THAO TÁC (CHUNG CỦA BRAND) ================= */
+.btn-brand-solid {
+    background-color: #8B6B4C;
+    color: #fff;
+    border: 2px solid #8B6B4C;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    padding: 10px 25px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-brand-solid:hover:not(.disabled) {
+    background-color: #6e5238;
+    border-color: #6e5238;
+    color: #fff;
+}
+
+/* Thêm hiệu ứng cho nút khi bị disabled */
+.btn-brand-solid.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.btn-brand-outline {
+    background-color: #fff;
+    color: #8B6B4C;
+    border: 2px solid #8B6B4C;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    padding: 10px 25px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-brand-outline:hover {
+    background-color: #8B6B4C;
+    color: #fff;
+}
+
+/* ================= SẢN PHẨM KHÔNG KHẢ DỤNG (DISABLED) ================= */
+.product-disabled {
+    background-color: #f8f9fa;
+}
+
+.product-disabled .img-product,
+.product-disabled .product-name-link,
+.product-disabled .price-text,
+.product-disabled .qty-group {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.product-disabled .btn-remove-item {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+
+/* ================= TOAST NOTIFICATION ================= */
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 16px 20px;
+    position: fixed;
+    z-index: 9999;
+    right: 30px;
+    top: 100px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#toast.toast-success {
+    background-color: #27ae60;
+}
+#toast.toast-error {
+    background-color: #e74c3c;
+}
+
+#toast.show {
+    visibility: visible;
+    -webkit-animation: slidein 0.5s, slideout 0.5s 2.5s;
+    animation: slidein 0.5s, slideout 0.5s 2.5s;
+}
+
+@keyframes slidein {
+    from {
+        right: -50px;
+        opacity: 0;
+    }
+    to {
+        right: 30px;
+        opacity: 1;
+    }
+}
+@keyframes slideout {
+    from {
+        right: 30px;
+        opacity: 1;
+    }
+    to {
+        right: -50px;
+        opacity: 0;
+    }
+}

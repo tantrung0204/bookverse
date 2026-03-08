@@ -92,6 +92,7 @@ public class Voucher implements Serializable {
 
     @OneToMany(mappedBy = "voucherId")
     private Collection<Order> order1Collection;
+
     @Transient
     private long usedCount;
 
@@ -224,5 +225,4 @@ public class Voucher implements Serializable {
     public String toString() {
         return "Voucher[ voucherId=" + voucherId + " ]";
     }
-
 }

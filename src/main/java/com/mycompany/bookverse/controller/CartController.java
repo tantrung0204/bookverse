@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.service.CategoryService;
 import java.math.BigDecimal;
 
 /**
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 public class CartController extends HttpServlet {
 
     private CartService cartService = new CartService();
+    private CategoryService categoryService = new CategoryService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -124,9 +126,11 @@ public class CartController extends HttpServlet {
 
         List<Cart> cartItems = cartService.getCustomerCart(customerId);
         BigDecimal cartTotal = cartService.calculateCartTotal(cartItems);
+        List<Category> categories = categoryService.getActiveSubCategories();
 
         request.setAttribute("cartList", cartItems);
         request.setAttribute("cartTotal", cartTotal);
+        request.setAttribute("categories", categories);
 
         request.getRequestDispatcher("/views/customer/cart.jsp").forward(request, response);
     }
@@ -172,28 +176,41 @@ public class CartController extends HttpServlet {
             throws IOException {
 
         response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
 
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
             int newQuantity = Integer.parseInt(request.getParameter("quantity"));
 
-            cartService.updateCartQuantity(cartId, newQuantity);
+            try {
+                cartService.updateCartQuantity(cartId, newQuantity);
+            } catch (Exception ex) {
+                // NẾU LỖI DO VƯỢT QUÁ KHO -> Trả về JSON báo lỗi
+                out.print("{");
+                out.print("\"status\": \"error\",");
+                out.print("\"message\": \"The quantity exceeds the available stock!\"");
+                out.print("}");
+                out.flush();
+                return;
+            }
 
             int customerId = 1;
             List<Cart> cartItems = cartService.getCustomerCart(customerId);
             BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);
 
             BigDecimal itemTotal = BigDecimal.ZERO;
+            int totalItems = 0;
             for (Cart c : cartItems) {
+                Product p = c.getProductId();
+                if (p.getStatus() != null && p.getStatus() == 1 && p.getStockQuantity() != null && p.getStockQuantity() > 0) {
+                    totalItems += c.getCartQuantity();
+                }
                 if (c.getCartId() == cartId) {
-                    BigDecimal price = c.getProductId().getPrice();
-                    itemTotal = price.multiply(new BigDecimal(newQuantity));
-                    break;
+                    itemTotal = p.getPrice().multiply(new BigDecimal(newQuantity));
                 }
             }
 
-            //Trả về JSON thủ công: {"status":"success", "itemTotal": 100000, "grandTotal": 500000}
-            PrintWriter out = response.getWriter();
+            //Trả về JSON thành công: {"status":"success", "itemTotal": 100000, "grandTotal": 500000}
             out.print("{");
             out.print("\"status\": \"success\",");
             out.print("\"itemTotal\": " + itemTotal + ",");
@@ -211,13 +228,22 @@ public class CartController extends HttpServlet {
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
 
-            cartService.removeCartItem(cartId);
+            // int customerId = (Integer) session.getAttribute("customerId");
+            int customerId = 1;
 
-            session.setAttribute("cartMessage", "Item removed from cart successfully!");
-            session.setAttribute("messageType", "success");
+            boolean isRemoved = cartService.removeCartItem(cartId, customerId);
+
+            if (isRemoved) {
+                session.setAttribute("cartMessage", "Item removed from cart successfully!");
+                session.setAttribute("messageType", "success");
+            } else {
+                session.setAttribute("cartMessage", "Action denied! You don't have permission to remove this item.");
+                session.setAttribute("messageType", "error");
+            }
 
         } catch (Exception e) {
-            session.setAttribute("cartMessage", "Failed to remove item.");
+            e.printStackTrace();
+            session.setAttribute("cartMessage", "An error occurred while processing your request.");
             session.setAttribute("messageType", "error");
         }
 

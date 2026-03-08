@@ -40,6 +40,16 @@ public class GenreDAO {
         }
     }
 
+    public List<Genre> findActiveGenres() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String sql = "SELECT g FROM Genre g WHERE g.status = 1";
+            return em.createQuery(sql, Genre.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Genre> searchByName(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

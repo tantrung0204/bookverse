@@ -79,7 +79,7 @@ public class Customer implements Serializable {
     @Column(name = "address")
     private String address;
     @Column(name = "gender")
-    private Integer gender;
+    private Integer gender; //0 nu, 1 nam
     @Size(max = 255)
     @Column(name = "profile_image_url")
     private String profileImageUrl;

@@ -1,0 +1,124 @@
+/* ================= HEADER MAIN ================= */
+.bookverse-header {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    border-bottom: 1px solid rgba(139, 107, 76, 0.2);
+}
+
+.navbar-brand img {
+    object-fit: contain;
+}
+
+.text-brand {
+    color: #8B6B4C !important;
+}
+
+/* ================= SEARCH BAR ================= */
+.header-search-form {
+    max-width: 500px;
+    position: relative;
+}
+
+.header-search-group .form-control {
+    border-color: #8B6B4C;
+    padding-right: 40px;
+    border-radius: 20px;
+}
+
+.header-search-group .form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(139, 107, 76, 0.25);
+    border-color: #8B6B4C;
+}
+
+.btn-search-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #8B6B4C;
+    font-size: 1.2rem;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 10;
+}
+
+.btn-search-icon:hover {
+    color: #6e5238;
+}
+
+/* ================= HEADER BUTTONS ================= */
+.btn-brand-rounded {
+    background-color: #8B6B4C;
+    color: #fff;
+    border: 2px solid #8B6B4C;
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-brand-rounded:hover {
+    background-color: #6e5238;
+    border-color: #6e5238;
+    color: #fff;
+}
+
+.btn-outline-brand-rounded {
+    background-color: #fff;
+    color: #8B6B4C;
+    border: 2px solid #8B6B4C;
+    text-decoration: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-brand-rounded:hover {
+    color: #6e5238;
+    border: 2px solid #6e5238;
+    text-shadow: 0 0 1px currentColor, 0.5px 0 0 currentColor;
+}
+
+/* ================= USER ICONS & DROPDOWN ================= */
+.icon-link, .user-dropdown-link {
+    color: #8B6B4C !important;
+    transition: color 0.3s ease;
+}
+
+.icon-link:hover, .user-dropdown-link:hover {
+    color: #6e5238 !important;
+}
+
+.bg-brand-accent {
+    background-color: #8B6B4C !important;
+    color: white;
+}
+
+.user-avatar {
+    object-fit: cover;
+    border: 2px solid #8B6B4C;
+    padding: 1px;
+}
+
+.brand-dropdown .dropdown-item {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    color: #2c2c2c;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.brand-dropdown .dropdown-item:hover {
+    background-color: rgba(139, 107, 76, 0.1);
+    color: #8B6B4C;
+}
+
+.brand-dropdown .dropdown-item i {
+    color: #8B6B4C;
+    opacity: 0.8;
+}
+
+.user-dropdown-link::after {
+    color: #8B6B4C;
+}

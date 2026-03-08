@@ -239,9 +239,8 @@
 }
 
 .page-btn.disabled {
-    background: transparent;
+    background: #f3f4f6;
     color: #888;
-    pointer-events: none;
 }
 
 /* ================= MODALS & POPUPS (Dự phòng cho các popup sau này) ================= */

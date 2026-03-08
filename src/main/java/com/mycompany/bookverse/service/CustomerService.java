@@ -13,16 +13,62 @@ import java.util.List;
  * @author TrungNT - CE200064
  */
 public class CustomerService {
-    private CustomerDAO customerDAO = new CustomerDAO();
 
-    public List<Customer> getAllCustomers() {
-        return customerDAO.findAll();
+    private CustomerDAO customerDAO;
+
+    public CustomerService() {
+        this.customerDAO = new CustomerDAO();
     }
 
-    public static void main(String[] args) {
-        CustomerService service = new CustomerService();
-        for (Customer c : service.getAllCustomers()) {
-            System.out.println(c.getUsername());
+    public List<Customer> getAllCustomers(int page, int pageSize) {
+        return customerDAO.findAll(page, pageSize);
+    }
+
+    public long getTotalCustomers() {
+        return customerDAO.getTotalCustomers();
+    }
+
+    public Customer getCustomerById(int id) {
+        return customerDAO.findById(id);
+    }
+
+    public int addCustomer(Customer customer) {
+
+        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()
+                || customer.getEmail() == null || customer.getEmail().trim().isEmpty()) {
+            return 2;
         }
+
+        boolean success = customerDAO.create(customer);
+        if (success) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public int editCustomer(Customer customer) {
+        if (customer.getFullName() == null || customer.getFullName().trim().isEmpty()) {
+            return 2;
+        }
+
+        boolean success = customerDAO.update(customer);
+        if (success) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public boolean deleteCustomer(int id) {
+        return customerDAO.delete(id);
+    }
+
+    public List<Customer> searchCustomers(String keyword) {
+        return customerDAO.search(keyword);
+    }
+
+    public boolean isEmailExist(String email, int currentId) {
+        return customerDAO.checkDuplicateEmail(email, currentId);
     }
 }

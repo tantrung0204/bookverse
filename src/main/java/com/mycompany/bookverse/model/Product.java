@@ -37,7 +37,13 @@ import java.util.Collection;
 @NamedQueries({
     @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p"),
     @NamedQuery(name = "Product.findByProductId", query = "SELECT p FROM Product p WHERE p.productId = :productId"),
-    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:keyword)")})
+    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:keyword)"),
+    @NamedQuery(
+            name = "Product.countByCategoryId",
+            query = "SELECT COUNT(p) FROM Product p WHERE p.categoryId = :categoryId"
+    )
+})
+
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,6 +65,9 @@ public class Product implements Serializable {
     private String imageUrl;
     @Column(name = "status")
     private Integer status;
+    @Size(max = 500)
+    @Column(name = "description_text")
+    private String descriptionText;
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     @ManyToOne
     private Category categoryId;
@@ -124,6 +133,14 @@ public class Product implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getDescriptionText() {
+        return descriptionText;
+    }
+
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
     }
 
     public Category getCategoryId() {
@@ -205,7 +222,7 @@ public class Product implements Serializable {
         if (this.orderItemCollection == null || this.orderItemCollection.isEmpty()) {
             return 0;
         }
-        
+
         int totalSold = 0;
 
         for (OrderItem item : this.orderItemCollection) {

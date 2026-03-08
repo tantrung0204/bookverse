@@ -24,8 +24,8 @@ import org.json.JSONObject;
  *
  * @author LECOO
  */
-@WebServlet(name = "InventoryController", urlPatterns = {"/inventory"})
-public class InventoryController extends HttpServlet {
+@WebServlet(name = "InventoryManagementController", urlPatterns = {"/inventory"})
+public class InventoryManagementController extends HttpServlet {
 
     private InventoryService inventoryServices = new InventoryService();
 
@@ -117,16 +117,13 @@ public class InventoryController extends HttpServlet {
                 String idStr = request.getParameter("importId");
                 try {
                     int id = Integer.parseInt(idStr);
-                    totalPages = inventoryServices.getTotalImportDetailPages(pageSize, id);
-                    List<ImportStockDetail> importDetails = inventoryServices.getImportDetail(page, pageSize, id);
+                    List<ImportStockDetail> importDetails = inventoryServices.getImportDetail(id);
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     JSONArray jsonArray = new JSONArray();
                     if (importDetails != null) {
                         for (ImportStockDetail d : importDetails) {
                             JSONObject obj = new JSONObject();
-                            obj.put("currentPage", page);
-                            obj.put("totalPages", totalPages);
                             obj.put("importDetailId", d.getImportDetailId());
                             obj.put("importedQuantity", d.getImportedQuantity());
                             obj.put("unitPrice", d.getUnitPrice());

@@ -98,7 +98,7 @@ public class InventoryDAO {
         }
     }
 
-    public List<ImportStockDetail> findByImportId(int importId, int offset, int limit) {
+    public List<ImportStockDetail> findByImportId(int importId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
 
@@ -113,9 +113,6 @@ public class InventoryDAO {
                     );
 
             query.setParameter("importId", importId);
-            query.setFirstResult(offset);
-            query.setMaxResults(limit);
-
             return query.getResultList();
 
         } finally {

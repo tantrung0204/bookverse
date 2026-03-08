@@ -22,20 +22,20 @@
     </a>
     <div class="content-card">
 
-        <div class="toolbar">
-            <%-- Add import --%>
-            <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Import
-            </button>
-            <%-- Filter Import --%>
-            <form action="author" method="get" class="search-form">
-                <input type="hidden" name="view" value="search">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>          
-                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
-                </div>
-            </form>
-        </div>
+        <!--        <div class="toolbar">
+        <%-- Add import --%>
+        <button type="button" class="btn-add" onclick="openCreatePopup()">
+            <i class="bi bi-plus-lg me-1"></i> Add New Import
+        </button>
+        <%-- Filter Import --%>
+        <form action="author" method="get" class="search-form">
+            <input type="hidden" name="view" value="search">
+            <div class="search-box">
+                <i class="bi bi-search"></i>          
+                <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+            </div>
+        </form>
+    </div>-->
         <c:if test="${not empty message}">
             <div class="alert alert-error">
                 ${message}
@@ -182,8 +182,6 @@
                         }
                         //xem data ở console chơi.
                         console.log("DATA:", data);
-                        let currentPage = data[0].currentPage;
-                        let totalPages = data[0].totalPages;
                         var html = `
         <table class="detail-table">
             <tr>
@@ -214,79 +212,6 @@
                             });
                         }
                         html += `</table>`;
-                        //Phân trang
-                        let startPage = currentPage - 1;//là page số 2 trở về sau
-                        let endPage = currentPage + 1;//là page kề page cuối
-                        //Nếu currentPage = 1 thì hiển thị từ trang 2 trở đi
-                        if (startPage < 2) {
-                            startPage = 2;
-                            endPage = 4;
-                        }
-                        //Nếu currentPage = page cuối
-                        if (endPage > totalPages - 1) {
-                            endPage = totalPages - 1;
-                            startPage = totalPages - 3;
-                        }
-                        //Luôn luôn đặt startPage=2.
-                        if (startPage < 2) {
-                            startPage = 2;
-                        }
-
-                        let pagination = `<nav class="d-flex justify-content-center">
-                <ul class="pagination">`;
-
-                        // Previous
-                        pagination += `
-            <li class="page-item ` + (currentPage === 1 ? 'disabled' : '') + `">
-                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage - 1 < 1 ? 1 : currentPage - 1) + `)">&laquo;</button>
-            </li>`;
-
-                        // Nếu total <= 5
-                        if (totalPages <= 5) {
-                            for (let i = 1; i <= totalPages; i++) {
-                                pagination += `
-                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
-                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
-                    </li>`;
-                            }
-                        } else {
-
-                            // page 1
-                            pagination += `
-                <li class="page-item ` + (currentPage === 1 ? 'active' : '') + `">
-                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + 1 + `)">1</button>
-                </li>`;
-
-                            if (startPage > 2) {
-                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                            }
-
-                            for (let i = startPage; i <= endPage; i++) {
-                                pagination += `
-                    <li class="page-item ` + (currentPage === i ? 'active' : '') + `">
-                        <button class="page-link" onclick="openDetailPopup(` + importId + `,` + i + `)">` + i + `</button>
-                    </li>`;
-                            }
-
-                            if (endPage < totalPages - 1) {
-                                pagination += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                            }
-
-                            pagination += `
-                <li class="page-item ` + (currentPage === totalPages ? 'active' : '') + `">
-                    <button class="page-link" onclick="openDetailPopup(` + importId + `,` + totalPages + `)">` + totalPages + `</button>
-                </li>`;
-                        }
-
-                        // Next
-                        pagination += `
-            <li class="page-item ` + (currentPage === totalPages ? 'disabled' : '') + `">
-                <button class="page-link" onclick="openDetailPopup(` + importId + `,` + (currentPage + 1) + `)">&raquo;</button>
-            </li>`;
-
-                        pagination += `</ul></nav>`;
-
-                        html += pagination;
                         document.getElementById("popupContent").innerHTML = html;
                         document.getElementById("detailPopup").style.display = "flex";
                     })
@@ -361,12 +286,12 @@
     </div>
 
     <!-- ================= DETAIL POPUP ================= -->
-    <div id="detailPopup" class="modal-overlay" >
+    <div id="detailPopup" class="modal-overlay">
         <div class="modal-content" style="width: 700px">
             <div class="modal-header">
-                <h3>Author Detail</h3>
+                <h3>Import Detail</h3>
             </div>
-            <div id="popupContent"></div>
+            <div id="popupContent" style="max-height: 400px;overflow-y: auto;"></div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
             </div>

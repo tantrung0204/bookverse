@@ -14,8 +14,8 @@
                 <div class="user-profile-btn d-flex align-items-center gap-2 dropdown-toggle" id="profileDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="" alt="Avatar" class="header-avatar rounded-circle"
-                         onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';"
-                         <span class="fw-medium text-dark">
+                        onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';" <span
+                        class="fw-medium text-dark">
                     abc
                     </span>
                 </div>

@@ -31,7 +31,8 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link ${activeMenu == 'staff'? 'active':''}">
+                    <a href="${pageContext.request.contextPath}/staff"
+                        class="sidebar-link ${activeMenu == 'staff'? 'active':''}">
                         <i class="bi bi-person-badge"></i> Staff
                     </a>
                 </li>

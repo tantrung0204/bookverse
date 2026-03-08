@@ -6,7 +6,7 @@
     color: #333333;
     font-weight: 700;
     font-family: "Playfair Display", serif;
-    font-size: 24px;
+    font-size:24px;
 }
 
 .subtitle {
@@ -20,7 +20,7 @@
 .content-card {
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     padding: 25px;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .btn-add {
-    background-color: #a6dcec;
+    background-color: #a6dcec; 
     color: #2c3e50;
     font-weight: 600;
     padding: 10px 20px;
@@ -157,7 +157,7 @@
 
 .btn-action:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .modal-overlay {
@@ -178,21 +178,14 @@
     width: 450px;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     animation: slideDown 0.3s ease-out;
 }
 
 @keyframes slideDown {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-header h3 {
@@ -244,6 +237,7 @@
     border-radius: 6px;
     cursor: pointer;
 }
+<<<<<<< HEAD
 
 .alert-error {
     background-color: #fdecea;
@@ -370,3 +364,5 @@
     pointer-events: none;
     opacity: 0.4;
 }
+=======
+>>>>>>> huynq

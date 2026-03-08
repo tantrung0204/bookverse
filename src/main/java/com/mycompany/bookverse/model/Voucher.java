@@ -33,11 +33,11 @@ import java.util.Date;
 @Table(name = "voucher")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Voucher.findAll", query = "SELECT v FROM Voucher v"),
-    @NamedQuery(name = "Voucher.findByVoucherId", query = "SELECT v FROM Voucher v WHERE v.voucherId = :voucherId"),
-    @NamedQuery(name = "Voucher.findByVoucherCode", query = "SELECT v FROM Voucher v WHERE v.voucherCode = :voucherCode"),
-    @NamedQuery(name = "Voucher.findByDiscountType", query = "SELECT v FROM Voucher v WHERE v.discountType = :discountType"),
-    @NamedQuery(name = "Voucher.findByStatus", query = "SELECT v FROM Voucher v WHERE v.status = :status")
+        @NamedQuery(name = "Voucher.findAll", query = "SELECT v FROM Voucher v"),
+        @NamedQuery(name = "Voucher.findByVoucherId", query = "SELECT v FROM Voucher v WHERE v.voucherId = :voucherId"),
+        @NamedQuery(name = "Voucher.findByVoucherCode", query = "SELECT v FROM Voucher v WHERE v.voucherCode = :voucherCode"),
+        @NamedQuery(name = "Voucher.findByDiscountType", query = "SELECT v FROM Voucher v WHERE v.discountType = :discountType"),
+        @NamedQuery(name = "Voucher.findByStatus", query = "SELECT v FROM Voucher v WHERE v.status = :status")
 })
 public class Voucher implements Serializable {
 
@@ -95,7 +95,6 @@ public class Voucher implements Serializable {
 
     @Transient
     private long usedCount;
-
 
     public Voucher() {
     }

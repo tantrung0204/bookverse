@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author NganTTK-CE190411
  */
-@WebServlet(name = "CategoryController", urlPatterns = {"/category"})
+@WebServlet(name = "CategoryController", urlPatterns = { "/category" })
 public class CategoryController extends HttpServlet {
 
     private CategoryService categoryService = new CategoryService();
@@ -29,10 +29,10 @@ public class CategoryController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -59,10 +59,10 @@ public class CategoryController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -220,7 +220,7 @@ public class CategoryController extends HttpServlet {
             request.setAttribute("editDesc", desc);
             request.setAttribute("editStatus", statusRaw);
             request.setAttribute("editParent", parentRaw);
-            request.setAttribute("categories",categoryService.getAllCategoriesPage(1));
+            request.setAttribute("categories", categoryService.getAllCategoriesPage(1));
             request.setAttribute("contentPage", "category-list.jsp");
             request.setAttribute("activeMenu", "category");
 

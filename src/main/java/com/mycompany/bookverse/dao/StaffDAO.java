@@ -16,10 +16,27 @@ import java.util.List;
  */
 public class StaffDAO {
 
-    public List<Staff> findAll() {
+    public List<Staff> findAll(int page, int pageSize) {
+        // Khởi tạo entity manager
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createNamedQuery("Staff.findAll", Staff.class).getResultList();
+            // Câu lệnh JPQL (Lấy đối tượng Staff)
+            String jpql = "SELECT s FROM Staff s ORDER BY s.staffId DESC";
+            TypedQuery<Staff> query = em.createQuery(jpql, Staff.class);
+            query.setMaxResults(com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE);
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long getTotalStaffs() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(s) FROM Staff s", Long.class).getSingleResult();
         } finally {
             em.close();
         }
@@ -77,9 +94,10 @@ public class StaffDAO {
             Staff staff = em.find(Staff.class, id);
             if (staff != null) {
                 em.remove(staff);
+                em.getTransaction().commit();
+                return true;
             }
-            em.getTransaction().commit();
-            return true;
+            return false;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();

@@ -78,19 +78,19 @@
         <li class="sidebar-item">
             <a href="${pageContext.request.contextPath}/genre" 
                class="sidebar-link ${activeMenu == 'genre'? 'active':''}"">
-                <i class="bi bi-tags"></i> Genre
+                <i class="bi bi-tags"></i> Genres
             </a>
         </li>
         <li class="sidebar-item">
             <a href="${pageContext.request.contextPath}/author"
                class="sidebar-link ${activeMenu == 'author'? 'active':''}">
-                <i class="bi bi-person"></i> Author
+                <i class="bi bi-person"></i> Authors
             </a>
         </li>
         <li class="sidebar-item">
             <a href="${pageContext.request.contextPath}/inventory"
                class="sidebar-link ${activeMenu == 'inventory'? 'active':''}">
-                <i class="bi bi-box-seam"></i> Inventory
+                <i class="bi bi-box-seam"></i> Inventorys
             </a>
         </li>
         <li class="sidebar-item">

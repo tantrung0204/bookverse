@@ -8,6 +8,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-list.css">
 
 <div class="container-fluid">
     <div class="page-header">
@@ -15,12 +16,17 @@
         <p class="subtitle">Create and manage inventory for your library</p>
     </div>
 
-    <a href="inventory">
-        <button type="button" class="btn-add">Import</button>
-    </a>
-    <a href="inventory?view=export-list">
-        <button type="button" class="btn-add">Export</button>
-    </a>
+    <div class="tab-container">
+            <a href="${pageContext.request.contextPath}/inventory" 
+               class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
+                <i class="bi bi-book me-1"></i> Imports
+            </a>
+            <a href="${pageContext.request.contextPath}/inventory?view=export-list" 
+               class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
+                <i class="bi bi-pencil-square me-1"></i> Exports
+            </a>
+        </div>
+    <div class="content-card">
 
     <div class="content-card">
 

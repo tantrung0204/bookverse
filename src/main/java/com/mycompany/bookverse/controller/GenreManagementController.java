@@ -64,7 +64,7 @@ public class GenreManagementController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String view = request.getParameter("view");
-        if (view == null) {
+        if (view == null | view.isEmpty()) {
             view = "list";
         }
         int page = 1;

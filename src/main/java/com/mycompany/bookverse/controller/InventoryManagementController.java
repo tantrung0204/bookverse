@@ -69,7 +69,7 @@ public class InventoryManagementController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String view = request.getParameter("view");
-        if (view == null) {
+        if (view == null || view.isEmpty()) {
             view = "import-list";
         }
         int page = 1;
@@ -93,6 +93,7 @@ public class InventoryManagementController extends HttpServlet {
                 if (imports == null || imports.isEmpty()) {
                     request.setAttribute("message", "No imports found");
                 } else {
+                    request.setAttribute("currentTab", view);
                     request.setAttribute("maxNote", maxNode);
                     request.setAttribute("imports", imports);
                     request.setAttribute("currentPage", page);
@@ -108,6 +109,7 @@ public class InventoryManagementController extends HttpServlet {
                 if (exports == null || exports.isEmpty()) {
                     request.setAttribute("message", "No exports found");
                 } else {
+                    request.setAttribute("currentTab", view);
                     request.setAttribute("maxNote", maxNode);
                     request.setAttribute("exports", exports);
                     request.setAttribute("currentPage", page);

@@ -13,25 +13,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.service.CategoryService;
 import com.mycompany.bookverse.service.ProductService;
 
 /**
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "HomeController", urlPatterns = {"/home"})
+@WebServlet(name = "HomeController", urlPatterns = { "/home" })
 public class HomeController extends HttpServlet {
 
+    private CategoryService categoryService = new CategoryService();
     private ProductService productService = new ProductService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -50,57 +52,38 @@ public class HomeController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String action = request.getParameter("action");
-        if (action == null) {
-            action = "list";
-        }
-        switch (action) {
-            case "list":
-                List<Product> products = productService.getAllProducts();
-                request.setAttribute("PRODUCT_LIST", products);
-                request.getRequestDispatcher("views/home.jsp").forward(request, response);
-                break;
-            case "detail":
-                String id = request.getParameter("id");
-                Product product = productService.getProductById(id);
-                if (product != null) {
-                    request.setAttribute("p", product);
-                    request.getRequestDispatcher("views/product-detail.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("error", "Sản phẩm không tồn tại!");
-                    request.getRequestDispatcher("/views/error-404.jsp").forward(request, response);
-                }
-                break;
-            case "search":
-                String keyword = request.getParameter("keyword");
-                List<Product> searchResult = productService.searchProducts(keyword);
-                request.setAttribute("PRODUCT_LIST", searchResult);
-                request.setAttribute("searchKeyword", keyword);
-                request.getRequestDispatcher("/views/home.jsp").forward(request, response);
-                break;
-        }
+        List<Category> categories = categoryService.getActiveSubCategories();
+        List<Book> topBooks = productService.getTopBestSellingBooks();
+        List<Stationery> topStationery = productService.getTopBestSellingStationery();
+
+        request.setAttribute("categories", categories);
+        request.setAttribute("topBooks", topBooks);
+        request.setAttribute("topStationery", topStationery);
+
+        request.getRequestDispatcher("/views/public/home.jsp").forward(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

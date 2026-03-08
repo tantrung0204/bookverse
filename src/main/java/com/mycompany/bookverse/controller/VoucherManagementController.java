@@ -27,6 +27,7 @@ import java.util.List;
  *
  * @author Admin
  */
+
 @WebServlet(name = "VoucherController", urlPatterns = {"/voucher"})
 public class VoucherManagementController extends HttpServlet {
 
@@ -36,10 +37,10 @@ public class VoucherManagementController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -58,14 +59,15 @@ public class VoucherManagementController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -130,8 +132,7 @@ public class VoucherManagementController extends HttpServlet {
                 totalItems = voucherService.countSearchVoucher(keyword);
                 totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
-                List<Voucher> searchList
-                        = voucherService.searchVouchersPaging(keyword, page, pageSize);
+                List<Voucher> searchList = voucherService.searchVouchersPaging(keyword, page, pageSize);
 
                 request.setAttribute("vouchers", searchList);
                 request.setAttribute("currentPage", page);
@@ -150,10 +151,10 @@ public class VoucherManagementController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -203,7 +204,7 @@ public class VoucherManagementController extends HttpServlet {
                         request.setAttribute("currentPage", page);
                         request.setAttribute("totalPages", totalPages);
 
-                        //  Lưu lại dữ liệu user đã nhập
+                        // Lưu lại dữ liệu user đã nhập
                         request.setAttribute("voucherName", request.getParameter("voucherName"));
                         request.setAttribute("code", request.getParameter("code"));
                         request.setAttribute("minOrderValue", request.getParameter("minOrderValue"));

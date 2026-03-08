@@ -16,35 +16,43 @@ import java.util.List;
  */
 public class CustomerDAO {
 
-    public List<Customer> findAll() {
+    public List<Customer> findAll(int page, int pageSize) {
         // Khởi tạo entity manager
         EntityManager em = JPAUtil.getEntityManager();
         try {
             // Câu lệnh JPQL (Lấy đối tượng Customer)
-//            String jpql = "SELECT c FROM Customer c";
-//            TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
-//            
-//            return query.getResultList();
-            // Chỉ cần gọi tên định danh đã khai báo trong Model
-            return em.createNamedQuery("Customer.findAll", Customer.class)
-                    .getResultList();
+            String jpql = "SELECT c FROM Customer c ORDER BY c.customerId DESC";
+            TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
+            query.setMaxResults(com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE);
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            return query.getResultList();
         } finally {
             em.close();
         }
     }
-  
-//    để gửi notification
+
+    public long getTotalCustomers() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(c) FROM Customer c", Long.class).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    // để gửi notification
     public List<Customer> getActiveCustomers() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
                     "SELECT c FROM Customer c WHERE c.status = 1",
-                    Customer.class
-            ).getResultList();
-        }finally {
+                    Customer.class).getResultList();
+        } finally {
             em.close();
         }
-}
+    }
+
     public Customer findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -53,6 +61,7 @@ public class CustomerDAO {
             em.close();
         }
     }
+
     public boolean create(Customer customer) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -70,6 +79,7 @@ public class CustomerDAO {
             em.close();
         }
     }
+
     public boolean update(Customer customer) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -87,6 +97,7 @@ public class CustomerDAO {
             em.close();
         }
     }
+
     public boolean delete(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -94,9 +105,10 @@ public class CustomerDAO {
             Customer customer = em.find(Customer.class, id);
             if (customer != null) {
                 em.remove(customer);
+                em.getTransaction().commit();
+                return true;
             }
-            em.getTransaction().commit();
-            return true;
+            return false;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -107,6 +119,7 @@ public class CustomerDAO {
             em.close();
         }
     }
+
     public List<Customer> search(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -114,6 +127,23 @@ public class CustomerDAO {
             TypedQuery<Customer> query = em.createQuery(hql, Customer.class);
             query.setParameter("keyword", "%" + keyword + "%");
             return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean checkDuplicateEmail(String email, int currentId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            // Tìm xem có email nào giống vậy mà ID khác với ông hiện tại không
+            String jpql = "SELECT COUNT(c) FROM Customer c WHERE c.email = :email AND c.customerId != :id";
+            Long count = em.createQuery(jpql, Long.class)
+                    .setParameter("email", email)
+                    .setParameter("id", currentId)
+                    .getSingleResult();
+            return count > 0;
+        } catch (Exception e) {
+            return false;
         } finally {
             em.close();
         }

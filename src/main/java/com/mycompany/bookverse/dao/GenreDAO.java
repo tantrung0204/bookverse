@@ -40,6 +40,16 @@ public class GenreDAO {
         }
     }
 
+    public List<Genre> findActiveGenres() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String sql = "SELECT g FROM Genre g WHERE g.status = 1";
+            return em.createQuery(sql, Genre.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Genre> searchByName(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -142,4 +152,67 @@ public class GenreDAO {
             em.close();
         }
     }
+
+    public List<Genre> findByPage(int offset, int limit) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Genre> query = em.createQuery(
+                    "SELECT g FROM Genre g ORDER BY g.genreId DESC",
+                    Genre.class
+            );
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(g) FROM Genre g",
+                    Long.class
+            ).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Genre> findByKeywordAndPage(String keyword, int offset, int limit) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Genre> query = em.createQuery(
+                    "SELECT g FROM Genre g "
+                    + "WHERE LOWER(g.genreName) LIKE LOWER(:kw) "
+                    + "ORDER BY g.genreId DESC",
+                    Genre.class
+            );
+
+            query.setParameter("kw", "%" + keyword + "%");
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countByKeyword(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(g) FROM Genre g "
+                    + "WHERE LOWER(g.genreName) LIKE LOWER(:kw)",
+                    Long.class
+            )
+                    .setParameter("kw", "%" + keyword + "%")
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
 }

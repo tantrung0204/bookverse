@@ -96,7 +96,7 @@
         <li class="sidebar-item">
             <a href="${pageContext.request.contextPath}/supplier"
                class="sidebar-link ${activeMenu == 'supplier'? 'active':''}">
-                <i class="bi bi-box-seam"></i> Supplier
+                <i class="bi bi-box-fill"></i> Suppliers
             </a>
         </li>
     </ul>

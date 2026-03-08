@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CartController", urlPatterns = {"/cart"})
+@WebServlet(name = "CartController", urlPatterns = { "/cart" })
 public class CartController extends HttpServlet {
 
     private CartService cartService = new CartService();
@@ -32,10 +32,10 @@ public class CartController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,14 +54,15 @@ public class CartController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -85,10 +86,10 @@ public class CartController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -120,8 +121,8 @@ public class CartController extends HttpServlet {
     private void viewCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        //HttpSession session = request.getSession();
-        //int customerId = session.getAttribute("customerId");
+        // HttpSession session = request.getSession();
+        // int customerId = session.getAttribute("customerId");
         int customerId = 1;
 
         List<Cart> cartItems = cartService.getCustomerCart(customerId);
@@ -143,8 +144,8 @@ public class CartController extends HttpServlet {
         String referer = request.getHeader("referer");
 
         try {
-            //HttpSession session = request.getSession();
-            //int customerId = session.getAttribute("customerId");
+            // HttpSession session = request.getSession();
+            // int customerId = session.getAttribute("customerId");
             int customerId = 1;
             int productId = Integer.parseInt(request.getParameter("productId"));
 
@@ -202,7 +203,8 @@ public class CartController extends HttpServlet {
             int totalItems = 0;
             for (Cart c : cartItems) {
                 Product p = c.getProductId();
-                if (p.getStatus() != null && p.getStatus() == 1 && p.getStockQuantity() != null && p.getStockQuantity() > 0) {
+                if (p.getStatus() != null && p.getStatus() == 1 && p.getStockQuantity() != null
+                        && p.getStockQuantity() > 0) {
                     totalItems += c.getCartQuantity();
                 }
                 if (c.getCartId() == cartId) {
@@ -210,7 +212,8 @@ public class CartController extends HttpServlet {
                 }
             }
 
-            //Trả về JSON thành công: {"status":"success", "itemTotal": 100000, "grandTotal": 500000}
+            // Trả về JSON thành công: {"status":"success", "itemTotal": 100000,
+            // "grandTotal": 500000}
             out.print("{");
             out.print("\"status\": \"success\",");
             out.print("\"itemTotal\": " + itemTotal + ",");

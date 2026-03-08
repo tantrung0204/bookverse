@@ -32,6 +32,19 @@ public class CustomerDAO {
             em.close();
         }
     }
+  
+//    để gửi notification
+    public List<Customer> getActiveCustomers() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT c FROM Customer c WHERE c.status = 1",
+                    Customer.class
+            ).getResultList();
+        }finally {
+            em.close();
+        }
+}
     public Customer findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

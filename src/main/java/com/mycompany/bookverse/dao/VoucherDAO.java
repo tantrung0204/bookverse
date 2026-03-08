@@ -16,16 +16,6 @@ import java.util.List;
  */
 public class VoucherDAO {
 
-    public List<Voucher> getAllVouchers() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createNamedQuery("Voucher.findAll", Voucher.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public Voucher findById(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -63,22 +53,34 @@ public class VoucherDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e; 
+            throw e;
         } finally {
             em.close();
         }
     }
 
-    public List<Voucher> searchByCode(String keyword) {
+    public List<Voucher> searchVoucher(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
+            String kw = "%" + keyword.trim().toLowerCase() + "%";
+
             return em.createQuery(
-                    "SELECT v FROM Voucher v WHERE v.voucherCode LIKE :kw",
+                    "SELECT v FROM Voucher v "
+                    + "WHERE LOWER(v.voucherName) LIKE :kw "
+                    + "OR LOWER(v.voucherCode) LIKE :kw",
                     Voucher.class)
-                    .setParameter("kw", "%" + keyword + "%")
+                    .setParameter("kw", kw)
                     .getResultList();
+
         } finally {
             em.close();
+        }
+    }
+    
+    public static void main(String[] args) {
+        VoucherDAO dao = new VoucherDAO();
+        for (Voucher voucher : dao.searchVoucher("K")) {
+            System.out.println(voucher.toString());
         }
     }
 
@@ -145,6 +147,58 @@ public class VoucherDAO {
                     + "AND o.orderStatus NOT IN ('pending', 'cancelled')",
                     Long.class)
                     .setParameter("vid", voucherId)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Voucher> getVouchersPaging(int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT v FROM Voucher v ORDER BY v.voucherId DESC", Voucher.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long getTotalVoucherCount() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(v) FROM Voucher v", Long.class)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Voucher> searchByCodePaging(String keyword, int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT v FROM Voucher v "
+                    + "WHERE LOWER(v.voucherName) LIKE :kw "
+                    + "OR LOWER(v.voucherCode) LIKE :kw ORDER BY v.voucherId DESC",
+                    Voucher.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countSearchVoucher(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(v) FROM Voucher v WHERE v.voucherCode LIKE :kw",
+                    Long.class)
+                    .setParameter("kw", "%" + keyword + "%")
                     .getSingleResult();
         } finally {
             em.close();

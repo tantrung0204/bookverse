@@ -174,7 +174,7 @@
                 <img src="${pageContext.request.contextPath}/uploads/${customerDetail.profileImageUrl}" 
                      class="rounded-circle shadow-sm" 
                      style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f8f9fa;"
-                     onerror="this.src='https://via.placeholder.com/120'">
+                     onerror="this.src=''">
             </div>
 
             <h4>${customerDetail.fullName}</h4>
@@ -248,7 +248,7 @@
                 <div class="input-group w-100">
                     <input type="text" class="form-control" id="fileNameDisplay" placeholder="PNG, JPG up to 10MB" readonly>
                     <button class="btn btn-primary" type="button" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-upload me-1"></i> Chosen Image
+                        <i class="fas fa-upload me-1"></i> Choose Image
                     </button>
                 </div>
                 <input type="file" id="fileInput" name="avatarFile" accept="image/png, image/jpeg" style="display: none" onchange="updateFileName(this)">
@@ -364,9 +364,4 @@
         };
     </script>
 </c:if>
-
-<!-- hash Email và Mật khẩu, phải cho nhập Username và Full Name đủ, không thì báo lỗi-->
-<!--chỉnh lại edit và delete cho hoàn thiện như Categories-->
-
-<!--Nhớ check trùng email-->
 

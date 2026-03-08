@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.service.*;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -122,6 +123,7 @@ public class ProductManagementController extends HttpServlet {
         request.setAttribute("currentTab", tab);
         request.setAttribute("currentKeyword", keyword);
         request.setAttribute("currentPage", page);
+        request.setAttribute("maxNode", PaginationConfig.MAX_PAGE_NODES);
 
         // 4. Dữ liệu phụ trợ cho Modal Create/Edit
         request.setAttribute("bookCategories", categoryService.getActiveSubCategoriesByParentId(1));

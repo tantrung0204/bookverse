@@ -135,17 +135,77 @@
 
         <c:if test="${totalPages > 1}">
             <div class="pagination-container">
-                <span style="color: #888; font-size: 14px;">Page:</span>
-                <c:forEach begin="1" end="${totalPages}" var="i">
-                    <c:choose>
-                        <c:when test="${i == currentPage}">
-                            <span class="page-link active">${i}</span>
-                        </c:when>
-                        <c:otherwise>
-                            <a class="page-link" href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=${i}">${i}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
+
+                <%-- Tính toán Start Page và End Page --%>
+                <c:set var="startPage" value="${currentPage - 1}" />
+                <c:set var="endPage" value="${currentPage + 1}" />
+
+                <c:if test="${startPage < 2}">
+                    <c:set var="startPage" value="2"/>
+                    <c:set var="endPage" value="4"/>
+                </c:if>
+
+                <c:if test="${endPage > totalPages - 1}">
+                    <c:set var="endPage" value="${totalPages - 1}"/>
+                    <c:set var="startPage" value="${totalPages - 3}"/>
+                </c:if>
+
+                <c:if test="${startPage < 2}">
+                    <c:set var="startPage" value="2"/>
+                </c:if>
+
+                <nav>
+                    <ul class="pagination">
+                        <%-- Nút Previous --%>
+                        <c:if test="${currentPage > 1}">
+                            <a class="page-btn" href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=${currentPage - 1}">&laquo;</a>
+                        </c:if>
+
+                        <%-- Nếu tổng số trang <= maxNode, hiển thị tất cả --%>
+                        <c:choose>
+                            <c:when test="${totalPages <= maxNode}">
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <a class="page-btn ${currentPage == i ? 'active' : ''}" 
+                                       href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=${i}">${i}</a>
+                                </c:forEach>
+                            </c:when>
+
+                            <%-- Nếu tổng số trang > maxNode, dùng dấu ... --%>
+                            <c:otherwise>
+                                <%-- Luôn hiện trang 1 --%>                   
+                                <a class="page-btn ${currentPage == 1 ? 'active' : ''}" 
+                                   href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=1">1</a>
+
+                                <%-- Dấu ... đầu tiên --%>
+                                <c:if test="${startPage > 2}">
+                                    <span class="page-btn disabled">...</span>
+                                </c:if>
+
+                                <%-- Các trang ở giữa --%>
+                                <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                                    <c:if test="${i > 1 and i < totalPages}">
+                                        <a class="page-btn ${currentPage == i ? 'active' : ''}" 
+                                           href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=${i}">${i}</a>
+                                    </c:if>
+                                </c:forEach>
+
+                                <%-- Dấu ... cuối cùng --%>
+                                <c:if test="${endPage < totalPages - 1}">
+                                    <span class="page-btn disabled">...</span>
+                                </c:if>
+
+                                <%-- Luôn hiện trang cuối --%>
+                                <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" 
+                                   href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=${totalPages}">${totalPages}</a>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <%-- Nút Next --%>
+                        <c:if test="${currentPage < totalPages}">
+                            <a class="page-btn" href="${pageContext.request.contextPath}/product?tab=${currentTab}&keyword=${currentKeyword}&page=${currentPage + 1}">&raquo;</a>
+                        </c:if>
+                    </ul>
+                </nav>
             </div>
         </c:if>
 

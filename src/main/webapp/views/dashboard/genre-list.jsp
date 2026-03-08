@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
 
 <div class="container-fluid">
 
@@ -130,55 +131,41 @@
         </c:if>
         <nav class="d-flex justify-content-center">
             <ul class="pagination">
-
-
-                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
-                </li>
-
-
+                <%-- Previous button --%>
+                <c:if test="${currentPage > 1}">
+                    <a class="page-btn ${currentPage == 1 ? 'disabled' : ''}" href="genre?page=${currentPage - 1}">&laquo;</a>
+                </c:if>
+                <%-- If the total <= 5, display all pages. --%>
                 <c:if test="${totalPages <= 5}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="genre?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}">${i}</a>
                     </c:forEach>
                 </c:if>
-
-
+                <%-- If the total > 5 --%>
                 <c:if test="${totalPages > 5}">
-                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                        <a class="page-link" href="genre?page=1">1</a>
-                    </li>
-
+                    <%-- Page 1 always appears --%>                   
+                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="genre?page=1">1</a>
+                    <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
-
+                    <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="genre?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}">${i}</a>
                     </c:forEach>
-
+                    <%-- The final ellipsis --%>
                     <c:if test="${endPage < totalPages - 1}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
-
-                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                        <a class="page-link" href="genre?page=${totalPages}">
-                            ${totalPages}
-                        </a>
-                    </li>
+                    <%-- The last page always appears --%>
+                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="author?page=${totalPages}">
+                        ${totalPages}
+                    </a>
                 </c:if>
-
-                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="genre?page=${currentPage + 1}">&raquo;</a>
-                </li>
+                <%-- Next button --%>
+                <c:if test="${currentPage < totalPages}">
+                    <a class="page-btn ${currentPage == totalPages ? 'disabled' : ''}" href="genre?page=${currentPage+1}">&raquo;</a>
+                </c:if>
             </ul>
         </nav>
     </div>

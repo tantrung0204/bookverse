@@ -24,7 +24,7 @@ public class InventoryService {
         return (int) Math.ceil((double) totalItems / pageSize);
     }
     public int getTotalExportPages(int pageSize) {
-        long totalItems = inventoryDAO.countAllImports();
+        long totalItems = inventoryDAO.countAllExports();
         return (int) Math.ceil((double) totalItems / pageSize);
     }
 

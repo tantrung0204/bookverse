@@ -53,7 +53,8 @@ public class InventoryDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                    "SELECT COUNT(o) FROM Order o",
+                    "SELECT COUNT(o) FROM Order o "
+                    + "WHERE o.orderStatus NOT IN ('Pending','Cancelled')",
                     Long.class
             ).getSingleResult();
         } finally {

@@ -111,13 +111,13 @@
                     <a class="page-btn ${currentPage == 1 ? 'disabled' : ''}" href="inventory?view=export-list&page=${currentPage - 1}">&laquo;</a>
                 </c:if>
                 <%-- If the total <= 5, display all pages. --%>
-                <c:if test="${totalPages <= 5}">
+                <c:if test="${totalPages <= maxNote}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?view=export-list&page=${i}">${i}</a>
                     </c:forEach>
                 </c:if>
                 <%-- If the total > 5 --%>
-                <c:if test="${totalPages > 5}">
+                <c:if test="${totalPages > maxNote}">
                     <%-- Page 1 always appears --%>                   
                     <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="inventory?view=export-list&page=1">1</a>
                     <%-- The ... mark at the beginning --%>

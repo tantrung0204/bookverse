@@ -85,6 +85,7 @@ public class InventoryManagementController extends HttpServlet {
             }
         }
         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+        int maxNode = PaginationConfig.MAX_PAGE_NODES;
         switch (view) {
             case "import-list":
                 int totalPages = inventoryServices.getTotalImportPages(pageSize);
@@ -92,6 +93,7 @@ public class InventoryManagementController extends HttpServlet {
                 if (imports == null || imports.isEmpty()) {
                     request.setAttribute("message", "No imports found");
                 } else {
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("imports", imports);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
@@ -106,6 +108,7 @@ public class InventoryManagementController extends HttpServlet {
                 if (exports == null || exports.isEmpty()) {
                     request.setAttribute("message", "No exports found");
                 } else {
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("exports", exports);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
@@ -143,7 +146,7 @@ public class InventoryManagementController extends HttpServlet {
                 }
                 break;
             case "exportDetail":
-                 idStr = request.getParameter("exportId");
+                idStr = request.getParameter("exportId");
                 try {
                     int id = Integer.parseInt(idStr);
                     List<OrderItem> exportDetails = inventoryServices.getExportDetail(id);

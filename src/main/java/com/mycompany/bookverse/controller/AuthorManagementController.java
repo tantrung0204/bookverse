@@ -80,7 +80,7 @@ public class AuthorManagementController extends HttpServlet {
             }
         }
         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-
+        int maxNode = PaginationConfig.MAX_PAGE_NODES;
         switch (view) {
             case "list":
                 String success = (String) request.getSession().getAttribute("success");
@@ -93,6 +93,7 @@ public class AuthorManagementController extends HttpServlet {
                 if (authors == null || authors.isEmpty()) {
                     request.setAttribute("message", "No vouchers found");
                 } else {
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("authors", authors);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);

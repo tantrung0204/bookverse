@@ -80,7 +80,7 @@ public class GenreManagementController extends HttpServlet {
             }
         }
         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-
+        int maxNode = PaginationConfig.MAX_PAGE_NODES;
         switch (view) {
             case "list":
                 String success = (String) request.getSession().getAttribute("success");
@@ -94,6 +94,7 @@ public class GenreManagementController extends HttpServlet {
                 if (genres == null || genres.isEmpty()) {
                     request.setAttribute("message", "No vouchers found");
                 } else {
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("genres", genres);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);

@@ -7,6 +7,7 @@ package com.mycompany.bookverse.controller;
 import com.mycompany.bookverse.model.Category;
 import com.mycompany.bookverse.service.CategoryService;
 import com.mycompany.bookverse.service.ProductService;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,8 +21,8 @@ import java.util.List;
  *
  * @author NganTTK-CE190411
  */
-@WebServlet(name = "CategoryController", urlPatterns = { "/category" })
-public class CategoryController extends HttpServlet {
+@WebServlet(name = "CategoryController", urlPatterns = {"/category"})
+public class CategoryManagementController extends HttpServlet {
 
     private CategoryService categoryService = new CategoryService();
     private ProductService productService = new ProductService();
@@ -29,10 +30,10 @@ public class CategoryController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -59,10 +60,10 @@ public class CategoryController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -106,6 +107,7 @@ public class CategoryController extends HttpServlet {
         request.setAttribute("categories", list);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("maxPageNodes", PaginationConfig.MAX_PAGE_NODES);
 
         request.setAttribute("contentPage", "category-list.jsp");
         request.setAttribute("activeMenu", "category");

@@ -121,57 +121,73 @@
                     </tbody>
                 </table>
 
+
                 <c:if test="${totalPages > 1}">
-                    <div class="pagination-container">
+                    <div class="pagination">
 
                         <!-- Previous -->
                         <c:if test="${currentPage > 1}">
-                            <c:url var="prevUrl" value="/supplier">
-                                <c:if test="${not empty keyword}">
-                                    <c:param name="action" value="search"/>
-                                    <c:param name="keyword" value="${keyword}"/>
-                                </c:if>
-                                <c:param name="page" value="${currentPage - 1}"/>
-                            </c:url>
+                            <a href="${pageContext.request.contextPath}/category?page=${currentPage - 1}" 
+                               class="page-btn">«</a>
+                        </c:if>
 
-                            <a class="page-btn" href="${prevUrl}">
-                                &laquo; Previous
+                        <!-- Page 1 -->
+                        <a href="${pageContext.request.contextPath}/category?page=1"
+                           class="page-btn ${currentPage == 1 ? 'active' : ''}">
+                            1
+                        </a>
+
+                        <!-- ... trước -->
+                        <c:if test="${currentPage > 3}">
+                            <span class="page-btn">...</span>
+                        </c:if>
+
+                        <!-- Trang trước current -->
+                        <c:if test="${currentPage - 1 > 1}">
+                            <a href="${pageContext.request.contextPath}/category?page=${currentPage - 1}"
+                               class="page-btn">
+                                ${currentPage - 1}
                             </a>
                         </c:if>
 
-                        <!-- Page numbers -->
-                        <c:forEach begin="1" end="${totalPages}" var="i">
-                            <c:url var="pageUrl" value="/supplier">
-                                <c:if test="${not empty keyword}">
-                                    <c:param name="action" value="search"/>
-                                    <c:param name="keyword" value="${keyword}"/>
-                                </c:if>
-                                <c:param name="page" value="${i}"/>
-                            </c:url>
-
-                            <a class="page-number ${i == currentPage ? 'active-page' : ''}"
-                               href="${pageUrl}">
-                                ${i}
+                        <!-- Current -->
+                        <c:if test="${currentPage != 1 && currentPage != totalPages}">
+                            <a href="${pageContext.request.contextPath}/category?page=${currentPage}"
+                               class="page-btn active">
+                                ${currentPage}
                             </a>
-                        </c:forEach>
+                        </c:if>
+
+                        <!-- Trang sau current -->
+                        <c:if test="${currentPage + 1 < totalPages}">
+                            <a href="${pageContext.request.contextPath}/category?page=${currentPage + 1}"
+                               class="page-btn">
+                                ${currentPage + 1}
+                            </a>
+                        </c:if>
+
+                        <!-- ... sau -->
+                        <c:if test="${currentPage < totalPages - 2}">
+                            <span class="page-btn">...</span>
+                        </c:if>
+
+                        <!-- Last page -->
+                        <c:if test="${totalPages > 1}">
+                            <a href="${pageContext.request.contextPath}/category?page=${totalPages}"
+                               class="page-btn ${currentPage == totalPages ? 'active' : ''}">
+                                ${totalPages}
+                            </a>
+                        </c:if>
 
                         <!-- Next -->
                         <c:if test="${currentPage < totalPages}">
-                            <c:url var="nextUrl" value="/supplier">
-                                <c:if test="${not empty keyword}">
-                                    <c:param name="action" value="search"/>
-                                    <c:param name="keyword" value="${keyword}"/>
-                                </c:if>
-                                <c:param name="page" value="${currentPage + 1}"/>
-                            </c:url>
-
-                            <a class="page-btn" href="${nextUrl}">
-                                Next &raquo;
-                            </a>
+                            <a href="${pageContext.request.contextPath}/category?page=${currentPage + 1}" 
+                               class="page-btn">»</a>
                         </c:if>
 
                     </div>
                 </c:if>
+                
             </c:when>
             <c:otherwise>
                 <div style="text-align:center; padding: 40px; color: #999;">

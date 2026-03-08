@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Supplier;
 import com.mycompany.bookverse.service.SupplierService;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -144,6 +145,7 @@ public class SupplierManagementController extends HttpServlet {
         request.setAttribute("keyword", keyword);
          request.setAttribute("currentPage", 1);
          request.setAttribute("totalPages", totalPages);
+          request.setAttribute("maxPageNodes", PaginationConfig.MAX_PAGE_NODES);
          
         request.setAttribute("contentPage", "supplier-list.jsp");
         request.setAttribute("activeMenu", "supplier");

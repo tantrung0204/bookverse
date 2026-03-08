@@ -322,52 +322,36 @@
     color: #333;
 }
 
-/* ================= PAGINATION ================= */
-.pagination-container {
-    margin: 30px 0;
-    text-align: center;
+.pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
 
-.pagination-container a {
-    display: inline-block;
+.page-btn {
     min-width: 38px;
-    padding: 8px 14px;
-    margin: 0 5px;
-    border-radius: 8px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
     text-decoration: none;
+    background: #f3f4f6;
+    color: #555;
     font-size: 14px;
     font-weight: 500;
-    border: 1px solid #e5e7eb;
-    background-color: #ffffff;
-    color: #374151;
-    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
 
-/* Hover effect */
-.pagination-container a:hover {
-    background-color: #3b82f6;
-    color: #ffffff;
-    border-color: #3b82f6;
+.page-btn:hover {
+    background: #e5e7eb;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
 }
 
-/* Active page */
-.active-page {
-    background-color: #2563eb !important;
-    color: #ffffff !important;
-    border-color: #2563eb !important;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
-}
-
-/* Previous / Next */
-.page-btn {
-    font-weight: 600;
-}
-
-/* Disabled state (nếu bạn muốn thêm) */
-.page-disabled {
-    pointer-events: none;
-    opacity: 0.4;
+.page-btn.active {
+    background: #a68a6d;
+    color: white;
 }

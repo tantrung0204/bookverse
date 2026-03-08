@@ -95,8 +95,6 @@ public class Voucher implements Serializable {
     @Transient
     private long usedCount;
 
-    @Transient
-    private long usedCount;
 
     public Voucher() {
     }

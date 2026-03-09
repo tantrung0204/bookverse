@@ -97,9 +97,9 @@ public class AuthorManagementController extends HttpServlet {
                     request.setAttribute("authors", authors);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "author-list.jsp");
-                    request.setAttribute("activeMenu", "author");
                 }
+                request.setAttribute("contentPage", "author-list.jsp");
+                request.setAttribute("activeMenu", "author");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "search":
@@ -113,10 +113,9 @@ public class AuthorManagementController extends HttpServlet {
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
                     request.setAttribute("authors", searchList);
-                    request.setAttribute("contentPage", "author-list.jsp");
-                    request.setAttribute("activeMenu", "author");
                 }
-
+                request.setAttribute("contentPage", "author-list.jsp");
+                request.setAttribute("activeMenu", "author");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "detail":

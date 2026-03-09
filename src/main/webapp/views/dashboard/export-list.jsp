@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/inventory.css">
 
 <div class="container-fluid">
     <div class="page-header">
@@ -17,33 +18,41 @@
     </div>
 
     <div class="tab-container">
-            <a href="${pageContext.request.contextPath}/inventory" 
-               class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
-                <i class="bi bi-book me-1"></i> Imports
-            </a>
-            <a href="${pageContext.request.contextPath}/inventory?view=export-list" 
-               class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
-                <i class="bi bi-pencil-square me-1"></i> Exports
-            </a>
+        <a href="${pageContext.request.contextPath}/inventory" 
+           class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
+            <i class="bi bi-book me-1"></i> Imports
+        </a>
+        <a href="${pageContext.request.contextPath}/inventory?view=export-list" 
+           class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
+            <i class="bi bi-pencil-square me-1"></i> Exports
+        </a>
+    </div>
+    <div class="content-card">
+
+        <div class="toolbar">
+            <%-- Add import --%>
+            <!--            <button type="button" class="btn-add" onclick="openCreatePopup()">
+                            <i class="bi bi-plus-lg me-1"></i> Add New Import
+                        </button>-->
+            <%-- Filter by date range --%>
+            <form action="inventory" method="get" class="date-filter-form">
+                <input type="hidden" name="view" value="export-list">
+
+                <div class="date-filter">
+                    <span>From</span>
+                    <input type="date" name="fromDate" value="${fromDate}">
+                </div>
+
+                <div class="date-filter">
+                    <span>To</span>
+                    <input type="date" name="toDate" value="${toDate}">
+                </div>
+
+                <button type="submit" class="btn-filter">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </form>
         </div>
-    <div class="content-card">
-
-    <div class="content-card">
-
-        <!--        <div class="toolbar">
-        <%-- Add import --%>
-        <button type="button" class="btn-add" onclick="openCreatePopup()">
-            <i class="bi bi-plus-lg me-1"></i> Add New Import
-        </button>
-        <%-- Search Export --%>
-        <form action="Export" method="get" class="search-form">
-            <input type="hidden" name="view" value="search">
-            <div class="search-box">
-                <i class="bi bi-search"></i>          
-                <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
-            </div>
-        </form>
-    </div>-->
         <c:if test="${not empty message}">
             <div class="alert alert-error">
                 ${message}
@@ -54,18 +63,21 @@
                 ${success}
             </div>
         </c:if>
+
         <c:choose>
             <%-- Export List --%>
             <c:when test="${not empty exports}">
                 <table class="custom-table">                 
                     <tr>
-                        <th width="10%">ID</th>
+                        <th width="15%">ID</th>
 
-                        <th width="35%">Staff</th>
+                        <th width="30%">Staff</th>
 
                         <th width="15%">Total cost</th>   
 
                         <th width="15%">Creation date</th>
+
+                        <th width="10%">Action</th>
                     </tr>
                     <c:forEach var="e" items="${exports}"> 
                         <tr>
@@ -73,21 +85,19 @@
                             <td>${e.staffId.fullName}</td>
                             <td>${e.totalAmount}</td>
                             <td>${e.createdAt}</td>
-                            <!--                            <td>
-                            <%-- Detail Export --%>
-                            <div class="action-buttons">
-                                <button type="button" class="btn-action btn-detail"
-                                        title="Detail" onclick="openDetailPopup(
-                                                        '${a.ExportId}',
-                                                        '${a.ExportName}',
-                                                        '${a.birthYear}',
-                                                        '${a.nationality}',
-                                                        '${a.biographyText}'
-                                                        )">
-                                    <i class="bi bi-eye"></i>
-                                </button>                                   
-                            </div> 
-                        </td>   -->
+                            <td>
+                                <%-- Detail Import --%>
+                                <div class="action-buttons"> 
+                                    <button type="button"
+                                            class="btn-action btn-detail"
+                                            onclick="openDetailPopup(${e.orderId}, 1)"
+                                            title="Detail"
+                                            >
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>                       
+                                </div> 
+                            </td>    
                         </tr>
                     </c:forEach>
                 </table>
@@ -178,29 +188,29 @@
                         var html = `
         <table class="detail-table">
             <tr>
-                <th style="width: 10%">Customer Name</th>
-                <th style="width: 20%">Staff Name</th>
+                <th style="width: 20%">Customer Name</th>
+                <th style="width: 15%">Staff Name</th>
                 <th style="width: 20%">Product Name</th>
-                <th style="width: 20%">Quantity</th>
-                <th style="width: 10%">Create At</th>
+                <th style="width: 10%">Quantity</th>
+                <th style="width: 20%">Create At</th>
             </tr>
     `;
                         if (data.length === 0) {
                             html += `<tr><td colspan="5">No import details found</td></tr>`;
                         } else {
-                            data.forEach(iteam => {
-                                let cusName = iteam.customerName;
-                                let staffName = iteam.staffName;
-                                let proName = iteam.exportedQuantity;
-                                let quantity = iteam.unitPrice;
-                                let createAt = iteam.note || "empty";
+                            data.forEach(item => {
+                                let cusName = item.customerName;
+                                let staffName = item.staffName;
+                                let proName = item.product.name;
+                                let quantity = item.product.quantity;
+                                let createAt = item.createdAt.substring(0, 16);
                                 html += `           
                                 <tr>
-                                    <td>` + id + `</td>
-                                    <td>` + name + `</td>
-                                    <td>` + quan + `</td>
-                                    <td>` + unitPri + `</td>
-                                    <td>` + note + `</td></tr>       
+                                    <td>` + cusName + `</td>
+                                    <td>` + staffName + `</td>
+                                    <td>` + proName + `</td>
+                                    <td>` + quantity + `</td>
+                                    <td>` + createAt + `</td></tr>       
     `;
                             });
                         }

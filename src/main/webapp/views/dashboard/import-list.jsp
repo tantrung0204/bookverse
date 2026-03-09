@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/inventory.css">
 
 <div class="container-fluid">
     <div class="page-header">
@@ -28,20 +29,30 @@
     </div>
     <div class="content-card">
 
-        <!--        <div class="toolbar">
-        <%-- Add import --%>
-        <button type="button" class="btn-add" onclick="openCreatePopup()">
-            <i class="bi bi-plus-lg me-1"></i> Add New Import
-        </button>
-        <%-- Filter Import --%>
-        <form action="author" method="get" class="search-form">
-            <input type="hidden" name="view" value="search">
-            <div class="search-box">
-                <i class="bi bi-search"></i>          
-                <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
-            </div>
-        </form>
-    </div>-->
+        <div class="toolbar">
+            <%-- Add import --%>
+<!--            <button type="button" class="btn-add" onclick="openCreatePopup()">
+                <i class="bi bi-plus-lg me-1"></i> Add New Import
+            </button>-->
+            <%-- Filter by date range --%>
+            <form action="inventory" method="get" class="date-filter-form">
+                <input type="hidden" name="view" value="import-list">
+
+                <div class="date-filter">
+                    <span>From</span>
+                    <input type="date" name="fromDate" value="${fromDate}">
+                </div>
+
+                <div class="date-filter">
+                    <span>To</span>
+                    <input type="date" name="toDate" value="${toDate}">
+                </div>
+
+                <button type="submit" class="btn-filter">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </form>
+        </div>
         <c:if test="${not empty message}">
             <div class="alert alert-error">
                 ${message}
@@ -58,15 +69,18 @@
             <c:when test="${not empty imports}">
                 <table class="custom-table">                 
                     <tr>
-                        <th width="10%">ID</th>
+                        <th width="15%">ID</th>
 
-                        <th width="20%">Supplier</th>
+                        <th width="30%">Supplier</th>
 
-                        <th width="35%">Staff</th>
+                        <th width="15%">Staff</th>
 
                         <th width="15%">Total cost</th>   
 
                         <th width="15%">Creation date</th>
+
+                        <th width="10%">Action</th>
+
                     </tr>
                     <c:forEach var="i" items="${imports}"> 
                         <tr>

@@ -98,9 +98,9 @@ public class GenreManagementController extends HttpServlet {
                     request.setAttribute("genres", genres);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "genre-list.jsp");
-                    request.setAttribute("activeMenu", "genre");
                 }
+                request.setAttribute("contentPage", "genre-list.jsp");
+                request.setAttribute("activeMenu", "genre");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "search":
@@ -114,10 +114,10 @@ public class GenreManagementController extends HttpServlet {
                     request.setAttribute("genres", searchList);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "genre-list.jsp");
-                    request.setAttribute("activeMenu", "genre");
-                }
 
+                }
+                request.setAttribute("contentPage", "genre-list.jsp");
+                request.setAttribute("activeMenu", "genre");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "detail":

@@ -17,6 +17,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -86,26 +89,55 @@ public class InventoryManagementController extends HttpServlet {
         }
         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
         int maxNode = PaginationConfig.MAX_PAGE_NODES;
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
+        //chuyển đổi theo format yyyy-MM-dd vì type date chỉ có format này
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date from = null;
+        Date to = null;
+        try {
+            if (fromDate != null && !fromDate.isEmpty()) {
+                from = sdf.parse(fromDate);
+            }
+            if (toDate != null && !toDate.isEmpty()) {
+                to = sdf.parse(toDate);
+                //chuyển to thành cuối ngày để có thể filter trong cùng một ngày
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(to);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                cal.set(Calendar.MILLISECOND, 999);
+
+                to = cal.getTime();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         switch (view) {
             case "import-list":
-                int totalPages = inventoryServices.getTotalImportPages(pageSize);
-                List<ImportStock> imports = inventoryServices.getImportsByPage(page, pageSize);
+                int totalPages = inventoryServices.getTotalImportPages(pageSize, from, to);
+                List<ImportStock> imports = inventoryServices.getImportsByPage(page, pageSize, from, to);
                 if (imports == null || imports.isEmpty()) {
                     request.setAttribute("message", "No imports found");
                 } else {
+
                     request.setAttribute("currentTab", view);
                     request.setAttribute("maxNote", maxNode);
                     request.setAttribute("imports", imports);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "import-list.jsp");
-                    request.setAttribute("activeMenu", "inventory");
                 }
+                request.setAttribute("fromDate", fromDate);
+                request.setAttribute("toDate", toDate);
+                request.setAttribute("contentPage", "import-list.jsp");
+                request.setAttribute("activeMenu", "inventory");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "export-list":
-                totalPages = inventoryServices.getTotalExportPages(pageSize);
-                List<Order> exports = inventoryServices.getExportsByPage(page, pageSize);
+                totalPages = inventoryServices.getTotalExportPages(pageSize, from, to);
+                List<Order> exports = inventoryServices.getExportsByPage(page, pageSize, from, to);
                 if (exports == null || exports.isEmpty()) {
                     request.setAttribute("message", "No exports found");
                 } else {
@@ -114,9 +146,12 @@ public class InventoryManagementController extends HttpServlet {
                     request.setAttribute("exports", exports);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "export-list.jsp");
-                    request.setAttribute("activeMenu", "inventory");
+
                 }
+                request.setAttribute("fromDate", fromDate);
+                request.setAttribute("toDate", toDate);
+                request.setAttribute("contentPage", "export-list.jsp");
+                request.setAttribute("activeMenu", "inventory");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "importDetail":

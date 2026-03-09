@@ -54,7 +54,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
+            <a href="${pageContext.request.contextPath}/feedback" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
                 <i class="bi bi-star"></i> Feedback
             </a>
         </li>

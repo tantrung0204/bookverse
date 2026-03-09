@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CartController", urlPatterns = { "/cart" })
+@WebServlet(name = "CartController", urlPatterns = {"/cart"})
 public class CartController extends HttpServlet {
 
     private CartService cartService = new CartService();
@@ -32,10 +32,10 @@ public class CartController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -59,10 +59,10 @@ public class CartController extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -77,6 +77,17 @@ public class CartController extends HttpServlet {
             case "list":
                 viewCart(request, response);
                 break;
+            case "buy": {
+                    int productId = Integer.parseInt(request.getParameter("productId"));
+                    int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+                    HttpSession session = request.getSession();
+                    session.setAttribute("buyNowProductId", productId);
+                    session.setAttribute("buyNowQuantity", quantity);
+
+                    response.sendRedirect(request.getContextPath() + "/checkout?mode=buyNow");
+                    break;
+            }
             default:
                 viewCart(request, response);
                 break;
@@ -86,10 +97,10 @@ public class CartController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -161,8 +172,7 @@ public class CartController extends HttpServlet {
             session.setAttribute("cartMessage", "Failed to add product! Invalid quantity.");
             session.setAttribute("messageType", "error");
         } catch (Exception e) {
-
-            session.setAttribute("cartMessage", "An error occurred. Please try again.");
+            session.setAttribute("cartMessage", e.getMessage());
             session.setAttribute("messageType", "error");
         }
 

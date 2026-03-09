@@ -148,4 +148,18 @@ public class CustomerDAO {
             em.close();
         }
     }
+
+    // ==========================================
+    // CÁC HÀM DÀNH CHO SIGN IN
+    // ==========================================
+    public Customer findByUsername(String username) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Customer> query = em.createNamedQuery("Customer.findByUsername", Customer.class);
+            query.setParameter("username", username);
+            return query.getResultStream().findFirst().orElse(null);
+        } finally {
+            em.close();
+        }
+    }
 }

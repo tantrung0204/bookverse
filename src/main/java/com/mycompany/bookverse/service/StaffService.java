@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.StaffDAO;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PasswordUtil;
 import java.util.List;
 
 /**
@@ -20,8 +21,12 @@ public class StaffService {
         this.staffDAO = new StaffDAO();
     }
 
-    public List<Staff> getAllStaffs() {
-        return staffDAO.findAll();
+    public List<Staff> getAllStaffs(int page, int pageSize) {
+        return staffDAO.findAll(page, pageSize);
+    }
+
+    public long getTotalStaffs() {
+        return staffDAO.getTotalStaffs();
     }
 
     public Staff getStaffById(int id) {
@@ -30,16 +35,16 @@ public class StaffService {
 
     public int addStaff(Staff staff) {
 
-//        if (staff.getFullName() == null || staff.getFullName().trim().isEmpty()
-//                || staff.getEmail() == null || staff.getEmail().trim().isEmpty()) {
-//            return 2;
-//        }
+        // if (staff.getFullName() == null || staff.getFullName().trim().isEmpty()
+        // || staff.getEmail() == null || staff.getEmail().trim().isEmpty()) {
+        // return 2;
+        // }
 
         boolean success = staffDAO.create(staff);
         if (success) {
-            return 0;
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -50,9 +55,9 @@ public class StaffService {
 
         boolean success = staffDAO.update(staff);
         if (success) {
-            return 0;
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -62,5 +67,18 @@ public class StaffService {
 
     public List<Staff> searchStaffs(String keyword) {
         return staffDAO.search(keyword);
+    }
+    
+    public Staff signin(String username, String password) {
+        Staff staff = staffDAO.findByUsername(username);
+        if (staff != null) {
+            if (staff.getStatus() != 1) {
+                return null;
+            }
+            if (PasswordUtil.checkPassword(password, staff.getPasswordHash())) {
+                return staff;
+            }
+        }
+        return null;
     }
 }

@@ -6,7 +6,7 @@
     color: #333333;
     font-weight: 700;
     font-family: "Playfair Display", serif;
-    font-size: 24px;
+    font-size:24px;
 }
 
 .subtitle {
@@ -17,39 +17,27 @@
     margin-bottom: 0;
 }
 
-.btn-detail {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    border-color: #bbdefb;
-}
+.btn-detail { background-color: #e3f2fd; color: #1976d2; border-color: #bbdefb; }
 
-.btn-edit {
-    background-color: #fff3e0;
-    color: #ef6c00;
-    border-color: #ffe0b2;
-}
+.btn-edit { background-color: #fff3e0; color: #ef6c00; border-color: #ffe0b2; }
 
-.btn-delete {
-    background-color: #ffebee;
-    color: #c62828;
-    border-color: #ffcdd2;
-}
+.btn-delete { background-color: #ffebee; color: #c62828; border-color: #ffcdd2; }
 
 
-.btn-add {
-    background-color: #9d7651;
+.btn-add{
+    background-color: #9d7651; 
     border-color: #9d7651;
     color: white;
     transition: all 0.3s;
 }
 
 .btn-add:hover {
-    background-color: #866343;
-    transform: translateY(-1px);
+    background-color: #866343 ; 
+    transform: translateY(-1px); 
 }
 
 
-.btn-cancel {
+.btn-cancel{
     background-color: #f1f3f5;
     border-color: #dee2e6;
     color: #495057;
@@ -58,3 +46,4 @@
 .btn-cancel:hover {
     background-color: #e2e6ea;
 }
+

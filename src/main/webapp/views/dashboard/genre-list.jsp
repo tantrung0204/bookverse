@@ -15,7 +15,6 @@
         <p class="subtitle">Create and manage book Genre for your library</p>
     </div>
     <div class="content-card">
-
         <div class="toolbar">
             <%-- Add Genre --%>
             <button type="button" class="btn-add" onclick="openCreatePopup()">
@@ -26,10 +25,24 @@
                 <input type="hidden" name="view" value="search">
                 <div class="search-box">
                     <i class="bi bi-search"></i>          
-                    <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
+                    <input type="text" name="keyword" placeholder="Search genres..." value="${keyword}">
                 </div>
             </form>
         </div>
+        <c:if test="${not empty message}">
+            <div class="alert alert-error">
+                ${message}
+            </div>
+        </c:if>
+        <c:if test="${not empty success}">
+            <div class="alert alert-success">
+                ${success}
+            </div>
+        </c:if>
+        <c:if test="${not empty deleteError}">
+            <div class="alert alert-error">${deleteError}</div>
+            <c:remove var="deleteError" scope="session"/>
+        </c:if>
         <c:choose>
             <%-- Genre List --%>
             <c:when test="${not empty genres}">
@@ -62,7 +75,7 @@
                                 <%-- Detail Genre --%>
                                 <div class="action-buttons">
                                     <button type="button" class="btn-action btn-detail"
-                                            title="View Detail" onclick="openDetailPopup(
+                                            title="Detail" onclick="openDetailPopup(
                                                             '${g.genreId}',
                                                             '${g.genreName}',
                                                             '${g.descriptionText}',
@@ -81,6 +94,7 @@
                                                             )">
                                         <i class="bi bi-pencil"></i>
                                     </button>
+
                                     <%-- Delete Genre --%>
                                     <form action="${pageContext.request.contextPath}/genre" method="post" style="display:inline;"
                                           onsubmit="return confirmDelete('${g.genreId}', '${g.genreName}')">
@@ -96,71 +110,79 @@
                     </c:forEach>
                 </table>
             </c:when>
-
-
-
+            <%-- pagination --%>
         </c:choose>
-        <c:if test="${not empty message}">
-            <div style="padding:10px;margin:10px 0;
-                 background:#f8d7da;color:#721c24;
-                 border:1px solid #f5c6cb;border-radius:5px;">
-                ${message}
-            </div>
+        <c:set var="startPage" value="${currentPage - 1}" />
+        <c:set var="endPage" value="${currentPage + 1}" />
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+            <c:set var="endPage" value="4"/>
         </c:if>
-        <c:if test="${not empty success}">
-            <div style="padding:10px;margin:10px 0;
-                 background:#28a745;color:#721c24;
-                 border:1px solid #f5c6cb;border-radius:5px;">
-                ${success}
-            </div>
+
+        <c:if test="${endPage > totalPages - 1}">
+            <c:set var="endPage" value="${totalPages - 1}"/>
+            <c:set var="startPage" value="${totalPages - 3}"/>
         </c:if>
-        <c:if test="${not empty deleteError}">
-            <div class="alert alert-danger mt-3">${deleteError}</div>
-            <c:remove var="deleteError" scope="session"/>
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
         </c:if>
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+
+
+                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
+                </li>
+
+
+                <c:if test="${totalPages <= 5}">
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" href="genre?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+                </c:if>
+
+
+                <c:if test="${totalPages > 5}">
+                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
+                        <a class="page-link" href="genre?page=1">1</a>
+                    </li>
+
+                    <c:if test="${startPage > 2}">
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    </c:if>
+
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <li class="page-item ${currentPage == i ? 'active' : ''}">
+                            <a class="page-link" href="genre?page=${i}">${i}</a>
+                        </li>
+                    </c:forEach>
+
+                    <c:if test="${endPage < totalPages - 1}">
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    </c:if>
+
+                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
+                        <a class="page-link" href="genre?page=${totalPages}">
+                            ${totalPages}
+                        </a>
+                    </li>
+                </c:if>
+
+                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="genre?page=${currentPage + 1}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <%-- Edit Genre po-up--%>
-    <div id="editPopup" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Genre</h3>
-            </div>
 
-            <c:if test="${not empty editError}">
-                <div class="alert alert-danger p-2 mb-3" id="editErrorMsg" style="font-size: 13px;">
-                    ${editError}
-                </div>
-            </c:if>
-
-            <form action="${pageContext.request.contextPath}/genre" method="post">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="genreId" id="editGenreId">
-
-                <div class="form-group">
-                    <label>Genre Name</label>
-                    <input type="text" name="genreName" id="editGenreName" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Description</label>
-                    <input type="text" name="descriptionText" id="editDescription" class="form-control">
-                </div>
-
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="status" id="editStatus" class="form-control">
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
-                    </select>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeEditPopup()">Cancel</button>
-                    <button type="submit" class="btn-save">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div> 
 </div>
 
 <script>
@@ -173,12 +195,9 @@
     function closeCreatePopup() {
         document.getElementById("createPopup").style.display = "none";
     }
-
-
     function closeDetailPopup() {
         document.getElementById("detailPopup").style.display = "none";
     }
-    // Hàm mở Popup và điền dữ liệu
     function openDetailPopup(id, name, desc, status) {
         document.getElementById("detailId").innerText = id;
         document.getElementById("detailName").innerText = name;
@@ -194,40 +213,27 @@
                 .catch(error => {
                     document.getElementById("detailQuantity").innerText = "Error";
                 });
-
-
         document.getElementById("detailPopup").style.display = "flex";
     }
-    // Hàm mở Popup và điền dữ liệu
     function openEditPopup(id, name, description, status) {
         document.getElementById("editGenreId").value = id;
         document.getElementById("editGenreName").value = name;
         document.getElementById("editDescription").value = description;
         document.getElementById("editStatus").value = status;
 
-        // Ẩn thông báo lỗi cũ nếu có
         const err = document.getElementById("editErrorMsg");
         if (err)
             err.style.display = 'none';
 
-        // Hiển thị modal (sử dụng Flex để căn giữa)
         document.getElementById("editPopup").style.display = "flex";
     }
-
-    // Hàm đóng Popup
     function closeEditPopup() {
         document.getElementById("editPopup").style.display = "none";
     }
-
-    // Xử lý confirm xóa
     function confirmDelete(id, name) {
         return confirm("Are you sure you want to delete Genre:\n" + name + " (ID: " + id + ")");
     }
-
     let popupTimer = null;
-
-
-    // Đóng Popup khi click ra ngoài vùng trắng
     window.onclick = function (event) {
         var modal = document.getElementById("editPopup");
         if (event.target == modal) {
@@ -264,7 +270,6 @@
                         '${editDesc}',
                         '${editStatus}'
                         );
-                // Hiển thị lại lỗi
                 const err = document.getElementById("editErrorMsg");
                 if (err)
                     err.style.display = 'block';
@@ -276,7 +281,7 @@
 <div id="createPopup" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Add new Category</h3>
+            <h3>Add new genre</h3>
         </div>
 
         <c:if test="${not empty createError}">
@@ -289,7 +294,7 @@
             <input type="hidden" name="action" value="create">
 
             <div class="form-group">
-                <label>Category Name</label>
+                <label>Genre Name</label>
                 <input type="text" name="name" class="form-control" value="${createName}">
             </div>
 
@@ -349,15 +354,15 @@
         </div>
     </div>
 </div>
-
+<%-- Edit Genre po-up--%>
 <div id="editPopup" class="modal-overlay">
-    <div class="modal-content ">
+    <div class="modal-content">
         <div class="modal-header">
             <h3>Edit Genre</h3>
         </div>
 
         <c:if test="${not empty editError}">
-            <div class="alert alert-danger p-2 mb-3 alert-error" id="editErrorMsg" style="font-size: 13px;">
+            <div class="alert alert-danger p-2 mb-3" id="editErrorMsg" style="font-size: 13px;">
                 ${editError}
             </div>
         </c:if>
@@ -368,7 +373,7 @@
 
             <div class="form-group">
                 <label>Genre Name</label>
-                <input type="text" name="genreName" id="editGenreName" class="form-control">
+                <input type="text" name="genreName" id="editGenreName" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -378,7 +383,7 @@
 
             <div class="form-group">
                 <label>Status</label>
-                <select name="status" id="status" class="form-control">
+                <select name="status" id="editStatus" class="form-control">
                     <option value="1">Active</option>
                     <option value="0">Inactive</option>
                 </select>
@@ -390,4 +395,5 @@
             </div>
         </form>
     </div>
-</div>
+</div> 
+

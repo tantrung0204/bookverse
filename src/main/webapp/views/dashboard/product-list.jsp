@@ -10,7 +10,6 @@
 <fmt:setLocale value="vi_VN"/>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-list.css">
-
 <div class="container-fluid">
 
     <div class="page-header">

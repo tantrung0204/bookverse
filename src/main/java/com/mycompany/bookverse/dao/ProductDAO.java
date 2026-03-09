@@ -273,7 +273,8 @@ public class ProductDAO {
         }
     }
 
-    public List<Book> findBooksWithFilter(List<Integer> genreIds, String sortPrice, String keyword, int page, int pageSize) {
+    public List<Book> findBooksWithFilter(List<Integer> genreIds, String sortPrice, String keyword, int page,
+            int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             StringBuilder sql = new StringBuilder("SELECT b FROM Book b WHERE b.status = 1");
@@ -401,7 +402,8 @@ public class ProductDAO {
         }
     }
 
-    public List<Product> searchAllProducts(String sortPrice, String keyword, Integer categoryId, int page, int pageSize) {
+    public List<Product> searchAllProducts(String sortPrice, String keyword, Integer categoryId, int page,
+            int pageSize) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             StringBuilder sql = new StringBuilder("SELECT p FROM Product p WHERE p.status = 1");

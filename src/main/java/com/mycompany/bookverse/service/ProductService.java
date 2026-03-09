@@ -135,7 +135,8 @@ public class ProductService {
         return genreDao.findActiveGenres();
     }
 
-    public List<? extends Product> getFilteredProducts(String type, List<Integer> genreIds, String sort, String keyword, Integer categoryId, int page) {
+    public List<? extends Product> getFilteredProducts(String type, List<Integer> genreIds, String sort, String keyword,
+            Integer categoryId, int page) {
         int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE;
 
         if ("book".equalsIgnoreCase(type)) {

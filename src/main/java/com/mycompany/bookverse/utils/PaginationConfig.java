@@ -14,8 +14,8 @@ public class PaginationConfig {
     public static final int HOMEPAGE_ITEMS_PER_PAGE = 20;
 
     // Cấu hình cho trang quản trị (Admin)
-    public static final int ADMIN_ITEMS_PER_PAGE = 1;
-    
+    public static final int ADMIN_ITEMS_PER_PAGE = 5;
+
     // Cấu hình cho Feedback trong trang chi tiết
     public static final int FEEDBACK_ITEMS_PER_PAGE = 5;
 

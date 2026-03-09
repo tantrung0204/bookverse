@@ -15,7 +15,7 @@ import java.util.List;
  * @author NganTTK-CE190411
  */
 public class CategoryDAO {
-
+    
     public List<Category> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -26,16 +26,73 @@ public class CategoryDAO {
         }
     }
 
-    public List<Category> searchByName(String keyword) {
+
+    public List<Category> getCategoriesPaging(int page, int pageSize) {
+
         EntityManager em = JPAUtil.getEntityManager();
+
         try {
-            return em.createNamedQuery("Category.searchByName", Category.class)
-                    .setParameter("keyword", "%" + keyword + "%")
+            return em.createQuery(
+                    "SELECT c FROM Category c WHERE c.parent IS NOT NULL ORDER BY c.categoryId DESC",
+                    Category.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
                     .getResultList();
         } finally {
             em.close();
         }
     }
+
+    public long countAllCategories() {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(c) FROM Category c",
+                    Long.class)
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Category> searchByNamePaging(String keyword,
+            int page, int pageSize) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT c FROM Category c "
+                    + "WHERE LOWER(c.categoryName) LIKE LOWER(:kw) "
+                    + "ORDER BY c.categoryId DESC",
+                    Category.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countSearch(String keyword) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(c) FROM Category c "
+                    + "WHERE LOWER(c.categoryName) LIKE LOWER(:kw)",
+                    Long.class)
+                    .setParameter("kw", "%" + keyword + "%")
+                    .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+    
 
     public Category findByCategoryId(int categoryId) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -103,30 +160,36 @@ public class CategoryDAO {
         }
     }
 
-    public boolean existCategoryById(int id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            Long count = em.createQuery(
-                    "SELECT COUNT(c) FROM Category c WHERE c.categoryId = :id",
-                    Long.class)
-                    .setParameter("id", id)
-                    .getSingleResult();
-            return count > 0;
-        } finally {
-            em.close();
-        }
-    }
+//    public boolean existCategoryById(int id) {
+//        EntityManager em = JPAUtil.getEntityManager();
+//        try {
+//            Long count = em.createQuery(
+//                    "SELECT COUNT(c) FROM Category c WHERE c.categoryId = :id",
+//                    Long.class)
+//                    .setParameter("id", id)
+//                    .getSingleResult();
+//            return count > 0;
+//        } finally {
+//            em.close();
+//        }
+//    }
 
     public boolean canDeleteCategory(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Long productCount = em.createQuery(
-                    "SELECT COUNT(p) FROM Product p WHERE p.categoryId.categoryId = :id",
+            Long bookCount = em.createQuery(
+                    "SELECT COUNT(b) FROM Book b WHERE b.category.categoryId = :id",
                     Long.class
             ).setParameter("id", id)
                     .getSingleResult();
 
-            return productCount == 0;
+            Long stationeryCount = em.createQuery(
+                    "SELECT COUNT(s) FROM Stationery s WHERE s.category.categoryId = :id",
+                    Long.class
+            ).setParameter("id", id)
+                    .getSingleResult();
+
+            return bookCount == 0 && stationeryCount == 0;
         } finally {
             em.close();
         }
@@ -145,6 +208,7 @@ public class CategoryDAO {
             em.remove(category);
             em.getTransaction().commit();
             return true;
+
         } catch (Exception e) {
             em.getTransaction().rollback();
             return false;

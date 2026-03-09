@@ -1,0 +1,183 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.bookverse.service;
+
+import com.mycompany.bookverse.dao.VoucherDAO;
+import com.mycompany.bookverse.model.Voucher;
+import java.math.BigDecimal;
+import java.util.List;
+
+/**
+ *
+ * @author Admin
+ */
+public class VoucherService {
+
+    private final VoucherDAO voucherDAO = new VoucherDAO();
+
+    public Voucher getVoucherById(int id) {
+        return voucherDAO.findById(id);
+    }
+
+    public String createVoucher(Voucher voucher) {
+
+        if (voucher.getAvailableQuantity() < 0) {
+            return "Quantity cannot be less than 0";
+        }
+
+        if (voucher.getDiscountType() == 1) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0
+                    || voucher.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
+
+                return "Discount percent must be between 0 and 100";
+            }
+
+        } else if (voucher.getDiscountType() == 2) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0) {
+
+                return "Discount amount must be greater than 0";
+            }
+
+            if (voucher.getDiscountValue().compareTo(
+                    voucher.getMinOrderValue()) >= 0) {
+
+                return "Discount amount must be less than minimum order value";
+            }
+        }
+
+        if (voucher.getExpiryDate() == null) {
+            return "Expiry date is required";
+        }
+
+        if (voucher.getExpiryDate().before(voucher.getStartDate())) {
+            return "Expiry date must be after start date";
+        }
+
+        long diff = voucher.getExpiryDate().getTime() - voucher.getStartDate().getTime();
+        long hours = diff / (1000 * 60 * 60);
+
+        if (hours < 24) {
+            return "Voucher must be valid at least 24 hours";
+        }
+
+        if (voucherDAO.existsByCode(voucher.getVoucherCode())) {
+            return "Voucher code already exists";
+        }
+
+        voucherDAO.create(voucher);
+        return "Create voucher successfully";
+    }
+
+    public List<Voucher> searchVouchers(String keyword) {
+        return voucherDAO.searchVoucher(keyword);
+    }
+
+    public String updateVoucher(Voucher voucher) {
+
+        Voucher old = voucherDAO.findById(voucher.getVoucherId());
+        if (old == null) {
+            return "Voucher does not exist";
+        }
+
+        if (voucher.getAvailableQuantity() < 0) {
+            return "Quantity cannot be less than 0";
+        }
+
+        if (voucher.getDiscountType() == 1) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0
+                    || voucher.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
+
+                return "Discount percent must be between 0 and 100";
+            }
+
+        } else if (voucher.getDiscountType() == 2) {
+
+            if (voucher.getDiscountValue() == null
+                    || voucher.getDiscountValue().compareTo(BigDecimal.ZERO) <= 0) {
+
+                return "Discount amount must be greater than 0";
+            }
+
+            if (voucher.getDiscountValue().compareTo(
+                    voucher.getMinOrderValue()) >= 0) {
+
+                return "Discount amount must be less than minimum order value";
+            }
+        }
+
+        if (voucher.getExpiryDate().before(old.getStartDate())) {
+            return "Expiry date must be after start date";
+        }
+
+        long diff = voucher.getExpiryDate().getTime() - old.getStartDate().getTime();
+        long hours = diff / (1000 * 60 * 60);
+
+        if (hours < 24) {
+            return "Voucher must be valid at least 24 hours";
+        }
+
+        if (voucherDAO.existsByCodeExceptId(
+                voucher.getVoucherCode(),
+                voucher.getVoucherId())) {
+            return "Voucher code already exists";
+        }
+
+        voucher.setStartDate(old.getStartDate());
+        voucherDAO.update(voucher);
+
+        return "Update voucher successfully";
+    }
+
+    public String deleteVoucher(int id) {
+        Voucher v = voucherDAO.findById(id);
+        if (v == null) {
+            return "Voucher does not exist";
+        }
+
+        voucherDAO.deleteById(id);
+        return "Delete voucher successfully";
+    }
+
+    public long countUsedVoucher(int voucherId) {
+        return voucherDAO.countUsedVoucher(voucherId);
+    }
+
+    public List<Voucher> getVouchersPaging(int page, int pageSize) {
+        List<Voucher> list = voucherDAO.getVouchersPaging(page, pageSize);
+
+        for (Voucher v : list) {
+            long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+            v.setUsedCount(used);
+        }
+
+        return list;
+    }
+
+    public long getTotalVoucherCount() {
+        return voucherDAO.getTotalVoucherCount();
+    }
+
+    public List<Voucher> searchVouchersPaging(String keyword, int page, int pageSize) {
+        List<Voucher> list = voucherDAO.searchByCodePaging(keyword, page, pageSize);
+
+        for (Voucher v : list) {
+            long used = voucherDAO.countUsedVoucher(v.getVoucherId());
+            v.setUsedCount(used);
+        }
+
+        return list;
+    }
+
+    public long countSearchVoucher(String keyword) {
+        return voucherDAO.countSearchVoucher(keyword);
+    }
+
+}

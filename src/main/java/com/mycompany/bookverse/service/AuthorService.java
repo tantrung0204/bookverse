@@ -23,13 +23,8 @@ public class AuthorService {
     public Author findAuthorById(int id) {
         return authorDAO.findById(id);
     }
-
-    public List<Author> searchAuthors(String keyword) {
-        return authorDAO.searchByName(keyword);
-    }
-
     public String insertAuthor(String name, String birth, String nat, String bio) {
-        String error ="";
+        String error = "";
         if (nat == null || nat.trim().isEmpty()) {
             error += "Nationality can not be empty.\n";
         } else if (!nat.matches("^[a-zA-ZÀ-ỹ\\s\\-_&.]+$")) {
@@ -46,9 +41,16 @@ public class AuthorService {
             error += "Biography contains invalid characters.\n";
         }
         if (birth == null || birth.trim().isEmpty()) {
-            error += "Birth can not be empty.\n";
+            error += "Birth year cannot be empty.\n";
         } else if (!birth.matches("\\d{4}")) {
-            error += "The date of birth must be a four-digit number.\n";
+            error += "Birth year must be a four-digit number.\n";
+        } else {
+            int birthYear = Integer.parseInt(birth);
+            int currentYear = java.time.Year.now().getValue();
+
+            if (birthYear > currentYear) {
+                error += "Birth year cannot be in the future.\n";
+            }
         }
 
         if (error.isEmpty()) {
@@ -66,14 +68,14 @@ public class AuthorService {
                     return "Create Author false";
                 }
             } else {
-                return "Author already exists";
+                return "Author name already exists";
             }
         }
         return error;
     }
 
     public String editAuthor(int id, String name, String birth, String nationality, String biography) {
-        String error ="";
+        String error = "";
         if (nationality == null || nationality.trim().isEmpty()) {
             error += "Nationality can not be empty.\n";
         } else if (!nationality.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
@@ -97,7 +99,7 @@ public class AuthorService {
         boolean checkExist = authorDAO.checkAuthorExist(id, name);
         Author old = authorDAO.findById(id);
         if (checkExist) {
-            return "Author already exist.";
+            return "Author name already exist.";
         }
         if (error.isEmpty()) {
             Integer birthDay = Integer.valueOf(birth);
@@ -112,6 +114,7 @@ public class AuthorService {
         return error;
 
     }
+
     public String deleteAuthor(int id) {
         if (findAuthorById(id) == null) {
             return "Author does not exist";
@@ -139,6 +142,7 @@ public class AuthorService {
         long totalItems = authorDAO.countAll();
         return (int) Math.ceil((double) totalItems / pageSize);
     }
+
     public List<Author> searchByKeyword(String keyword, int page, int pageSize) {
         int offset = (page - 1) * pageSize;
         return authorDAO.findByKeywordAndPage(keyword, offset, pageSize);

@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.CustomerDAO;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PasswordUtil;
 import java.util.List;
 
 /**
@@ -20,8 +21,12 @@ public class CustomerService {
         this.customerDAO = new CustomerDAO();
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerDAO.findAll();
+    public List<Customer> getAllCustomers(int page, int pageSize) {
+        return customerDAO.findAll(page, pageSize);
+    }
+
+    public long getTotalCustomers() {
+        return customerDAO.getTotalCustomers();
     }
 
     public Customer getCustomerById(int id) {
@@ -37,9 +42,9 @@ public class CustomerService {
 
         boolean success = customerDAO.create(customer);
         if (success) {
-            return 0;
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -50,9 +55,9 @@ public class CustomerService {
 
         boolean success = customerDAO.update(customer);
         if (success) {
-            return 0;
-        } else {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -62,5 +67,22 @@ public class CustomerService {
 
     public List<Customer> searchCustomers(String keyword) {
         return customerDAO.search(keyword);
+    }
+
+    public boolean isEmailExist(String email, int currentId) {
+        return customerDAO.checkDuplicateEmail(email, currentId);
+    }
+
+    public Customer signin(String username, String password) {
+        Customer customer = customerDAO.findByUsername(username);
+        if (customer != null) {
+            if (customer.getStatus() != 1) {
+                return null;
+            }
+            if (PasswordUtil.checkPassword(password, customer.getPasswordHash())) {
+                return customer;
+            }
+        }
+        return null;
     }
 }

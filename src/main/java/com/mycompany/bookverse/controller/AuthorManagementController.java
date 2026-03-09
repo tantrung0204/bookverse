@@ -109,6 +109,7 @@ public class AuthorManagementController extends HttpServlet {
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No author found for:" + keyword);
                 } else {
+                    request.setAttribute("keyword", keyword);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
                     request.setAttribute("authors", searchList);

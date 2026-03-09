@@ -110,6 +110,7 @@ public class GenreManagementController extends HttpServlet {
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No genre found for:" + keyword);
                 } else {
+                    request.setAttribute("keyword", keyword);
                     request.setAttribute("genres", searchList);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);

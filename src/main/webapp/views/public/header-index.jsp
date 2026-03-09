@@ -55,11 +55,8 @@
                             </li>
 
                             <li class="nav-item me-4">
-                                <a class="nav-link icon-link position-relative" href="#" title="Shopping Cart">
+                                <a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/cart" title="Shopping Cart">
                                     <i class="fas fa-shopping-cart fa-lg"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-brand-accent" style="font-size: 0.7rem;">
-                                        3
-                                    </span>
                                 </a>
                             </li>
 

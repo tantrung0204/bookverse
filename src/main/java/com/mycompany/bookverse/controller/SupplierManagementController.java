@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author NganTTK-CE190411
  */
-@WebServlet(name = "SupplierController", urlPatterns = {"/supplier"})
+@WebServlet(name = "SupplierController", urlPatterns = {"/dashboard/supplier"})
 public class SupplierManagementController extends HttpServlet {
 
     private SupplierService supplierService = new SupplierService();

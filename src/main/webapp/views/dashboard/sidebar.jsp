@@ -43,7 +43,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/category"
+            <a href="${pageContext.request.contextPath}/dashboar/category"
                class="sidebar-link ${activeMenu == 'category'? 'active':''}">
                 <i class="bi bi-tags"></i> Categories
             </a>
@@ -94,7 +94,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/supplier"
+            <a href="${pageContext.request.contextPath}/dashboar/supplier"
                class="sidebar-link ${activeMenu == 'supplier'? 'active':''}">
                 <i class="bi bi-box-fill"></i> Suppliers
             </a>

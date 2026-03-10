@@ -8,12 +8,15 @@ import com.mycompany.bookverse.model.CustomerNotification;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import java.util.List;
 
 /**
  *
  * @author Admin
  */
 public class CustomerNotificationDAO {
+
+    public static List<CustomerNotification> getNotificationsByCustomer;
 
     public void create(CustomerNotification cn) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -65,6 +68,27 @@ public class CustomerNotificationDAO {
         } catch (Exception e) {
             tx.rollback();
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<CustomerNotification> getNotificationsByCustomer(int customerId, int page, int pageSize) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            return em.createQuery(
+                    "SELECT cn FROM CustomerNotification cn "
+                    + "WHERE cn.customer.customerId = :customerId "
+                    + "ORDER BY cn.notification.createdAt DESC",
+                    CustomerNotification.class)
+                    .setParameter("customerId", customerId)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
         } finally {
             em.close();
         }

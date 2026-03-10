@@ -22,7 +22,7 @@ Author : NganTTK-CE190411 --%>
                 <i class="bi bi-plus-lg me-1"></i> Add New Category
             </button>
 
-            <form action="${pageContext.request.contextPath}/category" method="get">
+            <form action="${pageContext.request.contextPath}/dashboard/category" method="get">
                 <input type="hidden" name="action" value="search" />
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -96,7 +96,7 @@ Author : NganTTK-CE190411 --%>
                                             <i class="bi bi-pencil"></i>
                                         </button>
 
-                                        <form action="${pageContext.request.contextPath}/category"
+                                        <form action="${pageContext.request.contextPath}/dashboard/category"
                                               method="post" style="display:inline;"
                                               onsubmit="return confirmDelete('${c.categoryId}', '${c.categoryName}')">
                                             <input type="hidden" name="action" value="delete">
@@ -119,12 +119,12 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Previous -->
                         <c:if test="${currentPage > 1}">
-                            <a href="${pageContext.request.contextPath}/category?page=${currentPage - 1}" 
+                            <a href="${pageContext.request.contextPath}/dashboard/category?page=${currentPage - 1}" 
                                class="page-btn">«</a>
                         </c:if>
 
                         <!-- Page 1 -->
-                        <a href="${pageContext.request.contextPath}/category?page=1"
+                        <a href="${pageContext.request.contextPath}/dashboard/category?page=1"
                            class="page-btn ${currentPage == 1 ? 'active' : ''}">
                             1
                         </a>
@@ -136,7 +136,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Trang trước current -->
                         <c:if test="${currentPage - 1 > 1}">
-                            <a href="${pageContext.request.contextPath}/category?page=${currentPage - 1}"
+                            <a href="${pageContext.request.contextPath}/dashboard/category?page=${currentPage - 1}"
                                class="page-btn">
                                 ${currentPage - 1}
                             </a>
@@ -144,7 +144,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Current -->
                         <c:if test="${currentPage != 1 && currentPage != totalPages}">
-                            <a href="${pageContext.request.contextPath}/category?page=${currentPage}"
+                            <a href="${pageContext.request.contextPath}/dashboard/category?page=${currentPage}"
                                class="page-btn active">
                                 ${currentPage}
                             </a>
@@ -152,7 +152,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Trang sau current -->
                         <c:if test="${currentPage + 1 < totalPages}">
-                            <a href="${pageContext.request.contextPath}/category?page=${currentPage + 1}"
+                            <a href="${pageContext.request.contextPath}/dashboard/category?page=${currentPage + 1}"
                                class="page-btn">
                                 ${currentPage + 1}
                             </a>
@@ -165,7 +165,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Last page -->
                         <c:if test="${totalPages > 1}">
-                            <a href="${pageContext.request.contextPath}/category?page=${totalPages}"
+                            <a href="${pageContext.request.contextPath}/dashboard/category?page=${totalPages}"
                                class="page-btn ${currentPage == totalPages ? 'active' : ''}">
                                 ${totalPages}
                             </a>
@@ -173,7 +173,7 @@ Author : NganTTK-CE190411 --%>
 
                         <!-- Next -->
                         <c:if test="${currentPage < totalPages}">
-                            <a href="${pageContext.request.contextPath}/category?page=${currentPage + 1}" 
+                            <a href="${pageContext.request.contextPath}/dashboard/category?page=${currentPage + 1}" 
                                class="page-btn">»</a>
                         </c:if>
 
@@ -209,7 +209,7 @@ Author : NganTTK-CE190411 --%>
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/category" method="post">
+        <form action="${pageContext.request.contextPath}/dashboard/category" method="post">
             <input type="hidden" name="action" value="create">
 
             <div class="form-group">
@@ -297,7 +297,7 @@ Author : NganTTK-CE190411 --%>
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/category" method="post">
+        <form action="${pageContext.request.contextPath}/dashboard/category" method="post">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="categoryId" id="editCategoryId">
 
@@ -353,7 +353,7 @@ Author : NganTTK-CE190411 --%>
         document.getElementById("detailStatus").innerText = status == 1 ? "Active" : "Inactive";
         document.getElementById("detailQuantity").innerText = "Loading...";
 
-        fetch('${pageContext.request.contextPath}/category?action=detail&categoryId=' + id)
+        fetch('${pageContext.request.contextPath}/dashboard/category?action=detail&categoryId=' + id)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("detailQuantity").innerText = data.quantity + " products";

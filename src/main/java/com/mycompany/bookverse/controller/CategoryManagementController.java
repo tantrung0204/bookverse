@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author NganTTK-CE190411
  */
-@WebServlet(name = "CategoryController", urlPatterns = {"/category"})
+@WebServlet(name = "CategoryController", urlPatterns = {"/dashboard/category"})
 public class CategoryManagementController extends HttpServlet {
 
     private CategoryService categoryService = new CategoryService();

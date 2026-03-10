@@ -97,7 +97,7 @@
                                     </button>
 
                                     <%-- Delete Genre --%>
-                                    <form action="${pageContext.request.contextPath}/genre" method="post" style="display:inline;"
+                                    <form action="${pageContext.request.contextPath}/dashboard/genre" method="post" style="display:inline;"
                                           onsubmit="return confirmDelete('${g.genreId}', '${g.genreName}')">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="${g.genreId}">
@@ -133,38 +133,41 @@
             <ul class="pagination">
                 <%-- Previous button --%>
                 <c:if test="${currentPage > 1}">
-                    <a class="page-btn ${currentPage == 1 ? 'disabled' : ''}" href="genre?page=${currentPage - 1}">&laquo;</a>
+                    <a class="page-btn ${currentPage == 1 ? 'disabled' : ''}" href="genre?page=${currentPage - 1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&laquo;</a>
+                </c:if>
+                    <c:if test="${not empty keyword}">
+                        
                 </c:if>
                 <%-- If the total <= 5, display all pages. --%>
                 <c:if test="${totalPages <= maxNote}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}">${i}</a>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
                 </c:if>
                 <%-- If the total > 5 --%>
                 <c:if test="${totalPages > maxNote}">
                     <%-- Page 1 always appears --%>                   
-                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="genre?page=1">1</a>
+                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="genre?page=1&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">1</a>
                     <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
                         <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}">${i}</a>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
                     <%-- The final ellipsis --%>
                     <c:if test="${endPage < totalPages - 1}">
                         <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- The last page always appears --%>
-                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="author?page=${totalPages}">
+                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="author?page=${totalPages}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">
                         ${totalPages}
                     </a>
                 </c:if>
                 <%-- Next button --%>
                 <c:if test="${currentPage < totalPages}">
-                    <a class="page-btn ${currentPage == totalPages ? 'disabled' : ''}" href="genre?page=${currentPage+1}">&raquo;</a>
+                    <a class="page-btn ${currentPage == totalPages ? 'disabled' : ''}" href="genre?page=${currentPage+1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&raquo;</a>
                 </c:if>
             </ul>
         </nav>
@@ -277,7 +280,7 @@
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/genre" method="post">
+        <form action="${pageContext.request.contextPath}/dashboard/genre" method="post">
             <input type="hidden" name="action" value="create">
 
             <div class="form-group">
@@ -354,7 +357,7 @@
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/genre" method="post">
+        <form action="${pageContext.request.contextPath}/dashboard/genre" method="post">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="genreId" id="editGenreId">
 

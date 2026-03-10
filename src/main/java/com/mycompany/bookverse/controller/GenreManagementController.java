@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author LECOO
  */
-@WebServlet(name = "GenreManagementController", urlPatterns = {"/genre"})
+@WebServlet(name = "GenreManagementController", urlPatterns = {"/dashboard/genre"})
 public class GenreManagementController extends HttpServlet {
 
     private GenreService genreServices = new GenreService();
@@ -110,6 +110,7 @@ public class GenreManagementController extends HttpServlet {
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No genre found for:" + keyword);
                 } else {
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("keyword", keyword);
                     request.setAttribute("genres", searchList);
                     request.setAttribute("currentPage", page);

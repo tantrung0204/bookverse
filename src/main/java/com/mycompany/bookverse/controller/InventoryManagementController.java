@@ -28,7 +28,7 @@ import org.json.JSONObject;
  *
  * @author LECOO
  */
-@WebServlet(name = "InventoryManagementController", urlPatterns = {"/inventory"})
+@WebServlet(name = "InventoryManagementController", urlPatterns = {"/dashboard/inventory"})
 public class InventoryManagementController extends HttpServlet {
 
     private InventoryService inventoryServices = new InventoryService();

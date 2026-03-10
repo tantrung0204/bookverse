@@ -17,15 +17,6 @@
     border-radius:6px;
 }
 
-.btn-filter{
-    background:#2b7cff;
-    color:white;
-    border:none;
-    padding:7px 14px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
 .btn-filter:hover{
     background:#1a63d9;
 }

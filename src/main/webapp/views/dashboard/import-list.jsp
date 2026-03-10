@@ -18,22 +18,22 @@
     </div>
 
     <div class="tab-container">
-        <a href="${pageContext.request.contextPath}/inventory" 
+        <a href="${pageContext.request.contextPath}/dashboard/inventory" 
            class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
-            <i class="bi bi-book me-1"></i> Imports
+            <i class="bi bi-box-arrow-in-down"></i> Imports
         </a>
-        <a href="${pageContext.request.contextPath}/inventory?view=export-list" 
+        <a href="${pageContext.request.contextPath}/dashboard/inventory?view=export-list" 
            class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
-            <i class="bi bi-pencil-square me-1"></i> Exports
+            <i class="bi bi-box-arrow-up"></i> Exports
         </a>
     </div>
     <div class="content-card">
 
         <div class="toolbar">
             <%-- Add import --%>
-<!--            <button type="button" class="btn-add" onclick="openCreatePopup()">
-                <i class="bi bi-plus-lg me-1"></i> Add New Import
-            </button>-->
+            <!--            <button type="button" class="btn-add" onclick="openCreatePopup()">
+                            <i class="bi bi-plus-lg me-1"></i> Add New Import
+                        </button>-->
             <%-- Filter by date range --%>
             <form action="inventory" method="get" class="date-filter-form">
                 <input type="hidden" name="view" value="import-list">
@@ -48,7 +48,7 @@
                     <input type="date" name="toDate" value="${toDate}">
                 </div>
 
-                <button type="submit" class="btn-filter">
+                <button type="submit" class="btn-filter" style="margin-top:18px; background-color:#a68a6d; border-radius: 5px; border">
                     <i class="bi bi-funnel"></i> Filter
                 </button>
             </form>
@@ -129,38 +129,38 @@
             <ul class="pagination">
                 <%-- Previous button --%>
                 <c:if test="${currentPage > 1}">
-                    <a class="page-btn" href="inventory?page=${currentPage - 1}">&laquo;</a>
+                    <a class="page-btn" href="inventory?page=${currentPage - 1}&fromDate=${fromDate}&toDate=${toDate}">&laquo;</a>
                 </c:if>
                 <%-- If the total <= 5, display all pages. --%>
                 <c:if test="${totalPages <= maxNote}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?page=${i}">${i}</a>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?page=${i}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
                     </c:forEach>
                 </c:if>
                 <%-- If the total > 5 --%>
                 <c:if test="${totalPages > maxNote}">
                     <%-- Page 1 always appears --%>                   
-                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="inventory?page=1">1</a>
+                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="inventory?page=1&fromDate=${fromDate}&toDate=${toDate}">1</a>
                     <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
                         <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?page=${i}">${i}</a>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?page=${i}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
                     </c:forEach>
                     <%-- The final ellipsis --%>
                     <c:if test="${endPage < totalPages - 1}">
                         <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- The last page always appears --%>
-                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="inventory?page=${totalPages}">
+                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="inventory?page=${totalPages}&fromDate=${fromDate}&toDate=${toDate}">
                         ${totalPages}
                     </a>
                 </c:if>
                 <%-- Next button --%>
                 <c:if test="${currentPage < totalPages}">
-                    <a class="page-btn" href="inventory?page=${currentPage + 1}">&raquo;</a>
+                    <a class="page-btn" href="inventory?page=${currentPage + 1}&fromDate=${fromDate}&toDate=${toDate}">&raquo;</a>
                 </c:if>
             </ul>
         </nav>

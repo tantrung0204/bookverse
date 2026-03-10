@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author LECOO
  */
-@WebServlet(name = "AuthorManagementController", urlPatterns = {"/author"})
+@WebServlet(name = "AuthorManagementController", urlPatterns = {"/dashboard/author"})
 public class AuthorManagementController extends HttpServlet {
 
     private AuthorService authorServices = new AuthorService();
@@ -109,6 +109,7 @@ public class AuthorManagementController extends HttpServlet {
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No author found for:" + keyword);
                 } else {
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("keyword", keyword);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);

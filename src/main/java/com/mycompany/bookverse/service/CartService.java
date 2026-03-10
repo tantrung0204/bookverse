@@ -40,22 +40,37 @@ public class CartService {
         return total;
     }
 
-    public void addToCart(int customerId, int productId, int quantity) {
+    public void addToCart(int customerId, int productId, int quantity) throws Exception {
+
+        Product product = cartDAO.findProductById(productId);
+        if (product == null) {
+            throw new Exception("Product doest not exist!");
+        }
+
+        int stock = product.getStockQuantity();
+
         Cart existingCartItem = cartDAO.findByCustomerAndProduct(customerId, productId);
 
         if (existingCartItem != null) {
             // Đã tồn tại -> Cộng dồn số lượng
             int currentQty = existingCartItem.getCartQuantity();
+            int newQty = currentQty + quantity;
+
+            if (newQty > stock) {
+                throw new Exception("You already have "+ currentQty + " of this item in your cart. Only " + stock +" items are available.");
+            }
             existingCartItem.setCartQuantity(currentQty + quantity);
             cartDAO.save(existingCartItem);
         } else {
             // Chưa tồn tại -> Tạo mới
+            if (quantity > stock) {
+                throw new Exception("Quantity exceeds the available stock.");
+            }
             Cart newItem = new Cart();
             newItem.setCartQuantity(quantity);
 
             newItem.setCustomerId(new Customer(customerId));
-            newItem.setProductId(new Product(productId));
-
+            newItem.setProductId(product);
             cartDAO.save(newItem);
         }
     }

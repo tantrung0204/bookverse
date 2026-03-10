@@ -22,48 +22,12 @@ import java.math.BigDecimal;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CartController", urlPatterns = { "/cart" })
+@WebServlet(name = "CartController", urlPatterns = {"/cart"})
 public class CartController extends HttpServlet {
 
     private CartService cartService = new CartService();
     private CategoryService categoryService = new CategoryService();
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CartController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CartController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -83,21 +47,12 @@ public class CartController extends HttpServlet {
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
         if (action == null) {
-            // Nếu POST mà không có action, chuyển về trang xem giỏ
             response.sendRedirect("cart");
             return;
         }
@@ -118,22 +73,39 @@ public class CartController extends HttpServlet {
         }
     }
 
+    private int getAuthenticatedCustomerId(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String role = (String) session.getAttribute("role");
+        Object userObj = session.getAttribute("user");
+
+        if ("customer".equals(role) && userObj instanceof Customer) {
+            Customer customer = (Customer) userObj;
+            return customer.getCustomerId();
+        }
+        return -1;
+    }
+
     private void viewCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // HttpSession session = request.getSession();
-        // int customerId = session.getAttribute("customerId");
-        int customerId = 1;
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
 
         List<Cart> cartItems = cartService.getCustomerCart(customerId);
         BigDecimal cartTotal = cartService.calculateCartTotal(cartItems);
         List<Category> categories = categoryService.getActiveSubCategories();
 
-        request.setAttribute("cartList", cartItems);
-        request.setAttribute("cartTotal", cartTotal);
-        request.setAttribute("categories", categories);
-
-        request.getRequestDispatcher("/views/customer/cart.jsp").forward(request, response);
+        request.setAttribute(
+                "cartList", cartItems);
+        request.setAttribute(
+                "cartTotal", cartTotal);
+        request.setAttribute(
+                "categories", categories);
+        request.getRequestDispatcher(
+                "/views/customer/cart.jsp").forward(request, response);
     }
 
     private void addToCart(HttpServletRequest request, HttpServletResponse response)
@@ -143,10 +115,14 @@ public class CartController extends HttpServlet {
 
         String referer = request.getHeader("referer");
 
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            session.setAttribute("errorMessage", "Please login as a customer to add items to your cart.");
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
+
         try {
-            // HttpSession session = request.getSession();
-            // int customerId = session.getAttribute("customerId");
-            int customerId = 1;
             int productId = Integer.parseInt(request.getParameter("productId"));
 
             String quantityRaw = request.getParameter("quantity");
@@ -161,8 +137,7 @@ public class CartController extends HttpServlet {
             session.setAttribute("cartMessage", "Failed to add product! Invalid quantity.");
             session.setAttribute("messageType", "error");
         } catch (Exception e) {
-
-            session.setAttribute("cartMessage", "An error occurred. Please try again.");
+            session.setAttribute("cartMessage", e.getMessage());
             session.setAttribute("messageType", "error");
         }
 
@@ -178,6 +153,14 @@ public class CartController extends HttpServlet {
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            out.print("{\"status\": \"error\", \"message\": \"Session expired or unauthorized access. Please login again.\"}");
+            out.flush();
+            return;
+        }
 
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
@@ -195,7 +178,6 @@ public class CartController extends HttpServlet {
                 return;
             }
 
-            int customerId = 1;
             List<Cart> cartItems = cartService.getCustomerCart(customerId);
             BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);
 
@@ -228,11 +210,13 @@ public class CartController extends HttpServlet {
     private void deleteFromCart(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession session = request.getSession();
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
-
-            // int customerId = (Integer) session.getAttribute("customerId");
-            int customerId = 1;
 
             boolean isRemoved = cartService.removeCartItem(cartId, customerId);
 

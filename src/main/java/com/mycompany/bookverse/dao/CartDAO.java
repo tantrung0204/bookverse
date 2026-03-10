@@ -56,6 +56,19 @@ public class CartDAO {
 
     }
 
+    public Product findProductById(int productId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Product product = em.find(Product.class, productId);
+            if (product != null && product.getStatus() == 1) {
+                return product;
+            }
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
     public void save(Cart cartItem) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

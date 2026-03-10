@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.StaffDAO;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PasswordUtil;
 import java.util.List;
 
 /**
@@ -66,5 +67,18 @@ public class StaffService {
 
     public List<Staff> searchStaffs(String keyword) {
         return staffDAO.search(keyword);
+    }
+    
+    public Staff signin(String username, String password) {
+        Staff staff = staffDAO.findByUsername(username);
+        if (staff != null) {
+            if (staff.getStatus() != 1) {
+                return null;
+            }
+            if (PasswordUtil.checkPassword(password, staff.getPasswordHash())) {
+                return staff;
+            }
+        }
+        return null;
     }
 }

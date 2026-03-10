@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.CustomerDAO;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PasswordUtil;
 import java.util.List;
 
 /**
@@ -70,5 +71,18 @@ public class CustomerService {
 
     public boolean isEmailExist(String email, int currentId) {
         return customerDAO.checkDuplicateEmail(email, currentId);
+    }
+
+    public Customer signin(String username, String password) {
+        Customer customer = customerDAO.findByUsername(username);
+        if (customer != null) {
+            if (customer.getStatus() != 1) {
+                return null;
+            }
+            if (PasswordUtil.checkPassword(password, customer.getPasswordHash())) {
+                return customer;
+            }
+        }
+        return null;
     }
 }

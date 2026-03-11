@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/notification-list.css">
 <!DOCTYPE html>
 <html>
     <head>
@@ -25,28 +25,29 @@
             <c:otherwise>
 
                 <c:forEach var="n" items="${notifications}">
+                    <a href="${pageContext.request.contextPath}/notification/customer?action=detail&id=${n.customerNotificationId}">
+                        <div class="notification-item ${!n.isRead ? 'unread' : ''}">
+                            <div class="notification-card">
 
-                    <div class="notification-card">
+                                <div class="notification-icon">
+                                    🔔
+                                </div>
 
-                        <div class="notification-icon">
-                            🔔
-                        </div>
+                                <div class="notification-content">
+                                    <h4>${n.notificationId.title}</h4>
+                                    <p>${n.notificationId.contentText}</p>
+                                    <span class="time">
+                                        ${n.notificationId.createdAt}
+                                    </span>
+                                </div>
 
-                        <div class="notification-content">
-                            <h4>${n.notificationId.title}</h4>
-                            <p>${n.notificationId.contentText}</p>
-                            <span class="time">
-                                ${n.notificationId.createdAt}
-                            </span>
-                        </div>
-
-                    </div>
-
+                            </div>
+                    </a>
                 </c:forEach>
 
             </c:otherwise>
 
         </c:choose>
-    
-        </body>
+
+    </body>
 </html>

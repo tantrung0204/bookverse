@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Customer;
 import com.mycompany.bookverse.model.CustomerNotification;
+import com.mycompany.bookverse.model.Notification;
 import com.mycompany.bookverse.service.NotificationService;
 import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
@@ -27,8 +28,6 @@ public class NotificationCustomerController extends HttpServlet {
     
     private NotificationService notificationService = new NotificationService();
 
-    
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -43,19 +42,21 @@ public class NotificationCustomerController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         
-        if(action == null){
-            action="list";
+        if (action == null) {
+            action = "list";
         }
         
         switch (action) {
             case "list":
-                getListCusNotificaton(request,response);
+                getListCusNotificaton(request, response);
+                break;
+            case "detail":
+                getDetailCusNotification(request, response);
                 break;
             default:
                 throw new AssertionError();
         }
         
-       
     }
 
     /**
@@ -69,7 +70,7 @@ public class NotificationCustomerController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+        
     }
 
     /**
@@ -82,31 +83,30 @@ public class NotificationCustomerController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getListCusNotificaton(HttpServletRequest request, HttpServletResponse response) 
+    private void getListCusNotificaton(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-
+        
         if (session == null) {
             response.sendRedirect(request.getContextPath() + "/signin");
             return;
         }
-
+        
         Object user = session.getAttribute("user");
-
+        
         if (user == null || !(user instanceof Customer)) {
             response.sendRedirect(request.getContextPath() + "/signin");
             return;
         }
-
+        
         Customer customer = (Customer) user;
-
+        
         int customerId = customer.getCustomerId();
-
         
         int page = 1;
-
+        
         String pageParam = request.getParameter("page");
-
+        
         if (pageParam != null) {
             try {
                 page = Integer.parseInt(pageParam);
@@ -114,7 +114,7 @@ public class NotificationCustomerController extends HttpServlet {
                 page = 1;
             }
         }
-
+        
         if (page < 1) {
             page = 1;
         }
@@ -123,7 +123,23 @@ public class NotificationCustomerController extends HttpServlet {
         System.out.println("Notification size: " + list.size());
         request.setAttribute("notifications", list);
         request.getRequestDispatcher("/views/customer/notification-customer.jsp").forward(request, response);
-    
+        
     }
+    
+    private void getDetailCusNotification(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        
+        notificationService.markAsRead(id);
+        
+        CustomerNotification cn = notificationService.getCustomerNotificationById(id);
 
+        // lấy Notification thật
+        Notification notification = cn.getNotificationId();
+
+        request.setAttribute("notification", notification);
+        
+        request.getRequestDispatcher("/views/customer/cus-notification-detail.jsp").forward(request, response);
+    }
+    
 }

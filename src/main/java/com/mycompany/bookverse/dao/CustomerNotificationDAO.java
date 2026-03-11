@@ -95,5 +95,40 @@ public class CustomerNotificationDAO {
             em.close();
         }
     }
+    
+    public void markAsRead(int id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+
+            tx.begin();
+
+            CustomerNotification cn = em.find(CustomerNotification.class, id);
+
+            if (cn != null) {
+                cn.setIsRead(true);
+            }
+
+            tx.commit();
+
+        } finally {
+            em.close();
+        }
+    }
+    
+    public CustomerNotification getById(int id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.find(CustomerNotification.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+
 
 }

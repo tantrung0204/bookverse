@@ -116,7 +116,7 @@
                             </div>
 
                             <div class="d-flex gap-2 flex-grow-1">
-                                <button type="submit" name="action" value="add" class="btn btn-cart" 
+                                <button type="submit" name="action" value="add" class="btn btn-cart" id="add-to-cart"
                                         ${product.stockQuantity <= 0 ? 'disabled' : ''}>
                                     <i class="fa fa-shopping-cart me-2"></i> Add to Cart
                                 </button>

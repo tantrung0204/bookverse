@@ -84,28 +84,44 @@ public class NotificationCustomerController extends HttpServlet {
 
     private void getListCusNotificaton(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Customer customer = (Customer) request.getSession().getAttribute("customer");
-        if (customer == null) {
+        HttpSession session = request.getSession(false);
 
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/signin");
             return;
-
         }
-        
+
+        Object user = session.getAttribute("user");
+
+        if (user == null || !(user instanceof Customer)) {
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
+
+        Customer customer = (Customer) user;
+
         int customerId = customer.getCustomerId();
+
         
         int page = 1;
-        
+
         String pageParam = request.getParameter("page");
-        
-        if (pageParam != null){
-            page = Integer.parseInt(pageParam);
+
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+
+        if (page < 1) {
+            page = 1;
         }
         
         List<CustomerNotification> list = notificationService.getCustomerNotifications(customer.getCustomerId(), page, PaginationConfig.MAX_PAGE_NODES);
-        
-        request.setAttribute("notification", list);
+        System.out.println("Notification size: " + list.size());
+        request.setAttribute("notifications", list);
         request.getRequestDispatcher("/views/customer/notification-customer.jsp").forward(request, response);
     
     }

@@ -79,13 +79,15 @@ public class CustomerNotificationDAO {
 
         try {
 
+            int offset = Math.max(0, (page - 1) * pageSize);
+
             return em.createQuery(
                     "SELECT cn FROM CustomerNotification cn "
-                    + "WHERE cn.customer.customerId = :customerId "
-                    + "ORDER BY cn.notification.createdAt DESC",
+                    + "WHERE cn.customerId.customerId = :customerId "
+                    + "ORDER BY cn.notificationId.createdAt DESC",
                     CustomerNotification.class)
                     .setParameter("customerId", customerId)
-                    .setFirstResult((page - 1) * pageSize)
+                    .setFirstResult(offset)
                     .setMaxResults(pageSize)
                     .getResultList();
 

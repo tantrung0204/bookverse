@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,19 +14,39 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <c:choose>
 
-    <c:forEach var="n" items="${notifications}">
+            <c:when test="${empty notifications}">
+                <div class="empty-notification">
+                    <p>No notifications available</p>
+                </div>
+            </c:when>
 
-        <div class="notification-item">
+            <c:otherwise>
 
-            <h4>${n.notificationId.title}</h4>
+                <c:forEach var="n" items="${notifications}">
 
-            <p>${n.notificationId.contentText}</p>
+                    <div class="notification-card">
 
-            <small>${n.notificationId.createdAt}</small>
+                        <div class="notification-icon">
+                            🔔
+                        </div>
 
-        </div>
+                        <div class="notification-content">
+                            <h4>${n.notificationId.title}</h4>
+                            <p>${n.notificationId.contentText}</p>
+                            <span class="time">
+                                ${n.notificationId.createdAt}
+                            </span>
+                        </div>
 
-    </c:forEach>
+                    </div>
+
+                </c:forEach>
+
+            </c:otherwise>
+
+        </c:choose>
+    
         </body>
 </html>

@@ -97,10 +97,7 @@ public class NotificationService {
     }
     
     public List<CustomerNotification> getCustomerNotifications(int customerId, int page, int pageSize) {
-
-        int offset = (page - 1) * pageSize;
-
-        return customerNotificationDAO.getNotificationsByCustomer(customerId, offset, pageSize);
+        return customerNotificationDAO.getNotificationsByCustomer(customerId, page, pageSize);
     }
 
 }

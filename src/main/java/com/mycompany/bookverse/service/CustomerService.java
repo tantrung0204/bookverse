@@ -75,6 +75,10 @@ public class CustomerService {
 
     public Customer signin(String username, String password) {
         Customer customer = customerDAO.findByUsername(username);
+        System.out.println(customer);
+        System.out.println(password);
+        System.out.println(customer.getPasswordHash());
+        System.out.println(PasswordUtil.checkPassword(password, customer.getPasswordHash()));
         if (customer != null) {
             if (customer.getStatus() != 1) {
                 return null;

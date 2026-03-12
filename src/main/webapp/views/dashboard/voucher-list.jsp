@@ -19,7 +19,7 @@
                             <i class="bi bi-plus-lg me-1"></i> Add New Voucher
                         </button>
 
-                        <form class="search-form" action="${pageContext.request.contextPath}/voucher" method="get">
+                        <form class="search-form" action="${pageContext.request.contextPath}/dashboard/voucher" method="get">
                             <input type="hidden" name="action" value="search" />
                             <div class="search-box">
                                 <i class="bi bi-search"></i>
@@ -130,7 +130,7 @@
                                                     </button>
 
                                                     <!-- DELETE -->
-                                                    <form action="${pageContext.request.contextPath}/voucher"
+                                                    <form action="${pageContext.request.contextPath}/dashboard/voucher"
                                                         method="post" style="display:inline;">
                                                         <input type="hidden" name="action" value="delete" />
                                                         <input type="hidden" name="id" value="${v.voucherId}" />
@@ -165,17 +165,17 @@
                     <c:if test="${totalPages > 1}">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-                                <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage - 1}"
+                                <a href="${pageContext.request.contextPath}/dashboard/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage - 1}"
                                     class="page-btn">«</a>
                             </c:if>
                             <c:forEach begin="1" end="${totalPages}" var="i">
-                                <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${i}"
+                                <a href="${pageContext.request.contextPath}/dashboard/voucher?action=${currentAction}&keyword=${keywordParam}&page=${i}"
                                     class="page-btn ${i == currentPage ? 'active' : ''}">
                                     ${i}
                                 </a>
                             </c:forEach>
                             <c:if test="${currentPage < totalPages}">
-                                <a href="${pageContext.request.contextPath}/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage + 1}"
+                                <a href="${pageContext.request.contextPath}/dashboard/voucher?action=${currentAction}&keyword=${keywordParam}&page=${currentPage + 1}"
                                     class="page-btn">»</a>
                             </c:if>
                         </div>
@@ -196,7 +196,7 @@
                                 </div>
                             </c:if>
 
-                            <form action="${pageContext.request.contextPath}/voucher" method="post">
+                            <form action="${pageContext.request.contextPath}/dashboard/voucher" method="post">
 
                                 <input type="hidden" name="action" value="create" />
 
@@ -332,7 +332,7 @@
                                 </div>
                             </c:if>
 
-                            <form action="${pageContext.request.contextPath}/voucher" method="post">
+                            <form action="${pageContext.request.contextPath}/dashboard/voucher" method="post">
 
                                 <input type="hidden" name="action" value="edit" />
                                 <input type="hidden" id="editId" name="id" value="${voucher.voucherId}" />

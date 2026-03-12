@@ -28,7 +28,7 @@
             </button>
 
             <form class="search-form"
-                  action="${pageContext.request.contextPath}/notification"
+                  action="${pageContext.request.contextPath}/dashboard/notification"
                   method="get">
 
                 <input type="hidden" name="action" value="search"/>
@@ -100,7 +100,7 @@
                                         </button>
 
                                         <!-- DELETE -->
-                                        <form action="${pageContext.request.contextPath}/notification"
+                                        <form action="${pageContext.request.contextPath}/dashboard/notification"
                                               method="post"
                                               style="display:inline;">
                                             <input type="hidden" name="action" value="delete"/>
@@ -135,19 +135,19 @@
             <div class="pagination">
 
                 <c:if test="${currentPage > 1}">
-                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage - 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=list&page=${currentPage - 1}"
                        class="page-btn">«</a>
                 </c:if>
 
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${i}"
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=list&page=${i}"
                        class="page-btn ${i == currentPage ? 'active' : ''}">
                         ${i}
                     </a>
                 </c:forEach>
 
                 <c:if test="${currentPage < totalPages}">
-                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage + 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=list&page=${currentPage + 1}"
                        class="page-btn">»</a>
                 </c:if>
 
@@ -168,7 +168,7 @@
                     </div>
                 </c:if>
 
-                <form action="${pageContext.request.contextPath}/notification"
+                <form action="${pageContext.request.contextPath}/dashboard/notification"
                       method="post"
                       enctype="multipart/form-data">
 

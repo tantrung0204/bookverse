@@ -54,18 +54,18 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/feedback" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
+            <a href="${pageContext.request.contextPath}/dashboard/feedback" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
                 <i class="bi bi-star"></i> Feedback
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/voucher"
+            <a href="${pageContext.request.contextPath}/dashboard/voucher"
                class="sidebar-link ${activeMenu == 'voucher'? 'active':''}">
                 <i class="bi bi-percent"></i> Vouchers
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/notification"
+            <a href="${pageContext.request.contextPath}/dashboard/notification"
                class="sidebar-link ${activeMenu == 'notification'? 'active':''}">
                 <i class="bi bi-bell"></i> Notifications
             </a>

@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name = "FeedbackManagerController", urlPatterns = {"/feedback"})
+@WebServlet(name = "FeedbackManagerController", urlPatterns = {"/dashboard/feedback"})
 public class FeedbackManagerController extends HttpServlet {
 
     private FeedbackService service = new FeedbackService();
@@ -145,7 +145,7 @@ public class FeedbackManagerController extends HttpServlet {
 
             request.getSession().setAttribute("successMessage", msg);
 
-            response.sendRedirect(request.getContextPath() + "/feedback");
+            response.sendRedirect(request.getContextPath() + "/dashboard/feedback");
         }
     }
 

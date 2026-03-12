@@ -24,7 +24,7 @@
         <div class="toolbar">
 
             <form class="search-form"
-                  action="${pageContext.request.contextPath}/feedback"
+                  action="${pageContext.request.contextPath}/dashboard/feedback"
                   method="get">
 
                 <input type="hidden" name="action" value="search"/>
@@ -123,7 +123,7 @@
                                             <i class="bi bi-eye"></i>
                                         </button>
                                         <!-- DELETE -->
-                                        <form action="${pageContext.request.contextPath}/feedback"
+                                        <form action="${pageContext.request.contextPath}/dashboard/feedback"
                                               method="post"
                                               style="display:inline;">
 
@@ -169,19 +169,19 @@
             <div class="pagination">
 
                 <c:if test="${currentPage > 1}">
-                    <a href="${pageContext.request.contextPath}/feedback?page=${currentPage - 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?page=${currentPage - 1}"
                        class="page-btn">«</a>
                 </c:if>
 
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="${pageContext.request.contextPath}/feedback?page=${i}"
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?page=${i}"
                        class="page-btn ${i == currentPage ? 'active' : ''}">
                         ${i}
                     </a>
                 </c:forEach>
 
                 <c:if test="${currentPage < totalPages}">
-                    <a href="${pageContext.request.contextPath}/feedback?page=${currentPage + 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?page=${currentPage + 1}"
                        class="page-btn">»</a>
                 </c:if>
 

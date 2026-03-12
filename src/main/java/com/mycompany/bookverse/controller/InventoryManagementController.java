@@ -8,6 +8,8 @@ import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
+import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Supplier;
 import com.mycompany.bookverse.service.InventoryService;
 import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
@@ -210,6 +212,31 @@ public class InventoryManagementController extends HttpServlet {
                     response.sendRedirect("inventory");
                 }
                 break;
+            case "addProductList":
+                List<Product> productList = inventoryServices.getAllProduct();
+                List<Supplier> SupplierList = inventoryServices.getAllSupplier();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                JSONArray supplierArray = new JSONArray();
+                JSONArray productArray = new JSONArray();
+                for (Supplier s : SupplierList) {
+                    JSONObject sup = new JSONObject();
+                    sup.put("supplierId", s.getSupplierId());
+                    sup.put("supplierName", s.getSupplierName());
+                    supplierArray.put(sup);
+                }
+                for (Product p : productList) {
+                    JSONObject pro = new JSONObject();
+                    pro.put("productId", p.getProductId());
+                    pro.put("productName", p.getName());
+                    productArray.put(pro);
+                }
+                JSONObject result = new JSONObject();
+                result.put("suppliers", supplierArray);
+                result.put("products", productArray);
+
+                response.getWriter().write(result.toString());
+                break;
             default:
                 response.sendRedirect("inventory");
                 break;
@@ -227,7 +254,7 @@ public class InventoryManagementController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+         
     }
 
     /**

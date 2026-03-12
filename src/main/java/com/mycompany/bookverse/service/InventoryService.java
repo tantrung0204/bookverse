@@ -9,6 +9,8 @@ import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
+import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Supplier;
 import java.util.Date;
 import java.util.List;
 
@@ -46,5 +48,11 @@ public class InventoryService {
     public List<Order> getExportsByPage(int page, int pageSize,Date from, Date to) {
         int offset = (page - 1) * pageSize;
         return inventoryDAO.findByExportPage(offset, pageSize,from,to);
+    }
+    public List<Product> getAllProduct(){
+        return inventoryDAO.findAllProduct();
+    }
+    public List<Supplier> getAllSupplier(){
+        return inventoryDAO.findAllSupplier();
     }
 }

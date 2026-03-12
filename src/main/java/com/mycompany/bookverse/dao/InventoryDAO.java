@@ -8,6 +8,8 @@ import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
+import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Supplier;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -194,6 +196,25 @@ public class InventoryDAO {
 
             query.setParameter("orderId", exportId);
             return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Product> findAllProduct() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Product.findAll", Product.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    public List<Supplier> findAllSupplier() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Supplier.findAll", Supplier.class)
+                    .getResultList();
         } finally {
             em.close();
         }

@@ -31,9 +31,9 @@
 
         <div class="toolbar">
             <%-- Add import --%>
-            <!--            <button type="button" class="btn-add" onclick="openCreatePopup()">
-                            <i class="bi bi-plus-lg me-1"></i> Add New Import
-                        </button>-->
+            <button type="button" class="btn-add" onclick="openCreatePopup()">
+                <i class="bi bi-plus-lg me-1"></i> Add New Import
+            </button>
             <%-- Filter by date range --%>
             <form action="inventory" method="get" class="date-filter-form">
                 <input type="hidden" name="view" value="import-list">
@@ -165,13 +165,69 @@
             </ul>
         </nav>
     </div>
-
+    <form action="inventory" method="post" ></form>
     <script>
         function openCreatePopup() {
-            document.getElementById("createPopup").style.display = "flex";
-            const err = document.getElementById("createErrorMsg");
-            if (err)
-                err.style.display = 'none';
+            fetch("inventory?view=addProductList")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("DATA:", data);
+                        //xem data ở console chơi.
+                        console.log("DATA:", data);
+                        var html = `
+                       <table class="detail-table">
+                          <tr>
+                              <th style="width: 10%">Product Name</th>
+                              <th style="width: 20%">Quantity</th>            
+                          </tr>   
+    `;
+                        if (data.length === 0) {
+                            html += `<tr><td colspan="5">No import details found</td></tr>`;
+                        } else {
+                            data.products.forEach(item => {
+                                let proId = item.productId;
+                                console.log(proId);
+                                let proName = item.productName;
+
+                                html += `           
+                                <tr>
+                                    <td><input type="checkbox" 
+                                               name="productIds" 
+                                               value="` + proId + `">` + proName + `</td>                              
+                                    <td><input type="number" 
+                                               name="quantity_` + proId + `
+                                               min="1"></td>                       
+                                </tr> 
+                    `;
+                            });
+                            html += `
+                                <tr>
+                                   
+                                    <td>
+                                        <select name="supplierId" required>
+                                        <option value="">-- Select Supplier --</option>                                                                    
+                            `;
+                            data.suppliers.forEach(item => {
+                                let supId = item.supplierId;
+                                let supName = item.supplierName;
+
+                                html += ` 
+                            <option value="` + item.supplierId + `">
+                                ` + item.supplierName + `
+                            </option>               
+                            `;
+                            });
+                        }
+                        html += `</td> </select></tr></table>`;
+                        document.getElementById("createContent").innerHTML = html;
+                        document.getElementById("createPopup").style.display = "flex";
+                    })
+                    .catch(error => {
+                        document.getElementById("createContent").innerHTML =
+                                "<p style='color:red;text-align:center;'>Failed to load data</p>";
+                        document.getElementById("createPopup").style.display = "flex";
+                        console.error(error);
+                    });
         }
         function closeCreatePopup() {
             document.getElementById("createPopup").style.display = "none";
@@ -253,7 +309,7 @@
     <div id="createPopup" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add new author</h3>
+                <h3>Add New Import Stock</h3>
             </div>
 
             <c:if test="${not empty createError}">
@@ -262,29 +318,12 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/author" method="post">
+            <form action="${pageContext.request.contextPath}/dashboard/inventory" method="post">
                 <input type="hidden" name="action" value="create">
 
-                <div class="form-group">
-                    <label>Author Name</label>
-                    <input type="text" name="name" class="form-control" value="${createName}">
-                </div>
+                <div id="createContent" style="max-height: 400px;overflow-y: auto;">
 
-                <div class="form-group">
-                    <label>BirthDay</label>
-                    <input type="text" name="birth" class="form-control" value="${birth}">
                 </div>
-
-                <div class="form-group">
-                    <label>Nationality</label>
-                    <input type="text" name="nationality" class="form-control" value="${nationality}">
-                </div>
-
-                <div class="form-group">
-                    <label>Biography</label>
-                    <input type="text" name="biography" class="form-control" value="${biography}">
-                </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
                     <button type="submit" class="btn-save">Create</button>
@@ -303,7 +342,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
             </div>
-
         </div>
 
     </div>

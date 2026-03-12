@@ -120,4 +120,18 @@ public class StaffDAO {
             em.close();
         }
     }
+
+    // ==========================================
+    // CÁC HÀM DÀNH CHO SIGN IN
+    // ==========================================
+    public Staff findByUsername(String username) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Staff> query = em.createNamedQuery("Staff.findByUsername", Staff.class);
+            query.setParameter("username", username);
+            return query.getResultStream().findFirst().orElse(null);
+        } finally {
+            em.close();
+        }
+    }
 }

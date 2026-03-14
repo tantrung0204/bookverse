@@ -84,9 +84,42 @@ public class GenreManagementController extends HttpServlet {
         switch (view) {
             case "list":
                 String success = (String) request.getSession().getAttribute("success");
+                String createError = (String) request.getSession().getAttribute("createError");
+                String editError = (String) request.getSession().getAttribute("editError");
+                String deleteError = (String) request.getSession().getAttribute("deleteError");
                 if (success != null) {
                     request.setAttribute("success", success);
                     request.getSession().removeAttribute("success");
+                } else if (editError != null) {
+                    request.setAttribute("editError", (String) request.getSession().getAttribute("editError"));
+                    request.setAttribute("openEditPopup", true);
+                    request.setAttribute("editId",  request.getSession().getAttribute("editId"));
+                    request.setAttribute("editName", (String) request.getSession().getAttribute("editName"));
+                    request.setAttribute("editDesc", (String) request.getSession().getAttribute("editDesc"));
+                    request.setAttribute("editStatus", request.getSession().getAttribute("editStatus"));
+
+                    request.getSession().removeAttribute("editError");
+                    request.getSession().removeAttribute("openEditPopup");
+                    request.getSession().removeAttribute("editId");
+                    request.getSession().removeAttribute("editName");
+                    request.getSession().removeAttribute("editDesc");
+                    request.getSession().removeAttribute("editStatus");
+
+                } else if (createError != null) {
+                    request.setAttribute("createError", (String) request.getSession().getAttribute("createError"));
+                    request.setAttribute("openCreatePopup", true);
+                    request.setAttribute("createName", (String) request.getSession().getAttribute("createName"));
+                    request.setAttribute("createDesc", (String) request.getSession().getAttribute("createDesc"));
+                    request.setAttribute("createStatus", request.getSession().getAttribute("createStatus"));
+
+                    request.getSession().removeAttribute("createError");
+                    request.getSession().removeAttribute("openCreatePopup");
+                    request.getSession().removeAttribute("createName");
+                    request.getSession().removeAttribute("createDesc");
+                    request.getSession().removeAttribute("createStatus");
+                } else if (deleteError != null) {
+                    request.setAttribute("deleteError", deleteError);
+                    request.getSession().removeAttribute("deleteError");
                 }
 
                 int totalPages = genreServices.getTotalPages(pageSize);
@@ -178,17 +211,12 @@ public class GenreManagementController extends HttpServlet {
                     String msg = genreServices.editGenre(id, name, des, status);
 
                     if (!msg.contains("successfully")) {
-                        request.setAttribute("editError", msg);
-                        request.setAttribute("openEditPopup", true);
-                        request.setAttribute("editId", id);
-                        request.setAttribute("editName", name);
-                        request.setAttribute("editDesc", des);
-                        request.setAttribute("editStatus", status);
-                        List<Genre> genres = genreServices.getAllGenres();
-                        request.setAttribute("genres", genres);
-                        request.setAttribute("contentPage", "genre-list.jsp");
-                        request.setAttribute("activeMenu", "genre");
-                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        request.getSession().setAttribute("editError", msg);
+                        request.getSession().setAttribute("editId", id);
+                        request.getSession().setAttribute("editName", name);
+                        request.getSession().setAttribute("editDesc", des);
+                        request.getSession().setAttribute("editStatus", status);
+                        response.sendRedirect("genre");
                         return;
                     }
                     request.getSession().setAttribute("success", "Edit successfully");
@@ -204,21 +232,17 @@ public class GenreManagementController extends HttpServlet {
                     int status = Integer.parseInt(request.getParameter("status"));
                     String msg = genreServices.insertGenre(name, description, status);
                     if (!msg.contains("successfully")) {
-                        request.setAttribute("createError", msg);
-                        request.setAttribute("openCreatePopup", true);
-                        request.setAttribute("createName", name);
-                        request.setAttribute("createDesc", description);
-                        request.setAttribute("createStatus", status);
-                        List<Genre> genres = genreServices.getAllGenres();
-                        request.setAttribute("genres", genres);
-                        request.setAttribute("contentPage", "genre-list.jsp");
-                        request.setAttribute("activeMenu", "genre");
-                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        request.getSession().setAttribute("createError", msg);
+                        request.getSession().setAttribute("createName", name);
+                        request.getSession().setAttribute("createDesc", description);
+                        request.getSession().setAttribute("createStatus", status);
+
+                        response.sendRedirect("genre");
                         return;
                     }
                     request.getSession().setAttribute("success", "Create successfully");
                     response.sendRedirect("genre");
-                } catch (ServletException | IOException | NumberFormatException e) {
+                } catch (IOException | NumberFormatException e) {
                     response.sendRedirect("genre");
                 }
                 break;
@@ -227,15 +251,11 @@ public class GenreManagementController extends HttpServlet {
                     int id = Integer.parseInt(request.getParameter("id"));
                     String msg = genreServices.deleteGenre(id);
                     if (!msg.contains("successfully")) {
-                        request.setAttribute("deleteError", msg);
-                        List<Genre> genres = genreServices.getAllGenres();
-                        request.setAttribute("genres", genres);
-                        request.setAttribute("contentPage", "genre-list.jsp");
-                        request.setAttribute("activeMenu", "genre");
-                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        request.getSession().setAttribute("deleteError", msg);
+                        response.sendRedirect("genre");
                         return;
                     }
-                } catch (ServletException | IOException | NumberFormatException e) {
+                } catch (IOException | NumberFormatException e) {
                     response.sendRedirect("genre");
                 }
                 request.getSession().setAttribute("success", "Deletech successfully");

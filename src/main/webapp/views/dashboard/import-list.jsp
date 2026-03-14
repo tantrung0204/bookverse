@@ -178,7 +178,9 @@
                        <table class="detail-table">
                           <tr>
                               <th style="width: 10%">Product Name</th>
-                              <th style="width: 20%">Quantity</th>            
+                              <th style="width: 20%">Quantity</th>
+                              <th style="width: 20%">Unit Price</th> 
+                              <th style="width: 20%">Note</th>
                           </tr>   
     `;
                         if (data.length === 0) {
@@ -195,8 +197,14 @@
                                                name="productIds" 
                                                value="` + proId + `">` + proName + `</td>                              
                                     <td><input type="number" 
-                                               name="quantity_` + proId + `
-                                               min="1"></td>                       
+                                               name="quantity_` + proId + `"
+                                               min="1"></td>
+                                    <td><input type="number" 
+                                        name="unit_price_` + proId + `"
+                                        min="1"></td>
+                                    <td><input type="text" 
+                                        name="note_` + proId + `" 
+                                        placeholder="note"></td>
                                 </tr> 
                     `;
                             });
@@ -307,7 +315,7 @@
     </c:if>
     <!-- ================= CREATE POPUP ================= -->
     <div id="createPopup" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 900px">
             <div class="modal-header">
                 <h3>Add New Import Stock</h3>
             </div>
@@ -338,7 +346,7 @@
             <div class="modal-header">
                 <h3>Import Detail</h3>
             </div>
-            <div id="popupContent" style="max-height: 400px;overflow-y: auto;"></div>
+            <div id="popupContent" style="max-height: 400px; overflow-y: auto;"></div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
             </div>

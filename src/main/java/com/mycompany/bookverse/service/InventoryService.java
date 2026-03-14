@@ -27,7 +27,7 @@ public class InventoryService {
         return (int) Math.ceil((double) totalItems / pageSize);
     }
 
-    public int getTotalExportPages(int pageSize,Date from, Date to) {
+    public int getTotalExportPages(int pageSize, Date from, Date to) {
         long totalItems = inventoryDAO.countAllExports(from, to);
         return (int) Math.ceil((double) totalItems / pageSize);
     }
@@ -45,14 +45,32 @@ public class InventoryService {
         return inventoryDAO.findByExportId(id);
     }
 
-    public List<Order> getExportsByPage(int page, int pageSize,Date from, Date to) {
+    public List<Order> getExportsByPage(int page, int pageSize, Date from, Date to) {
         int offset = (page - 1) * pageSize;
-        return inventoryDAO.findByExportPage(offset, pageSize,from,to);
+        return inventoryDAO.findByExportPage(offset, pageSize, from, to);
     }
-    public List<Product> getAllProduct(){
+
+    public List<Product> getAllProduct() {
         return inventoryDAO.findAllProduct();
     }
-    public List<Supplier> getAllSupplier(){
+
+    public List<Supplier> getAllSupplier() {
         return inventoryDAO.findAllSupplier();
+    }
+
+    public Supplier getSupplier(int id) {
+        return inventoryDAO.findSupplierById(id);
+    }
+
+    public Product getProduct(int id) {
+        return inventoryDAO.findProductById(id);
+    }
+
+    public int insertImportStock(ImportStock importStock) {
+        return inventoryDAO.addImportStock(importStock);
+    }
+
+    public boolean insertImportStockDetail(ImportStockDetail importStockDetail) {
+        return inventoryDAO.addImportStockDetail(importStockDetail);
     }
 }

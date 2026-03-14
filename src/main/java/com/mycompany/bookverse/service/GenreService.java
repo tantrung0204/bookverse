@@ -16,9 +16,6 @@ public class GenreService {
 
     private GenreDAO genreDAO = new GenreDAO();
 
-    public List<Genre> getAllGenres() {
-        return genreDAO.findAll();
-    }
 
     public Genre findGenreById(int id) {
         return genreDAO.findById(id);
@@ -28,9 +25,6 @@ public class GenreService {
         return genreDAO.findActiveGenres();
     }
 
-    public List<Genre> searchGenres(String keyword) {
-        return genreDAO.searchByName(keyword);
-    }
 
     public String insertGenre(String name, String des, int status) {
         String error = "";

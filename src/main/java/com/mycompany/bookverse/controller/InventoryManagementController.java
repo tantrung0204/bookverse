@@ -9,6 +9,7 @@ import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
 import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Staff;
 import com.mycompany.bookverse.model.Supplier;
 import com.mycompany.bookverse.service.InventoryService;
 import com.mycompany.bookverse.utils.PaginationConfig;
@@ -19,6 +20,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -119,6 +121,11 @@ public class InventoryManagementController extends HttpServlet {
         }
         switch (view) {
             case "import-list":
+                String success = (String) request.getSession().getAttribute("success");
+                if (success != null) {
+                    request.setAttribute("success", success);
+                    request.getSession().removeAttribute("success");
+                }
                 int totalPages = inventoryServices.getTotalImportPages(pageSize, from, to);
                 List<ImportStock> imports = inventoryServices.getImportsByPage(page, pageSize, from, to);
                 if (imports == null || imports.isEmpty()) {
@@ -254,7 +261,89 @@ public class InventoryManagementController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         
+        try {
+
+            Staff staff = (Staff) request.getSession().getAttribute("user");
+            if (staff == null) {//chưa đăng nhập dc.
+                staff = new Staff(1);
+            }
+            
+            int supplierId;
+            String supplierIdStr = request.getParameter("supplierId");
+            try {
+                supplierId = Integer.parseInt(supplierIdStr);// lấy supplier id
+            } catch (Exception e) {
+                request.getSession().setAttribute("message", "Id supplier is error");
+                response.sendRedirect("inventory");
+                return;
+            }
+            Supplier supplier = inventoryServices.getSupplier(supplierId);
+            if(supplier == null){
+                request.getSession().setAttribute("message", "supplier is not found");
+                response.sendRedirect("inventory");
+                return;
+            }
+            
+            String[] productIdsString = request.getParameterValues("productIds");// lấy list product id muốn add
+            if (productIdsString == null || productIdsString.length == 0) {
+                request.getSession().setAttribute("message", "No product selected");
+                response.sendRedirect("inventory");
+                return;
+            }
+            
+            BigDecimal totalCost = BigDecimal.ZERO;// tổng tiền
+            for (String id : productIdsString) {//Tính total cost              
+                int quantity = Integer.parseInt(request.getParameter("quantity_" + id));
+                BigDecimal unitPrice = new BigDecimal(request.getParameter("unit_price_" + id));
+                totalCost = totalCost.add(unitPrice.multiply(BigDecimal.valueOf(quantity)));
+            }
+            //tạo import_stock
+            ImportStock importStock = new ImportStock();
+            importStock.setStaffId(staff);
+            importStock.setSupplierId(supplier);
+            importStock.setTotalCost(totalCost);
+            Date date= new Date();
+            importStock.setCreatedAt(date);
+            int importId = inventoryServices.insertImportStock(importStock);
+            //tạo import_stock_detail
+            if (importId == -1) {
+                request.getSession().setAttribute("message", "Import Stock error");
+                response.sendRedirect("inventory");
+            } else {
+                importStock.setImportId(importId);
+                boolean allSuccess = true;
+                for (String id : productIdsString) {
+
+                    int productId = Integer.parseInt(id);
+
+                    Product product = inventoryServices.getProduct(productId);
+                    Integer quantity = Integer.valueOf(request.getParameter("quantity_" + id));
+                    BigDecimal unitPrice = new BigDecimal(request.getParameter("unit_price_" + id));
+                    String note = request.getParameter("note_" + id);
+
+                    ImportStockDetail importStockDetail = new ImportStockDetail();
+
+                    importStockDetail.setImportId(importStock);
+                    importStockDetail.setProductId(product);
+                    importStockDetail.setNote(note);
+                    importStockDetail.setImportedQuantity(quantity);
+                    importStockDetail.setUnitPrice(unitPrice);
+
+                    if (!inventoryServices.insertImportStockDetail(importStockDetail)) {
+                        allSuccess = false;
+                    }
+                }
+                if (allSuccess) {
+                    request.getSession().setAttribute("success", "Add successfully");
+                } else {
+                    request.getSession().setAttribute("success", "Some items failed");
+                }
+                response.sendRedirect("inventory");
+            }
+        } catch (IOException | NumberFormatException e) {
+            response.sendRedirect("inventory");
+        }
+
     }
 
     /**

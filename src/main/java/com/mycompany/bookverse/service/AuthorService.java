@@ -129,7 +129,7 @@ public class AuthorService {
         }
     }
 
-    public Long countBooksByAuthorId(int authorId) {
+    public long countBooksByAuthorId(int authorId) {
         return authorDAO.countBooksByAuthorId(authorId);
     }
 

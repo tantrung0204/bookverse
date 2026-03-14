@@ -210,6 +210,7 @@ public class InventoryDAO {
             em.close();
         }
     }
+
     public List<Supplier> findAllSupplier() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -219,4 +220,67 @@ public class InventoryDAO {
             em.close();
         }
     }
+
+    public Supplier findSupplierById(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Supplier.findBySupplierId", Supplier.class)
+                    .setParameter("supplierId", id)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public Product findProductById(int id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Product.findByProductId", Product.class)
+                    .setParameter("productId", id)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public int addImportStock(ImportStock importStock) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(importStock);
+            em.flush(); // đảm bảo DB tạo id ngay
+            int id = importStock.getImportId();
+            em.getTransaction().commit();
+            return id;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return -1;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean addImportStockDetail(ImportStockDetail importStockDetail) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.persist(importStockDetail);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
 }

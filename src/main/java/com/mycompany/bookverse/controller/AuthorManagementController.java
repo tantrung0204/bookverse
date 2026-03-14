@@ -84,10 +84,46 @@ public class AuthorManagementController extends HttpServlet {
         switch (view) {
             case "list":
                 String success = (String) request.getSession().getAttribute("success");
+                String createError = (String) request.getSession().getAttribute("createError");
+                String editError = (String) request.getSession().getAttribute("editError");
+                String deleteError = (String) request.getSession().getAttribute("deleteError");
                 if (success != null) {
                     request.setAttribute("success", success);
                     request.getSession().removeAttribute("success");
+                } else if (editError != null) {
+                    request.setAttribute("editError", (String) request.getSession().getAttribute("editError"));
+                    request.setAttribute("openEditPopup", true);
+                    request.setAttribute("editId", request.getSession().getAttribute("ceditId"));
+                    request.setAttribute("editName", (String) request.getSession().getAttribute("editName"));
+                    request.setAttribute("editBirth", request.getSession().getAttribute("editBirth"));
+                    request.setAttribute("editNat", (String) request.getSession().getAttribute("editNat"));
+                    request.setAttribute("editBio", (String) request.getSession().getAttribute("editBio"));
+
+                    request.getSession().removeAttribute("editError");
+                    request.getSession().removeAttribute("openEditPopup");
+                    request.getSession().removeAttribute("editId");
+                    request.getSession().removeAttribute("editName");
+                    request.getSession().removeAttribute("editBirth");
+                    request.getSession().removeAttribute("editNat");
+                    request.getSession().removeAttribute("editBio");
+                } else if (createError != null) {
+                    request.setAttribute("createError", (String) request.getSession().getAttribute("createError"));
+                    request.setAttribute("openCreatePopup", true);
+                    request.setAttribute("createName", (String) request.getSession().getAttribute("createName"));
+                    request.setAttribute("birth", request.getSession().getAttribute("birth"));
+                    request.setAttribute("nationality", (String) request.getSession().getAttribute("nationality"));
+                    request.setAttribute("biography", (String) request.getSession().getAttribute("biography"));
+
+                    request.getSession().removeAttribute("createError");
+                    request.getSession().removeAttribute("openCreatePopup");
+                    request.getSession().removeAttribute("birth");
+                    request.getSession().removeAttribute("nationality");
+                    request.getSession().removeAttribute("biography");
+                } else if (deleteError != null) {
+                    request.setAttribute("deleteError", deleteError);
+                    request.getSession().removeAttribute("deleteError");
                 }
+
                 int totalPages = authorServices.getTotalPages(pageSize);
                 List<Author> authors = authorServices.getAuthorsByPage(page, pageSize);
                 if (authors == null || authors.isEmpty()) {
@@ -176,18 +212,13 @@ public class AuthorManagementController extends HttpServlet {
                     String bio = request.getParameter("biography");
                     String msg = authorServices.editAuthor(id, name, birthStr, nat, bio);
                     if (!msg.contains("successfully")) {
-                        request.setAttribute("editError", msg);
-                        request.setAttribute("openEditPopup", true);
-                        request.setAttribute("editId", id);
-                        request.setAttribute("editName", name);
-                        request.setAttribute("editBirth", birthStr);
-                        request.setAttribute("editNat", nat);
-                        request.setAttribute("editBio", bio);
-                        List<Author> authors = authorServices.getAllAuthors();
-                        request.setAttribute("authors", authors);
-                        request.setAttribute("contentPage", "author-list.jsp");
-                        request.setAttribute("activeMenu", "author");
-                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        request.getSession().setAttribute("editError", msg);
+                        request.getSession().setAttribute("editId", id);
+                        request.getSession().setAttribute("editName", name);
+                        request.getSession().setAttribute("editBirth", birthStr);
+                        request.getSession().setAttribute("editNat", nat);
+                        request.getSession().setAttribute("editBio", bio);
+                        response.sendRedirect("author");
                         return;
                     }
                     request.getSession().setAttribute("success", "Edit successfully");
@@ -204,17 +235,12 @@ public class AuthorManagementController extends HttpServlet {
                     String bio = request.getParameter("biography");
                     String msg = authorServices.insertAuthor(name, birth, nat, bio);
                     if (!msg.contains("successfully")) {
-                        request.setAttribute("createError", msg);
-                        request.setAttribute("openCreatePopup", true);
-                        request.setAttribute("createName", name);
-                        request.setAttribute("birth", birth);
-                        request.setAttribute("nationality", nat);
-                        request.setAttribute("biography", bio);
-                        List<Author> authors = authorServices.getAllAuthors();
-                        request.setAttribute("authors", authors);
-                        request.setAttribute("contentPage", "author-list.jsp");
-                        request.setAttribute("activeMenu", "author");
-                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        request.getSession().setAttribute("createError", msg);                      
+                        request.getSession().setAttribute("createName", name);
+                        request.getSession().setAttribute("birth", birth);
+                        request.getSession().setAttribute("nationality", nat);
+                        request.getSession().setAttribute("biography", bio);
+                        response.sendRedirect("author");
                         return;
                     }
                     request.getSession().setAttribute("success", "Create successfully");
@@ -228,17 +254,13 @@ public class AuthorManagementController extends HttpServlet {
                     int id = Integer.parseInt(request.getParameter("id"));
                     String msg = authorServices.deleteAuthor(id);
                     if (!msg.contains("successfully")) {
-                        request.setAttribute("deleteError", msg);
-                        List<Author> Authors = authorServices.getAllAuthors();
-                        request.setAttribute("authors", Authors);
-                        request.setAttribute("contentPage", "author-list.jsp");
-                        request.setAttribute("activeMenu", "author");
-                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        request.getSession().setAttribute("deleteError", msg);
+                        response.sendRedirect("author");
                         return;
                     }
                     request.getSession().setAttribute("success", "Deletech successfully");
                     response.sendRedirect("author");
-                } catch (ServletException | IOException | NumberFormatException e) {
+                } catch (IOException | NumberFormatException e) {
                     request.getSession().setAttribute("success", "Loi quan que gi vay");
                     response.sendRedirect("author");
                 }

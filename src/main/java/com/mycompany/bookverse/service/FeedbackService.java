@@ -45,4 +45,46 @@ public class FeedbackService {
         dao.delete(id);
         return "Delete feedback successfully";
     }
+
+    public String deleteForCustomer(int id, int customerId) {
+
+        Feedback f = dao.findById(id);
+
+        if (f == null) {
+            return "Feedback not found";
+        }
+
+        if (!f.getCustomerId().getCustomerId().equals(customerId)) {
+            return "You cannot delete this feedback";
+        }
+
+        dao.delete(id);
+
+        return "Delete feedback successfully";
+    }
+
+    public List<Feedback> getByCustomer(int customerId) {
+        return dao.getByCustomerId(customerId);
+    }
+
+    public boolean create(int customerId, int productId, int rating, String content) {
+        return dao.create(customerId, productId, rating, content);
+    }
+
+    public String update(int id, int rating, String content) {
+
+        Feedback f = dao.findById(id);
+
+        if (f == null) {
+            return "Feedback not found";
+        }
+
+        f.setRating(rating);
+        f.setContentText(content);
+
+        dao.update(f);
+
+        return "Update feedback successfully";
+    }
+
 }

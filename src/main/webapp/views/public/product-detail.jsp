@@ -101,32 +101,53 @@
                     </div>
 
                     <div class="action-area">
-                        <form action="cart" method="post" class="d-flex flex-wrap gap-3 align-items-end">
-                            <input type="hidden" name="productId" value="${product.productId}"/>
-
-                            <div>
-                                <label for="quantity" class="fw-bold mb-1 d-block">Quantity:</label>
-                                <div class="qty-input-group">
-                                    <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepDown()">-</button>
-                                    <input type="number" id="quantity" name="quantity" class="qty-input" 
-                                           value="1" min="1" max="${product.stockQuantity}" required 
-                                           ${product.stockQuantity <= 0 ? 'disabled' : ''} />
-                                    <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepUp()">+</button>
-                                </div>
+                        <div>
+                            <label for="quantity" class="fw-bold mb-1 d-block">Quantity:</label>
+                            <div class="qty-input-group">
+                                <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepDown()">-</button>
+                                <input type="number" id="quantity" name="quantity" class="qty-input" 
+                                       value="1" min="1" max="${product.stockQuantity}" required 
+                                       ${product.stockQuantity <= 0 ? 'disabled' : ''} />
+                                <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepUp()">+</button>
                             </div>
+                        </div>
 
-                            <div class="d-flex gap-2 flex-grow-1">
-                                <button type="submit" name="action" value="add" class="btn btn-cart" 
+                        <div class="d-flex gap-2 flex-grow-1 mt-3">
+                            <%-- Add to Cart form --%>
+                            <form action="cart" method="post" style="display:inline;">
+                                <input type="hidden" name="action" value="add" />
+                                <input type="hidden" name="productId" value="${product.productId}"/>
+                                <input type="hidden" name="quantity" id="cartQuantity" value="1"/>
+                                <button type="submit" class="btn btn-cart" id="add-to-cart"
                                         ${product.stockQuantity <= 0 ? 'disabled' : ''}>
                                     <i class="fa fa-shopping-cart me-2"></i> Add to Cart
                                 </button>
+                            </form>
 
-                                <button type="submit" name="action" value="buy" class="btn btn-buy" 
+                            <%-- Buy Now form - goes to checkout --%>
+                            <form action="${pageContext.request.contextPath}/checkout" method="post" style="display:inline;">
+                                <input type="hidden" name="action" value="buyNow" />
+                                <input type="hidden" name="productId" value="${product.productId}"/>
+                                <input type="hidden" name="quantity" id="buyNowQuantity" value="1"/>
+                                <button type="submit" class="btn btn-buy" 
                                         ${product.stockQuantity <= 0 ? 'disabled' : ''}>
                                     Buy Now
                                 </button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
+
+                        <%-- Sync quantity input with hidden fields --%>
+                        <script>
+                            document.getElementById('quantity').addEventListener('change', function() {
+                                document.getElementById('cartQuantity').value = this.value;
+                                document.getElementById('buyNowQuantity').value = this.value;
+                            });
+                            // Also sync on stepUp/stepDown
+                            document.getElementById('quantity').addEventListener('input', function() {
+                                document.getElementById('cartQuantity').value = this.value;
+                                document.getElementById('buyNowQuantity').value = this.value;
+                            });
+                        </script>
                     </div>
                 </div>
             </div>

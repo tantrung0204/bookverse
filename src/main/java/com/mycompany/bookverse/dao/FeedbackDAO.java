@@ -10,6 +10,7 @@ import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import com.mycompany.bookverse.model.Feedback;
+import java.util.Date;
 
 /**
  *
@@ -140,6 +141,110 @@ public class FeedbackDAO {
                 em.remove(f);
             }
             em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Feedback> getByCustomerId(int customerId) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            String jpql = "SELECT f FROM Feedback f WHERE f.customerId.customerId = :cid ORDER BY f.createdAt DESC";
+
+            TypedQuery<Feedback> query = em.createQuery(jpql, Feedback.class);
+
+            query.setParameter("cid", customerId);
+
+            return query.getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean create(int customerId, int productId, int rating, String content) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            em.getTransaction().begin();
+
+            Customer customer = em.find(Customer.class, customerId);
+            Product product = em.find(Product.class, productId);
+
+            if (customer == null || product == null) {
+                throw new RuntimeException("Customer or Product not found");
+            }
+
+            Feedback feedback = new Feedback();
+
+            feedback.setCustomerId(customer);
+            feedback.setProductId(product);
+            feedback.setRating(rating);
+            feedback.setContentText(content);
+            feedback.setCreatedAt(new Date());
+
+            em.persist(feedback);
+
+            em.getTransaction().commit();
+
+            return true;
+
+        } catch (Exception e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            e.printStackTrace();
+
+            return false;
+
+        } finally {
+
+            em.close();
+
+        }
+    }
+
+    public void update(Feedback feedback) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            em.getTransaction().begin();
+
+            em.merge(feedback);
+
+            em.getTransaction().commit();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean isProductReviewed(int customerId, int productId) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            Long count = em.createQuery(
+                    "SELECT COUNT(f) FROM Feedback f "
+                    + "WHERE f.customerId.customerId = :cid "
+                    + "AND f.productId.productId = :pid",
+                    Long.class)
+                    .setParameter("cid", customerId)
+                    .setParameter("pid", productId)
+                    .getSingleResult();
+
+            return count > 0;
+
         } finally {
             em.close();
         }

@@ -36,72 +36,79 @@
 
             <div class="order-header">
 
-                <span class="order-id">Order #${o.orderId}</span>
+                <div class="order-left">
 
-                <span class="status ${fn:toLowerCase(o.orderStatus)}">
-                    ${o.orderStatus}
-                </span>
+                    <span class="order-id">
+                        ORD-${o.orderId}
+                    </span>
 
-            </div>
-
-            <div class="order-body">
-
-                <div class="order-info">
-
-                    <p>Date: <fmt:formatDate value="${o.createdAt}" pattern="yyyy-MM-dd HH:mm"/></p>
+                    <span class="status ${fn:toLowerCase(o.orderStatus)}">
+                        ${o.orderStatus}
+                    </span>
 
                 </div>
-
-            </div>
-
-            <div class="order-footer">
-
-                <span class="order-total">
-                    Total: ${o.totalAmount}
-                </span>
 
                 <div class="order-actions">
 
                     <a class="btn-view"
                        href="${pageContext.request.contextPath}/order?action=detail&id=${o.orderId}">
-                        View Detail
+                        View Details
                     </a>
 
-                    <!-- Cancel Order -->
+                    <!-- CANCEL -->
                     <c:if test="${o.orderStatus == 'Pending'}">
-                        <form method="post"
-                              action="${pageContext.request.contextPath}/order"
-                              class="action-form">
+
+                        <form method="post" action="${pageContext.request.contextPath}/order">
 
                             <input type="hidden" name="action" value="cancel">
                             <input type="hidden" name="orderId" value="${o.orderId}">
 
-                            <button type="submit"
-                                    class="btn-cancel"
-                                    onclick="return confirm('Are you sure you want to cancel this order?')">
+                            <button class="btn-cancel"
+                                    onclick="return confirm('Cancel this order?')">
                                 Cancel Order
                             </button>
 
                         </form>
+
                     </c:if>
 
-                    <!-- Confirm Received -->
+                    <!-- CONFIRM RECEIVED -->
                     <c:if test="${o.orderStatus == 'Shipping'}">
-                        <form method="post"
-                              action="${pageContext.request.contextPath}/order"
-                              class="action-form">
+
+                        <form method="post" action="${pageContext.request.contextPath}/order">
 
                             <input type="hidden" name="action" value="confirm">
                             <input type="hidden" name="orderId" value="${o.orderId}">
 
-                            <button type="submit"
-                                    class="btn-confirm"
-                                    onclick="return confirm('Are you sure you want to confirm received?')">
+                            <button class="btn-confirm">
                                 Received
                             </button>
 
                         </form>
+
                     </c:if>
+
+                </div>
+
+            </div>
+
+            <div class="order-body">
+
+                <div class="order-block">
+
+                    <span>Order Date</span>
+
+                    <p>
+                        <fmt:formatDate value="${o.createdAt}" pattern="MMM dd, yyyy"/>
+                    </p>
+
+                </div>
+
+                <div class="order-block">
+
+                    <span>Total Amount</span>
+
+                    <p>${o.totalAmount}</p>
 
                 </div>
 

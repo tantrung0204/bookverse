@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -45,6 +46,17 @@ public class OrderItem implements Serializable {
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     @ManyToOne
     private Product productId;
+
+    @Transient
+    private boolean reviewed;
+
+    public boolean isReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
 
     public OrderItem() {
     }
@@ -109,5 +121,5 @@ public class OrderItem implements Serializable {
     public String toString() {
         return "com.mycompany.bookverse.model.OrderItem[ orderItemId=" + orderItemId + " ]";
     }
-    
+
 }

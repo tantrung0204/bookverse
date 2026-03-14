@@ -126,6 +126,11 @@ public class ProductService {
     public List<Book> getTopBestSellingBooks() {
         return productDao.findTopSellingBooks(5);
     }
+    
+    public static void main(String[] args) {
+        ProductService service = new ProductService();
+        System.out.println(service.getProductDetail(3));
+    }
 
     public List<Stationery> getTopBestSellingStationery() {
         return productDao.findTopSellingStationery(5);

@@ -1,0 +1,243 @@
+body{
+    background:#EAE6D7;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* container */
+
+.review-container{
+    width:900px;
+    margin:40px auto;
+}
+
+/* title */
+
+.title{
+    font-size:28px;
+    color:#7a5a3b;
+    margin-bottom:5px;
+}
+
+.subtitle{
+    color:#777;
+    margin-bottom:25px;
+}
+
+/* review count */
+
+.review-count{
+    text-align:right;
+    color:#777;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+/* card */
+
+.review-card{
+    display:flex;
+    background:#F4F4F4;
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* book image */
+
+.book-image img{
+    width:90px;
+    height:120px;
+    object-fit:cover;
+    border-radius:6px;
+}
+
+/* content */
+
+.review-content{
+    flex:1;
+    margin-left:20px;
+}
+
+/* header */
+
+.review-top{
+    display:flex;
+    justify-content:space-between;
+}
+
+/* title */
+
+.review-info h3{
+    margin:0;
+    font-size:18px;
+    color:#7a5a3b;
+}
+
+/* rating */
+
+.rating{
+    color:#000;
+    font-size:16px;
+}
+
+.rating span{
+    color:#555;
+    margin-left:4px;
+}
+
+/* date */
+
+.date{
+    font-size:13px;
+    color:#888;
+    margin-top:3px;
+}
+
+/* review text */
+
+.review-text{
+    margin-top:12px;
+    color:#444;
+    line-height:1.5;
+}
+
+/* read more */
+
+.read-more{
+    display:inline-block;
+    margin-top:8px;
+    color:#b36b2c;
+    font-size:14px;
+    cursor:pointer;
+}
+
+/* buttons */
+
+.actions{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+}
+
+/* edit */
+
+.btn-edit{
+    background:#C7D5E5;
+    color:#333;
+    padding:7px 14px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:14px;
+    display:inline-block;
+}
+
+/* delete */
+
+.btn-delete{
+    background:#E7B5B5;
+    color:#333;
+    padding:7px 14px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:14px;
+    display:inline-block;
+}
+
+.btn-edit:hover{
+    background:#b0c4db;
+}
+
+.btn-delete:hover{
+    background:#de9e9e;
+}
+
+/* ===== MODAL ===== */
+
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.45);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+}
+
+/* popup */
+
+.modal-content{
+    background:white;
+    width:420px;
+    padding:28px;
+    border-radius:12px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.15);
+    position:relative;
+}
+
+/* title */
+
+.modal-content h3{
+    margin-top:0;
+    margin-bottom:20px;
+    color:#7a5a3b;
+}
+
+/* close */
+
+.close{
+    position:absolute;
+    right:16px;
+    top:14px;
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* form layout */
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    font-size:14px;
+    margin-bottom:5px;
+    color:#444;
+}
+
+/* rating select */
+
+#editRating{
+    width:120px;
+    padding:4px;
+}
+
+/* textarea */
+
+#editContent{
+    width:100%;
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    resize:none;
+}
+
+/* button */
+
+.btn-confirm{
+    margin-top:10px;
+    background:#b36b2c;
+    color:white;
+    border:none;
+    padding:8px 16px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn-confirm:hover{
+    background:#9c5a24;
+}

@@ -108,7 +108,6 @@ public class CartController extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action == null) {
-            // Nếu POST mà không có action, chuyển về trang xem giỏ
             response.sendRedirect("cart");
             return;
         }
@@ -129,22 +128,39 @@ public class CartController extends HttpServlet {
         }
     }
 
+    private int getAuthenticatedCustomerId(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String role = (String) session.getAttribute("role");
+        Object userObj = session.getAttribute("user");
+
+        if ("customer".equals(role) && userObj instanceof Customer) {
+            Customer customer = (Customer) userObj;
+            return customer.getCustomerId();
+        }
+        return -1;
+    }
+
     private void viewCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // HttpSession session = request.getSession();
-        // int customerId = session.getAttribute("customerId");
-        int customerId = 1;
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
 
         List<Cart> cartItems = cartService.getCustomerCart(customerId);
         BigDecimal cartTotal = cartService.calculateCartTotal(cartItems);
         List<Category> categories = categoryService.getActiveSubCategories();
 
-        request.setAttribute("cartList", cartItems);
-        request.setAttribute("cartTotal", cartTotal);
-        request.setAttribute("categories", categories);
-
-        request.getRequestDispatcher("/views/customer/cart.jsp").forward(request, response);
+        request.setAttribute(
+                "cartList", cartItems);
+        request.setAttribute(
+                "cartTotal", cartTotal);
+        request.setAttribute(
+                "categories", categories);
+        request.getRequestDispatcher(
+                "/views/customer/cart.jsp").forward(request, response);
     }
 
     private void addToCart(HttpServletRequest request, HttpServletResponse response)
@@ -154,10 +170,14 @@ public class CartController extends HttpServlet {
 
         String referer = request.getHeader("referer");
 
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            session.setAttribute("errorMessage", "Please login as a customer to add items to your cart.");
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
+
         try {
-            // HttpSession session = request.getSession();
-            // int customerId = session.getAttribute("customerId");
-            int customerId = 1;
             int productId = Integer.parseInt(request.getParameter("productId"));
 
             String quantityRaw = request.getParameter("quantity");
@@ -188,6 +208,14 @@ public class CartController extends HttpServlet {
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            out.print("{\"status\": \"error\", \"message\": \"Session expired or unauthorized access. Please login again.\"}");
+            out.flush();
+            return;
+        }
 
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
@@ -205,7 +233,6 @@ public class CartController extends HttpServlet {
                 return;
             }
 
-            int customerId = 1;
             List<Cart> cartItems = cartService.getCustomerCart(customerId);
             BigDecimal grandTotal = cartService.calculateCartTotal(cartItems);
 
@@ -238,11 +265,13 @@ public class CartController extends HttpServlet {
     private void deleteFromCart(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession session = request.getSession();
+        int customerId = getAuthenticatedCustomerId(request);
+        if (customerId == -1) {
+            response.sendRedirect(request.getContextPath() + "/signin");
+            return;
+        }
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
-
-            // int customerId = (Integer) session.getAttribute("customerId");
-            int customerId = 1;
 
             boolean isRemoved = cartService.removeCartItem(cartId, customerId);
 

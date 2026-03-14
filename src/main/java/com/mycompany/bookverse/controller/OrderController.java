@@ -119,15 +119,14 @@ public class OrderController extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-//        Customer customer = (Customer) session.getAttribute("customer");
-//
-//        if (customer == null) {
-//            response.sendRedirect("login.jsp");
-//            return;
-//        }
-//
-//        int customerId = customer.getCustomerId();
-        int customerId = 10; // test
+        Customer customer = (Customer) session.getAttribute("user");
+
+        if (customer == null) {
+            response.sendRedirect(request.getContextPath() + "/views/public/signin.jsp");
+            return;
+        }
+
+        int customerId = customer.getCustomerId();
 
         List<Order> orders = orderService.getOrdersByCustomer(customerId);
 
@@ -143,8 +142,23 @@ public class OrderController extends HttpServlet {
 
         int orderId = Integer.parseInt(request.getParameter("id"));
 
+        HttpSession session = request.getSession();
+        Customer customer = (Customer) session.getAttribute("user");
+
         Order order = orderService.getOrder(orderId);
         List<OrderItem> items = orderService.getOrderItems(orderId);
+
+        if (customer != null) {
+            for (OrderItem item : items) {
+
+                boolean reviewed = orderService.isReviewed(
+                        customer.getCustomerId(),
+                        item.getProductId().getProductId()
+                );
+
+                item.setReviewed(reviewed);
+            }
+        }
 
         request.setAttribute("order", order);
         request.setAttribute("items", items);

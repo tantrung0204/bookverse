@@ -129,13 +129,13 @@
                     <a class="page-btn" href="author?page=${currentPage - 1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&laquo;</a>
                 </c:if>
                 <%-- If the total <= 5, display all pages. --%>
-                <c:if test="${totalPages <= maxNote}">
+                <c:if test="${totalPages <= maxNode}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <a class="page-btn ${currentPage == i ? 'active' : ''}" href="author?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
                 </c:if>
                 <%-- If the total > 5 --%>
-                <c:if test="${totalPages > maxNote}">
+                <c:if test="${totalPages > maxNode}">
                     <%-- Page 1 always appears --%>                   
                     <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="author?page=1&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">1</a>
                     <%-- The ... mark at the beginning --%>

@@ -127,9 +127,9 @@ public class AuthorManagementController extends HttpServlet {
                 int totalPages = authorServices.getTotalPages(pageSize);
                 List<Author> authors = authorServices.getAuthorsByPage(page, pageSize);
                 if (authors == null || authors.isEmpty()) {
-                    request.setAttribute("message", "No vouchers found");
+                    request.setAttribute("message", "No authors found");
                 } else {
-                    request.setAttribute("maxNote", maxNode);
+                    request.setAttribute("maxNode", maxNode);
                     request.setAttribute("authors", authors);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
@@ -145,7 +145,7 @@ public class AuthorManagementController extends HttpServlet {
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No author found for:" + keyword);
                 } else {
-                    request.setAttribute("maxNote", maxNode);
+                    request.setAttribute("maxNode", maxNode);
                     request.setAttribute("keyword", keyword);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
@@ -258,10 +258,9 @@ public class AuthorManagementController extends HttpServlet {
                         response.sendRedirect("author");
                         return;
                     }
-                    request.getSession().setAttribute("success", "Deletech successfully");
+                    request.getSession().setAttribute("success", "Delete successfully");
                     response.sendRedirect("author");
                 } catch (IOException | NumberFormatException e) {
-                    request.getSession().setAttribute("success", "Loi quan que gi vay");
                     response.sendRedirect("author");
                 }
 

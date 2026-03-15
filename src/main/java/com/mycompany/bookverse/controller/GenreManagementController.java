@@ -125,9 +125,9 @@ public class GenreManagementController extends HttpServlet {
                 int totalPages = genreServices.getTotalPages(pageSize);
                 List<Genre> genres = genreServices.getGenresByPage(page, pageSize);
                 if (genres == null || genres.isEmpty()) {
-                    request.setAttribute("message", "No vouchers found");
+                    request.setAttribute("message", "No genres found");
                 } else {
-                    request.setAttribute("maxNote", maxNode);
+                    request.setAttribute("maxNode", maxNode);
                     request.setAttribute("genres", genres);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
@@ -143,7 +143,7 @@ public class GenreManagementController extends HttpServlet {
                 if (searchList == null || searchList.isEmpty()) {
                     request.setAttribute("message", "No genre found for:" + keyword);
                 } else {
-                    request.setAttribute("maxNote", maxNode);
+                    request.setAttribute("maxNode", maxNode);
                     request.setAttribute("keyword", keyword);
                     request.setAttribute("genres", searchList);
                     request.setAttribute("currentPage", page);
@@ -258,7 +258,7 @@ public class GenreManagementController extends HttpServlet {
                 } catch (IOException | NumberFormatException e) {
                     response.sendRedirect("genre");
                 }
-                request.getSession().setAttribute("success", "Deletech successfully");
+                request.getSession().setAttribute("success", "Delete successfully");
                 response.sendRedirect("genre");
                 break;
             default:

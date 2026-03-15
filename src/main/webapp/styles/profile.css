@@ -1,0 +1,92 @@
+/* sidebar */
+.account-sidebar{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+}
+body{
+    background-color: #fcffef;
+    font-family: 'Playfair Display', serif;
+}
+.account-sidebar h4{
+    font-weight:600;
+    margin-bottom:20px;
+}
+
+.account-sidebar a{
+    display:block;
+    padding:10px 15px;
+    margin-bottom:8px;
+    border-radius:8px;
+    text-decoration:none;
+    color:#333;
+}
+
+.account-sidebar a.active{
+    background:#b7cbc7;
+    font-weight:600;
+}
+
+.account-sidebar a:hover{
+    background:#eee;
+}
+
+/* profile card */
+
+.profile-card{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+}
+
+
+/* stat box */
+
+.stat-box{
+    padding:25px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.stat-orders{
+    background:#e7e3c8;
+}
+
+.stat-books{
+    background:#c8dcd8;
+}
+
+.stat-reviews{
+    background:#cfd8e6;
+}
+
+.stat-box h4{
+    margin-bottom:10px;
+}
+
+.stat-number{
+    font-weight:700;
+}
+.edit-profile-card{
+    background:#e9e6cf;
+    padding:35px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    
+}
+
+
+.avatar{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    overflow:hidden;
+    border:4px solid white;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}

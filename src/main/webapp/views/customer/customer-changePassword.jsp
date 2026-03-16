@@ -45,12 +45,14 @@
                         <label class="form-label">Old Password</label>
                         <input type="text" class="form-control"
                                placeholder="Enter your old password"
+                               value="${oldPass}"
                                name="oldPassword">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">New Password</label>
                         <input type="text" class="form-control"
                                placeholder="Enter your new password"
+                               value="${newPass}"
                                name="newPassword">
                     </div>         
 
@@ -58,6 +60,7 @@
                         <label class="form-label">Re-New Password</label>
                         <input type="text" class="form-control"
                                placeholder="Enter your re-new password"
+                               value="${reNewPass}"
                                name="reNewPassword">
                     </div> 
                     <div class="d-flex gap-3">

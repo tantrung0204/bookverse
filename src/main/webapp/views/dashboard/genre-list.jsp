@@ -195,13 +195,18 @@
         document.getElementById("detailStatus").innerText = status == 1 ? "Active" : "Inactive";
         document.getElementById("detailQuantity").innerText = "Loading...";
 
-        fetch('${pageContext.request.contextPath}/genre?view=detail&id=' + id)
+        fetch('${pageContext.request.contextPath}/dashboard/genre?view=detail&id=' + id)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                    console.log(data.quantity);
+                        if (data.quantity > 1) {
+                            document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                        } else if (data.quantity <= 1) {
+                            document.getElementById("detailQuantity").innerText = data.quantity + " product";
+                        }
                 })
                 .catch(error => {
-                    document.getElementById("detailQuantity").innerText = "Error";
+                    document.getElementById("detailQuantity").innerText = "0 product";
                 });
         document.getElementById("detailPopup").style.display = "flex";
     }

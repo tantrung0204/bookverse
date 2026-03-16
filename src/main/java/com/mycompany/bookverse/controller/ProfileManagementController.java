@@ -73,7 +73,14 @@ public class ProfileManagementController extends HttpServlet {
         if (session != null && session.getAttribute("user") != null) {
             String error = (String) session.getAttribute("error");
             if (error != null && !error.isEmpty()) {
+                request.setAttribute("oldPass", (String) session.getAttribute("oldPass"));
+                request.setAttribute("newPass", (String) session.getAttribute("newPass"));
+                request.setAttribute("reNewPass", (String) session.getAttribute("reNewPass"));
                 request.setAttribute("error", error);
+                
+                session.removeAttribute("oldPass");
+                session.removeAttribute("newPass");
+                session.removeAttribute("reNewPass");
                 session.removeAttribute("error");
             } else {
                 String success = (String) session.getAttribute("success");
@@ -231,13 +238,12 @@ public class ProfileManagementController extends HttpServlet {
                 String newPass = request.getParameter("newPassword").toLowerCase();
                 String reNewPass = request.getParameter("reNewPassword").toLowerCase();
                 Customer customer = (Customer) session.getAttribute("user");
-                hashedNewPassword = PasswordUtil.hashPassword(oldPass);
 
                 if (oldPass == null || oldPass.trim().isEmpty()) {
                     error += "Old password can't be empty <br>";
                 } else if (!oldPass.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
                     error += "old password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
-                } else if (!hashedNewPassword.equalsIgnoreCase(customer.getPasswordHash())) {//kiểm tra mật khẩu cũ có đúng ko.
+                } else if (!PasswordUtil.checkPassword(oldPass, customer.getPasswordHash())) {//kiểm tra mật khẩu cũ có đúng ko.
                     error += "The current password is incorrect.<br>";
                 }
                 if (newPass == null || newPass.trim().isEmpty()) {
@@ -257,6 +263,10 @@ public class ProfileManagementController extends HttpServlet {
                 }
 
                 if (!error.isEmpty()) {
+                    session.setAttribute("oldPass", oldPass);
+                    session.setAttribute("newPass", newPass);
+                    session.setAttribute("reNewPass", reNewPass);
+
                     session.setAttribute("error", error);
                 } else {
                     hashedNewPassword = PasswordUtil.hashPassword(reNewPass);

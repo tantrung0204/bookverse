@@ -94,7 +94,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/dashboar/supplier"
+            <a href="${pageContext.request.contextPath}/dashboard/supplier"
                class="sidebar-link ${activeMenu == 'supplier'? 'active':''}">
                 <i class="bi bi-box-fill"></i> Suppliers
             </a>

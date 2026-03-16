@@ -175,7 +175,7 @@ public class CategoryManagementController extends HttpServlet {
             request.getSession().setAttribute("successMsg",
                     "Create category successfully");
 
-            response.sendRedirect(request.getContextPath() + "/category");
+            response.sendRedirect(request.getContextPath() + "/dashboard/category");
 
         } catch (IllegalArgumentException e) {
 
@@ -211,7 +211,7 @@ public class CategoryManagementController extends HttpServlet {
             request.getSession().setAttribute("successMsg",
                     "Edit category successfully");
 
-            response.sendRedirect(request.getContextPath() + "/category");
+            response.sendRedirect(request.getContextPath() + "/dashboard/category");
 
         } catch (IllegalArgumentException e) {
 

@@ -171,7 +171,7 @@ public class SupplierManagementController extends HttpServlet {
         try {
             supplierService.createSupplier(name, email, phone, address, statusRaw);
             request.getSession().setAttribute("successMsg", "Create supplier successfully");
-            response.sendRedirect(request.getContextPath() + "/supplier");
+            response.sendRedirect(request.getContextPath() + "/dashboard/supplier");
         } catch (IllegalArgumentException e) {
             request.setAttribute("createError", e.getMessage());
             request.setAttribute("openCreatePopup", true);
@@ -205,7 +205,7 @@ public class SupplierManagementController extends HttpServlet {
 
             request.getSession().setAttribute("successMsg", "Edit supplier successfully");
 
-            response.sendRedirect(request.getContextPath() + "/supplier");
+            response.sendRedirect(request.getContextPath() + "/dashboard/supplier");
         } catch (IllegalArgumentException e) {
 
             request.setAttribute("editError", e.getMessage());

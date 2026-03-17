@@ -122,13 +122,14 @@ body{
 /* edit */
 
 .btn-edit{
-    background:#C7D5E5;
-    color:#333;
     padding:7px 14px;
+    border:1px solid #c9b79d;
     border-radius:6px;
+    background:white;
+    color:#7c5b2e;
     text-decoration:none;
     font-size:14px;
-    display:inline-block;
+
 }
 
 /* delete */

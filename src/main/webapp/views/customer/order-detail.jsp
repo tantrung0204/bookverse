@@ -8,7 +8,14 @@
 
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css"  type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/order-detail.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
+
+
+<jsp:include page="/views/public/header-index.jsp" />
 
 <div class="detail-container">
 
@@ -144,37 +151,45 @@
 
     </div>
 </div>
-
+<jsp:include page="/views/public/footer-index.jsp" />
 <div id="reviewModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeReviewModal()">&times;</span>
-        <h3>Write Review</h3>
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h3>Write Review</h3>
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+        </div>
+
         <div class="review-product">
             <img id="reviewImg">
             <span id="reviewName"></span>
         </div>
+
         <form id="reviewForm" class="review-form">
             <input type="hidden" name="action" value="create">
             <input type="hidden" id="productId" name="productId">
+
             <div class="form-group">
                 <label>Rating</label>
-                <select name="rating" required>
-                    <option value="5">⭐⭐⭐⭐⭐</option>
-                    <option value="4">⭐⭐⭐⭐</option>
-                    <option value="3">⭐⭐⭐</option>
-                    <option value="2">⭐⭐</option>
-                    <option value="1">⭐</option>
+                <select name="rating">
+                    <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                    <option value="4">⭐⭐⭐⭐ (4)</option>
+                    <option value="3">⭐⭐⭐ (3)</option>
+                    <option value="2">⭐⭐ (2)</option>
+                    <option value="1">⭐ (1)</option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label>Comment</label>
-                <textarea name="content" rows="4"
-                          placeholder="Write your review..."></textarea>
+                <textarea name="content" placeholder="Write your review..."></textarea>
             </div>
-            <button type="submit" class="btn-confirm submit-review">
+
+            <button type="submit" class="btn-submit">
                 Submit Review
             </button>
         </form>
+
     </div>
 </div>
 <script>
@@ -185,9 +200,9 @@
         document.getElementById("reviewName").innerText = name;
         document.getElementById("reviewImg").src =
                 "${pageContext.request.contextPath}/images/" + img;
-        document.getElementById("reviewModal").style.display = "block";
+        document.getElementById("reviewModal").style.display = "flex";
     }
-    
+
     function closeReviewModal() {
         document.getElementById("reviewModal").style.display = "none";
     }
@@ -214,3 +229,4 @@
     });
 
 </script>
+<script src="${pageContext.request.contextPath}/boostrap/bootstrap.bundle.min.js"></script>

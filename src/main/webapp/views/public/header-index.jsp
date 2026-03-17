@@ -78,9 +78,10 @@
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end shadow brand-dropdown" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#"><i class="far fa-user me-2"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile"><i class="far fa-user me-2"></i> Profile</a></li>
                                     <li><a class="dropdown-item" href="${pageContext.request.contextPath}/order">
                                             <i class="fas fa-receipt me-2"></i> My Orders</a></li>
+
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a></li>
                                 </ul>

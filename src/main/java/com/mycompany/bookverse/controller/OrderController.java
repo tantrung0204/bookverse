@@ -130,9 +130,11 @@ public class OrderController extends HttpServlet {
 
         List<Order> orders = orderService.getOrdersByCustomer(customerId);
 
+        request.setAttribute("openCustomerProfile", "yes");
+        request.setAttribute("openOrderHistory", "yes");
+        request.setAttribute("activeMenu", "orderHistory");
         request.setAttribute("orders", orders);
-
-        request.getRequestDispatcher("/views/customer/order-list.jsp")
+        request.getRequestDispatcher("/views/public/profile.jsp")
                 .forward(request, response);
     }
 

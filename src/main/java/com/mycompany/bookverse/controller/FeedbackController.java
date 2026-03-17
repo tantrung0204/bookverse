@@ -135,12 +135,20 @@ public class FeedbackController extends HttpServlet {
             return;
         }
 
+        int customerId = customer.getCustomerId();
+        
         List<Feedback> list = service.getByCustomer(customer.getCustomerId());
 
         request.setAttribute("feedbacks", list);
 
-        request.getRequestDispatcher("/views/customer/own-feedback.jsp")
+        
+        request.setAttribute("openCustomerProfile", "yes");
+        request.setAttribute("openOwnFeedback", "yes");
+        request.setAttribute("activeMenu", "ownFeedback");
+        request.setAttribute("feedbacks", list);
+        request.getRequestDispatcher("/views/public/profile.jsp")
                 .forward(request, response);
+        
     }
 
     /* ================= SHOW EDIT ================= */

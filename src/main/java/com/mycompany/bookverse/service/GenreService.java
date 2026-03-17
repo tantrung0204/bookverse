@@ -16,9 +16,6 @@ public class GenreService {
 
     private GenreDAO genreDAO = new GenreDAO();
 
-    public List<Genre> getAllGenres() {
-        return genreDAO.findAll();
-    }
 
     public Genre findGenreById(int id) {
         return genreDAO.findById(id);
@@ -28,24 +25,21 @@ public class GenreService {
         return genreDAO.findActiveGenres();
     }
 
-    public List<Genre> searchGenres(String keyword) {
-        return genreDAO.searchByName(keyword);
-    }
 
     public String insertGenre(String name, String des, int status) {
         String error = "";
         if (des == null || des.trim().isEmpty()) {
-            error += "Description can not be empty.\n";
+            error += "Description can not be empty.<br>";
         } else if (!des.matches("^[a-zA-ZÀ-ỹ0-9\\s]+$")) {
-            error += "Description contains invalid characters.\n";
+            error += "Description contains invalid characters.<br>";
         }
         if (name == null || name.trim().isEmpty()) {
-            error += "Name cannot be left blank.\n";
+            error += "Name cannot be left blank.<br>";
         } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s]+$")) {
-            error += "Name contains invalid characters.\n";
+            error += "Name contains invalid characters.<br>";
         }
         if (status != 0 && status != 1) {
-            error += "status must be 1 or 2.\n";
+            error += "status must be 1 or 2.<br>";
         }
         boolean checkExist = genreDAO.checkGenreExistByName(name);
 
@@ -74,17 +68,17 @@ public class GenreService {
             return "Genre name already exist.";
         }
         if (description == null || description.trim().isEmpty()) {
-            error += "Description can not be empty.\n";
+            error += "Description can not be empty.<br>";
         } else if (!description.matches("^[a-zA-ZÀ-ỹ]+[.]?((\\s[a-zA-ZÀ-ỹ0-9]+)+\\s?[.,-]?)*$")) {
-            error += "Description contains invalid characters.\n";
+            error += "Description contains invalid characters.<br>";
         }
         if (name == null || name.trim().isEmpty()) {
-            error += "Name cannot be left blank.\n";
+            error += "Name cannot be left blank.<br>";
         } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
-            error += "Name contains invalid characters.\n";
+            error += "Name contains invalid characters.<br>";
         }
         if (status != 0 && status != 1) {
-            error += "status must be 1 or 2.\n";
+            error += "status must be 1 or 2.<br>";
         }
 
         if (error.isEmpty()) {

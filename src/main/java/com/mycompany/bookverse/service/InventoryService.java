@@ -9,6 +9,9 @@ import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
+import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Supplier;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,28 +22,55 @@ public class InventoryService {
 
     private InventoryDAO inventoryDAO = new InventoryDAO();
 
-    public int getTotalImportPages(int pageSize) {
-        long totalItems = inventoryDAO.countAllImports();
-        return (int) Math.ceil((double) totalItems / pageSize);
-    }
-    public int getTotalExportPages(int pageSize) {
-        long totalItems = inventoryDAO.countAllImports();
+    public int getTotalImportPages(int pageSize, Date from, Date to) {
+        long totalItems = inventoryDAO.countAllImports(from, to);
         return (int) Math.ceil((double) totalItems / pageSize);
     }
 
-    public List<ImportStock> getImportsByPage(int page, int pageSize) {
+    public int getTotalExportPages(int pageSize, Date from, Date to) {
+        long totalItems = inventoryDAO.countAllExports(from, to);
+        return (int) Math.ceil((double) totalItems / pageSize);
+    }
+
+    public List<ImportStock> getImportsByPage(int page, int pageSize, Date from, Date to) {
         int offset = (page - 1) * pageSize;
-        return inventoryDAO.findByImportPage(offset, pageSize);
+        return inventoryDAO.findByImportPage(offset, pageSize, from, to);
     }
 
     public List<ImportStockDetail> getImportDetail(int id) {
         return inventoryDAO.findByImportId(id);
     }
+
     public List<OrderItem> getExportDetail(int id) {
         return inventoryDAO.findByExportId(id);
     }
-    public List<Order> getExportsByPage(int page, int pageSize) {
+
+    public List<Order> getExportsByPage(int page, int pageSize, Date from, Date to) {
         int offset = (page - 1) * pageSize;
-        return inventoryDAO.findByExportPage(offset, pageSize);
+        return inventoryDAO.findByExportPage(offset, pageSize, from, to);
+    }
+
+    public List<Product> getAllProduct() {
+        return inventoryDAO.findAllProduct();
+    }
+
+    public List<Supplier> getAllSupplier() {
+        return inventoryDAO.findAllSupplier();
+    }
+
+    public Supplier getSupplier(int id) {
+        return inventoryDAO.findSupplierById(id);
+    }
+
+    public Product getProduct(int id) {
+        return inventoryDAO.findProductById(id);
+    }
+
+    public int insertImportStock(ImportStock importStock) {
+        return inventoryDAO.addImportStock(importStock);
+    }
+
+    public boolean insertImportStockDetail(ImportStockDetail importStockDetail) {
+        return inventoryDAO.addImportStockDetail(importStockDetail);
     }
 }

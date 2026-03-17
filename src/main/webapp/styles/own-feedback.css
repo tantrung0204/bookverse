@@ -1,6 +1,6 @@
 body{
-    background:#EAE6D7;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    background:#fcffef;
+    font-family: 'Playfair Display', serif;
 }
 
 /* container */
@@ -14,13 +14,12 @@ body{
 
 .title{
     font-size:28px;
-    color:#7a5a3b;
-    margin-bottom:5px;
+    margin-bottom:10px;
 }
 
 .subtitle{
     color:#777;
-    margin-bottom:25px;
+    margin-bottom:10px;
 }
 
 /* review count */

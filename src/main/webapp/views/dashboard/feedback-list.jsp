@@ -79,10 +79,10 @@
                     <thead>
                         <tr>
                             <th width="10%">ID</th>
-                            <th width="20%">Customer</th>
-                            <th width="20%">Product</th>
-                            <th width="20%">Rating</th>
-                            <th width="15%">Date</th>
+                            <th width="19%">Customer</th>
+                            <th width="19%">Product</th>
+                            <th width="19%">Rating</th>
+                            <th width="18%">Date</th>
                             <th width="15%">Actions</th>
                         </tr>
                     </thead>
@@ -164,30 +164,100 @@
 
 
         <!-- PAGINATION -->
+
+        <c:set var="startPage" value="${currentPage - 1}" />
+        <c:set var="endPage" value="${currentPage + 1}" />
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+            <c:set var="endPage" value="4"/>
+        </c:if>
+
+        <c:if test="${endPage > totalPages - 1}">
+            <c:set var="endPage" value="${totalPages - 1}"/>
+            <c:set var="startPage" value="${totalPages - 3}"/>
+        </c:if>
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+        </c:if>
+
+
         <c:if test="${totalPages > 1}">
 
             <div class="pagination">
 
+                <!-- PREVIOUS -->
                 <c:if test="${currentPage > 1}">
-                    <a href="${pageContext.request.contextPath}/dashboard/feedback?page=${currentPage - 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?action=search&page=${currentPage - 1}&keyword=${param.keyword}&rating=${param.rating}"
                        class="page-btn">«</a>
                 </c:if>
 
-                <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="${pageContext.request.contextPath}/dashboard/feedback?page=${i}"
-                       class="page-btn ${i == currentPage ? 'active' : ''}">
-                        ${i}
-                    </a>
-                </c:forEach>
 
+                <!-- <= 5 pages -->
+                <c:if test="${totalPages <= 5}">
+
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <a href="${pageContext.request.contextPath}/dashboard/feedback?action=search&page=${i}&keyword=${param.keyword}&rating=${param.rating}"
+                           class="page-btn ${i == currentPage ? 'active' : ''}">
+                            ${i}
+                        </a>
+                    </c:forEach>
+
+                </c:if>
+
+
+                <!-- > 5 pages -->
+                <c:if test="${totalPages > 5}">
+
+                    <!-- PAGE 1 -->
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?action=search&page=1&keyword=${param.keyword}&rating=${param.rating}"
+                       class="page-btn ${currentPage == 1 ? 'active' : ''}">
+                        1
+                    </a>
+
+
+                    <!-- ... -->
+                    <c:if test="${startPage > 2}">
+                        <span class="page-btn disabled">...</span>
+                    </c:if>
+
+
+                    <!-- MIDDLE -->
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <a href="${pageContext.request.contextPath}/dashboard/feedback?action=search&page=${i}&keyword=${param.keyword}&rating=${param.rating}"
+                           class="page-btn ${i == currentPage ? 'active' : ''}">
+                            ${i}
+                        </a>
+                    </c:forEach>
+
+
+                    <!-- ... -->
+                    <c:if test="${endPage < totalPages - 1}">
+                        <span class="page-btn disabled">...</span>
+                    </c:if>
+
+
+                    <!-- LAST PAGE -->
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?action=search&page=${totalPages}&keyword=${param.keyword}&rating=${param.rating}"
+                       class="page-btn ${currentPage == totalPages ? 'active' : ''}">
+                        ${totalPages}
+                    </a>
+
+                </c:if>
+
+
+                <!-- NEXT -->
                 <c:if test="${currentPage < totalPages}">
-                    <a href="${pageContext.request.contextPath}/dashboard/feedback?page=${currentPage + 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/feedback?action=search&page=${currentPage + 1}&keyword=${param.keyword}&rating=${param.rating}"
                        class="page-btn">»</a>
+
                 </c:if>
 
             </div>
 
         </c:if>
+
 
     </div>
 

@@ -43,7 +43,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/dashboar/category"
+            <a href="${pageContext.request.contextPath}/dashboard/category"
                class="sidebar-link ${activeMenu == 'category'? 'active':''}">
                 <i class="bi bi-tags"></i> Categories
             </a>

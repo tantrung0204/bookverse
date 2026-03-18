@@ -127,12 +127,12 @@
 
                         <!-- Previous -->
                         <c:if test="${currentPage > 1}">
-                            <a href="${pageContext.request.contextPath}/dashboar/category?page=${currentPage - 1}" 
+                            <a href="${pageContext.request.contextPath}/dashboard/supplier?page=${currentPage - 1}" 
                                class="page-btn">«</a>
                         </c:if>
 
                         <!-- Page 1 -->
-                        <a href="${pageContext.request.contextPath}/dashboar/category?page=1"
+                        <a href="${pageContext.request.contextPath}/dashboard/supplier?page=1"
                            class="page-btn ${currentPage == 1 ? 'active' : ''}">
                             1
                         </a>
@@ -144,7 +144,7 @@
 
                         <!-- Trang trước current -->
                         <c:if test="${currentPage - 1 > 1}">
-                            <a href="${pageContext.request.contextPath}/dashboar/category?page=${currentPage - 1}"
+                            <a href="${pageContext.request.contextPath}/dashboard/supplier?page=${currentPage - 1}"
                                class="page-btn">
                                 ${currentPage - 1}
                             </a>
@@ -152,7 +152,7 @@
 
                         <!-- Current -->
                         <c:if test="${currentPage != 1 && currentPage != totalPages}">
-                            <a href="${pageContext.request.contextPath}/dashboar/category?page=${currentPage}"
+                            <a href="${pageContext.request.contextPath}/dashboard/supplier?page=${currentPage}"
                                class="page-btn active">
                                 ${currentPage}
                             </a>
@@ -160,7 +160,7 @@
 
                         <!-- Trang sau current -->
                         <c:if test="${currentPage + 1 < totalPages}">
-                            <a href="${pageContext.request.contextPath}/dashboar/category?page=${currentPage + 1}"
+                            <a href="${pageContext.request.contextPath}/dashboard/supplier?page=${currentPage + 1}"
                                class="page-btn">
                                 ${currentPage + 1}
                             </a>
@@ -173,7 +173,7 @@
 
                         <!-- Last page -->
                         <c:if test="${totalPages > 1}">
-                            <a href="${pageContext.request.contextPath}/dashboar/category?page=${totalPages}"
+                            <a href="${pageContext.request.contextPath}/dashboard/supplier?page=${totalPages}"
                                class="page-btn ${currentPage == totalPages ? 'active' : ''}">
                                 ${totalPages}
                             </a>
@@ -181,7 +181,7 @@
 
                         <!-- Next -->
                         <c:if test="${currentPage < totalPages}">
-                            <a href="${pageContext.request.contextPath}/dashboar/category?page=${currentPage + 1}" 
+                            <a href="${pageContext.request.contextPath}/dashboard/supplier?page=${currentPage + 1}" 
                                class="page-btn">»</a>
                         </c:if>
 

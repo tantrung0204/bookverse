@@ -2,8 +2,14 @@
 .bookverse-header {
     font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
     border-bottom: 1px solid rgba(139, 107, 76, 0.2);
+    position: relative;
+    z-index: 9999;
 }
 
+.bookverse-header .navbar {
+    position: relative;
+    z-index: 9999;
+}
 .navbar-brand img {
     object-fit: contain;
 }
@@ -85,12 +91,19 @@
 .icon-link, .user-dropdown-link {
     color: #8B6B4C !important;
     transition: color 0.3s ease;
+    position: relative;
+    z-index: 10000;
 }
 
 .icon-link:hover, .user-dropdown-link:hover {
     color: #6e5238 !important;
 }
 
+.icon-link i {
+    display: inline-block;
+    font-size: 18px;
+    color: #333;
+}
 .bg-brand-accent {
     background-color: #8B6B4C !important;
     color: white;

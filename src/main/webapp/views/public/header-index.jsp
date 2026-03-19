@@ -55,7 +55,7 @@
                             </li>
 
                             <li class="nav-item me-4">
-                                <a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/cart" title="Shopping Cart">
+<a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/cart" title="Shopping Cart">
                                     <i class="fas fa-shopping-cart fa-lg"></i>
                                 </a>
                             </li>

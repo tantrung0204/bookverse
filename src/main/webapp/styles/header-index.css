@@ -135,3 +135,6 @@
 .user-dropdown-link::after {
     color: #8B6B4C;
 }
+.badge-dot {
+    pointer-events: none;
+}

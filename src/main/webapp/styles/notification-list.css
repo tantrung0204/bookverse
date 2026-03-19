@@ -413,3 +413,83 @@
     max-height: 100%;
     object-fit: contain; /* Giữ nguyên tỉ lệ ảnh */
 }
+/* Container khi không có thông báo */
+.empty-notification {
+    background: #f4f6f8;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+/* Link bỏ underline */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Item wrapper */
+.notification-item {
+    margin-bottom: 15px;
+    transition: 0.25s ease;
+}
+
+/* Card giống profile UI */
+.notification-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Hover giống stat-box */
+.notification-item:hover .notification-card {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Unread highlight */
+.notification-item.unread .notification-card {
+    background: #eef2f7;
+    border-left: 5px solid #ffc107;
+}
+
+/* Icon */
+.notification-icon {
+    min-width: 45px;
+    height: 45px;
+    background: #dbe4f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* Content */
+.notification-content h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.notification-content p {
+    margin: 3px 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Time */
+.notification-content .time {
+    font-size: 12px;
+    color: #adb5bd;
+}
+
+/* Read trạng thái */
+.notification-item:not(.unread) {
+    opacity: 0.7;
+}

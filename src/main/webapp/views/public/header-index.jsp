@@ -48,7 +48,7 @@
                         <%-- CASE 2: USER LOGGED IN --%>
                         <c:otherwise>
                             <li class="nav-item me-3">
-                                <a class="nav-link icon-link position-relative" href="#" title="Notifications">
+                                <a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/notification/customer" title="Notifications">
                                     <i class="far fa-bell fa-lg"></i>
                                     <span class="position-absolute top-10 start-100 translate-middle p-1 bg-danger border border-light rounded-circle badge-dot"></span>
                                 </a>

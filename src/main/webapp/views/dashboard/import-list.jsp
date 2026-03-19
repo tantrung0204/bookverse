@@ -69,15 +69,15 @@
             <c:when test="${not empty imports}">
                 <table class="custom-table">                 
                     <tr>
-                        <th width="15%">ID</th>
+                        <th width="10%">ID</th>
 
-                        <th width="30%">Supplier</th>
+                        <th width="15%">Supplier</th>
 
                         <th width="15%">Staff</th>
 
                         <th width="15%">Total cost</th>   
 
-                        <th width="15%">Creation date</th>
+                        <th width="20%">Creation date</th>
 
                         <th width="10%">Action</th>
 
@@ -334,7 +334,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
-                    <button type="submit" class="btn-save">Create</button>
+                    <button type="submit" class="btn-save">Submit</button>
                 </div>
             </form>
         </div>

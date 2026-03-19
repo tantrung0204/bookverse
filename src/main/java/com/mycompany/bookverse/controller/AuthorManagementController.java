@@ -210,7 +210,15 @@ public class AuthorManagementController extends HttpServlet {
                     String nat = request.getParameter("nationality");
                     String birthStr = request.getParameter("birth");
                     String bio = request.getParameter("biography");
-                    String msg = authorServices.editAuthor(id, name, birthStr, nat, bio);
+
+                    Author author = new Author();
+                    author.setAuthorName(name);
+                    author.setBiographyText(bio);
+                    author.setBirthYear(Integer.valueOf(birthStr));
+                    author.setNationality(nat);
+                    author.setAuthorId(id);
+
+                    String msg = authorServices.editAuthor(author);
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("editError", msg);
                         request.getSession().setAttribute("editId", id);
@@ -233,9 +241,15 @@ public class AuthorManagementController extends HttpServlet {
                     String birth = request.getParameter("birth");
                     String nat = request.getParameter("nationality");
                     String bio = request.getParameter("biography");
-                    String msg = authorServices.insertAuthor(name, birth, nat, bio);
+
+                    Author author = new Author();
+                    author.setAuthorName(name);
+                    author.setBiographyText(bio);
+                    author.setBirthYear(Integer.valueOf(birth));
+                    author.setNationality(nat);
+                    String msg = authorServices.insertAuthor(author);
                     if (!msg.contains("successfully")) {
-                        request.getSession().setAttribute("createError", msg);                      
+                        request.getSession().setAttribute("createError", msg);
                         request.getSession().setAttribute("createName", name);
                         request.getSession().setAttribute("birth", birth);
                         request.getSession().setAttribute("nationality", nat);

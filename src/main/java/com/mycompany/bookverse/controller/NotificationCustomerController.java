@@ -25,7 +25,7 @@ import java.util.List;
  */
 @WebServlet(name = "NotificationCustomerController", urlPatterns = {"/notification/customer"})
 public class NotificationCustomerController extends HttpServlet {
-    
+
     private NotificationService notificationService = new NotificationService();
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -41,11 +41,11 @@ public class NotificationCustomerController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        
+
         if (action == null) {
             action = "list";
         }
-        
+
         switch (action) {
             case "list":
                 getListCusNotificaton(request, response);
@@ -56,7 +56,7 @@ public class NotificationCustomerController extends HttpServlet {
             default:
                 throw new AssertionError();
         }
-        
+
     }
 
     /**
@@ -70,7 +70,7 @@ public class NotificationCustomerController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     /**
@@ -86,27 +86,27 @@ public class NotificationCustomerController extends HttpServlet {
     private void getListCusNotificaton(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        
+
         if (session == null) {
             response.sendRedirect(request.getContextPath() + "/signin");
             return;
         }
-        
+
         Object user = session.getAttribute("user");
-        
+
         if (user == null || !(user instanceof Customer)) {
             response.sendRedirect(request.getContextPath() + "/signin");
             return;
         }
-        
+
         Customer customer = (Customer) user;
-        
+
         int customerId = customer.getCustomerId();
-        
+
         int page = 1;
-        
+
         String pageParam = request.getParameter("page");
-        
+
         if (pageParam != null) {
             try {
                 page = Integer.parseInt(pageParam);
@@ -114,32 +114,36 @@ public class NotificationCustomerController extends HttpServlet {
                 page = 1;
             }
         }
-        
+
         if (page < 1) {
             page = 1;
         }
-        
+
         List<CustomerNotification> list = notificationService.getCustomerNotifications(customer.getCustomerId(), page, PaginationConfig.MAX_PAGE_NODES);
-        System.out.println("Notification size: " + list.size());
+        request.setAttribute("openCustomerProfile", "yes");
+        request.setAttribute("openNotification", "yes");
         request.setAttribute("notifications", list);
-        request.getRequestDispatcher("/views/customer/notification-customer.jsp").forward(request, response);
-        
+        request.setAttribute("activeMenu", "notification");
+        request.getRequestDispatcher("/views/public/profile.jsp")
+                .forward(request, response);
+
     }
-    
+
     private void getDetailCusNotification(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        
+
         notificationService.markAsRead(id);
-        
+
         CustomerNotification cn = notificationService.getCustomerNotificationById(id);
 
         // lấy Notification thật
         Notification notification = cn.getNotificationId();
 
         request.setAttribute("notification", notification);
-        
+
         request.getRequestDispatcher("/views/customer/cus-notification-detail.jsp").forward(request, response);
+        
     }
-    
+
 }

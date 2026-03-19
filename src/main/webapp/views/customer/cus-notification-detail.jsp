@@ -6,33 +6,56 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/notification-list.css">
 <!DOCTYPE html>
-<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/notification-detail.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css"  type="text/css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
     </head>
-    <body>
+    <!-- HEADER (nếu có) -->
+    <jsp:include page="/views/public/header-index.jsp" />
 
-        <h2>${notification.title}</h2>
+    <div class="detail-container">
 
-        <p class="time">
-            ${notification.createdAt}
-        </p>
-        
-         <img src="${pageContext.request.contextPath}/${notification.imageUrl}"
-                                             alt="Notification Image"
-                                             class="notification-img">
-                            
+        <!-- TITLE -->
+        <h2 class="detail-title">${notification.title}</h2>
 
-        <p>
-            ${notification.contentText}
-        </p>
+        <!-- TIME -->
+        <p class="time">${notification.createdAt}</p>
 
-        <a href="${pageContext.request.contextPath}/notification/customer">
+        <!-- BODY 2 CỘT -->
+        <div class="detail-body">
+
+            <!-- LEFT -->
+            <div class="left-column">
+                <div class="notification-content">
+                    ${notification.contentText}
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <c:if test="${not empty notification.imageUrl}">
+                <div class="right-column">
+                    <img src="${pageContext.request.contextPath}/${notification.imageUrl}"
+                         alt="Notification Image">
+                </div>
+            </c:if>
+
+        </div>
+
+        <!-- BACK -->
+        <a class="back-btn"
+           href="${pageContext.request.contextPath}/notification/customer">
             ← Back to notifications
         </a>
-    
-    </body>
-</html>
+
+    </div>
+
+    <!-- FOOTER -->
+    <jsp:include page="/views/public/footer-index.jsp" />
+

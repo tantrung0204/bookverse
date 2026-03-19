@@ -48,6 +48,8 @@
                                    class="sidebar-link ${activeMenu eq 'orderHistory'? 'active':''}">Orders History</a>
                                 <a href="${pageContext.request.contextPath}/feedback"
                                    class="sidebar-link ${activeMenu eq 'ownFeedback'? 'active':''}">Review</a>
+                                      <a href="${pageContext.request.contextPath}/notification/customer"
+                                   class="sidebar-link ${activeMenu eq 'notification'? 'active':''}">Notifications</a>
                             </c:if>
                             <c:if test="${not empty openStaffProfile}">
                                 <a href="${pageContext.request.contextPath}/profile"
@@ -76,6 +78,9 @@
                     </c:if>
                     <c:if test="${not empty openOwnFeedback}">
                         <jsp:include page="../customer/own-feedback.jsp"/>
+                    </c:if>
+                     <c:if test="${not empty openNotification}">
+                        <jsp:include page="../customer/notification-customer.jsp"/>
                     </c:if>
                 </div>
             </div>

@@ -50,16 +50,6 @@ public class GenreDAO {
         }
     }
 
-    public List<Genre> searchByName(String keyword) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createQuery("SELECT g FROM Genre g WHERE g.genreName LIKE :kw", Genre.class)
-                    .setParameter("kw", "%" + keyword + "%")
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
 
     public boolean createGenre(Genre genre) {
         EntityManager em = JPAUtil.getEntityManager();

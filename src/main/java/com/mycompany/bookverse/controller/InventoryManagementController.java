@@ -8,6 +8,9 @@ import com.mycompany.bookverse.model.ImportStock;
 import com.mycompany.bookverse.model.ImportStockDetail;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
+import com.mycompany.bookverse.model.Product;
+import com.mycompany.bookverse.model.Staff;
+import com.mycompany.bookverse.model.Supplier;
 import com.mycompany.bookverse.service.InventoryService;
 import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
@@ -17,6 +20,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +32,7 @@ import org.json.JSONObject;
  *
  * @author LECOO
  */
-@WebServlet(name = "InventoryManagementController", urlPatterns = {"/inventory"})
+@WebServlet(name = "InventoryManagementController", urlPatterns = {"/dashboard/inventory"})
 public class InventoryManagementController extends HttpServlet {
 
     private InventoryService inventoryServices = new InventoryService();
@@ -69,7 +76,7 @@ public class InventoryManagementController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String view = request.getParameter("view");
-        if (view == null) {
+        if (view == null || view.isEmpty()) {
             view = "import-list";
         }
         int page = 1;
@@ -85,33 +92,75 @@ public class InventoryManagementController extends HttpServlet {
             }
         }
         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+        int maxNode = PaginationConfig.MAX_PAGE_NODES;
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
+        //chuyển đổi theo format yyyy-MM-dd vì type date chỉ có format này
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date from = null;
+        Date to = null;
+        try {
+            if (fromDate != null && !fromDate.isEmpty()) {
+                from = sdf.parse(fromDate);
+            }
+            if (toDate != null && !toDate.isEmpty()) {
+                to = sdf.parse(toDate);
+                //chuyển to thành cuối ngày để có thể filter trong cùng một ngày
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(to);
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+                cal.set(Calendar.MILLISECOND, 999);
+
+                to = cal.getTime();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         switch (view) {
             case "import-list":
-                int totalPages = inventoryServices.getTotalImportPages(pageSize);
-                List<ImportStock> imports = inventoryServices.getImportsByPage(page, pageSize);
+                String success = (String) request.getSession().getAttribute("success");
+                if (success != null) {
+                    request.setAttribute("success", success);
+                    request.getSession().removeAttribute("success");
+                }
+                int totalPages = inventoryServices.getTotalImportPages(pageSize, from, to);
+                List<ImportStock> imports = inventoryServices.getImportsByPage(page, pageSize, from, to);
                 if (imports == null || imports.isEmpty()) {
                     request.setAttribute("message", "No imports found");
                 } else {
+
+                    request.setAttribute("currentTab", view);
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("imports", imports);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "import-list.jsp");
-                    request.setAttribute("activeMenu", "inventory");
                 }
+                request.setAttribute("fromDate", fromDate);
+                request.setAttribute("toDate", toDate);
+                request.setAttribute("contentPage", "import-list.jsp");
+                request.setAttribute("activeMenu", "inventory");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "export-list":
-                totalPages = inventoryServices.getTotalExportPages(pageSize);
-                List<Order> exports = inventoryServices.getExportsByPage(page, pageSize);
+                totalPages = inventoryServices.getTotalExportPages(pageSize, from, to);
+                List<Order> exports = inventoryServices.getExportsByPage(page, pageSize, from, to);
                 if (exports == null || exports.isEmpty()) {
                     request.setAttribute("message", "No exports found");
                 } else {
+                    request.setAttribute("currentTab", view);
+                    request.setAttribute("maxNote", maxNode);
                     request.setAttribute("exports", exports);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("contentPage", "export-list.jsp");
-                    request.setAttribute("activeMenu", "inventory");
+
                 }
+                request.setAttribute("fromDate", fromDate);
+                request.setAttribute("toDate", toDate);
+                request.setAttribute("contentPage", "export-list.jsp");
+                request.setAttribute("activeMenu", "inventory");
                 request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                 break;
             case "importDetail":
@@ -143,7 +192,7 @@ public class InventoryManagementController extends HttpServlet {
                 }
                 break;
             case "exportDetail":
-                 idStr = request.getParameter("exportId");
+                idStr = request.getParameter("exportId");
                 try {
                     int id = Integer.parseInt(idStr);
                     List<OrderItem> exportDetails = inventoryServices.getExportDetail(id);
@@ -170,6 +219,31 @@ public class InventoryManagementController extends HttpServlet {
                     response.sendRedirect("inventory");
                 }
                 break;
+            case "addProductList":
+                List<Product> productList = inventoryServices.getAllProduct();
+                List<Supplier> SupplierList = inventoryServices.getAllSupplier();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                JSONArray supplierArray = new JSONArray();
+                JSONArray productArray = new JSONArray();
+                for (Supplier s : SupplierList) {
+                    JSONObject sup = new JSONObject();
+                    sup.put("supplierId", s.getSupplierId());
+                    sup.put("supplierName", s.getSupplierName());
+                    supplierArray.put(sup);
+                }
+                for (Product p : productList) {
+                    JSONObject pro = new JSONObject();
+                    pro.put("productId", p.getProductId());
+                    pro.put("productName", p.getName());
+                    productArray.put(pro);
+                }
+                JSONObject result = new JSONObject();
+                result.put("suppliers", supplierArray);
+                result.put("products", productArray);
+
+                response.getWriter().write(result.toString());
+                break;
             default:
                 response.sendRedirect("inventory");
                 break;
@@ -187,7 +261,89 @@ public class InventoryManagementController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+
+            Staff staff = (Staff) request.getSession().getAttribute("user");
+            if (staff == null) {//chưa đăng nhập dc.
+                staff = new Staff(1);
+            }
+            
+            int supplierId;
+            String supplierIdStr = request.getParameter("supplierId");
+            try {
+                supplierId = Integer.parseInt(supplierIdStr);// lấy supplier id
+            } catch (Exception e) {
+                request.getSession().setAttribute("message", "Id supplier is error");
+                response.sendRedirect("inventory");
+                return;
+            }
+            Supplier supplier = inventoryServices.getSupplier(supplierId);
+            if(supplier == null){
+                request.getSession().setAttribute("message", "supplier is not found");
+                response.sendRedirect("inventory");
+                return;
+            }
+            
+            String[] productIdsString = request.getParameterValues("productIds");// lấy list product id muốn add
+            if (productIdsString == null || productIdsString.length == 0) {
+                request.getSession().setAttribute("message", "No product selected");
+                response.sendRedirect("inventory");
+                return;
+            }
+            
+            BigDecimal totalCost = BigDecimal.ZERO;// tổng tiền
+            for (String id : productIdsString) {//Tính total cost              
+                int quantity = Integer.parseInt(request.getParameter("quantity_" + id));
+                BigDecimal unitPrice = new BigDecimal(request.getParameter("unit_price_" + id));
+                totalCost = totalCost.add(unitPrice.multiply(BigDecimal.valueOf(quantity)));
+            }
+            //tạo import_stock
+            ImportStock importStock = new ImportStock();
+            importStock.setStaffId(staff);
+            importStock.setSupplierId(supplier);
+            importStock.setTotalCost(totalCost);
+            Date date= new Date();
+            importStock.setCreatedAt(date);
+            int importId = inventoryServices.insertImportStock(importStock);
+            //tạo import_stock_detail
+            if (importId == -1) {
+                request.getSession().setAttribute("message", "Import Stock error");
+                response.sendRedirect("inventory");
+            } else {
+                importStock.setImportId(importId);
+                boolean allSuccess = true;
+                for (String id : productIdsString) {
+
+                    int productId = Integer.parseInt(id);
+
+                    Product product = inventoryServices.getProduct(productId);
+                    Integer quantity = Integer.valueOf(request.getParameter("quantity_" + id));
+                    BigDecimal unitPrice = new BigDecimal(request.getParameter("unit_price_" + id));
+                    String note = request.getParameter("note_" + id);
+
+                    ImportStockDetail importStockDetail = new ImportStockDetail();
+
+                    importStockDetail.setImportId(importStock);
+                    importStockDetail.setProductId(product);
+                    importStockDetail.setNote(note);
+                    importStockDetail.setImportedQuantity(quantity);
+                    importStockDetail.setUnitPrice(unitPrice);
+
+                    if (!inventoryServices.insertImportStockDetail(importStockDetail)) {
+                        allSuccess = false;
+                    }
+                }
+                if (allSuccess) {
+                    request.getSession().setAttribute("success", "Add successfully");
+                } else {
+                    request.getSession().setAttribute("success", "Some items failed");
+                }
+                response.sendRedirect("inventory");
+            }
+        } catch (IOException | NumberFormatException e) {
+            response.sendRedirect("inventory");
+        }
+
     }
 
     /**

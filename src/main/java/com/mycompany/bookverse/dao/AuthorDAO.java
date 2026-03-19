@@ -40,17 +40,6 @@ public class AuthorDAO {
         }
     }
 
-    public List<Author> searchByName(String keyword) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createQuery("SELECT a FROM Author a WHERE a.authorName LIKE :kw", Author.class)
-                    .setParameter("kw", "%" + keyword + "%")
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public boolean createAuthor(Author author) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -105,7 +94,7 @@ public class AuthorDAO {
         return false;
     }
 
-    public Long countBooksByAuthorId(int authorId) {
+    public long countBooksByAuthorId(int authorId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             String jpql = "SELECT COUNT(b) FROM Author a JOIN a.bookCollection b WHERE a.authorId = :id";

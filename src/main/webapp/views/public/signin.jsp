@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="button-group">
-                    <button type="submit">Sign In</button>
+                    <button id="signin-btn" type="submit">Sign In</button>
                     <a href="signup.jsp" class="signup-btn">Sign Up</a>
                 </div>
             </form>

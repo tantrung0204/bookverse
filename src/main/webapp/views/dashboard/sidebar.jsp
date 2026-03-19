@@ -54,18 +54,18 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
+            <a href="${pageContext.request.contextPath}/dashboard/feedback" class="sidebar-link ${activeMenu == 'feedback'? 'active':''}">
                 <i class="bi bi-star"></i> Feedback
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/voucher"
+            <a href="${pageContext.request.contextPath}/dashboard/voucher"
                class="sidebar-link ${activeMenu == 'voucher'? 'active':''}">
                 <i class="bi bi-percent"></i> Vouchers
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/notification"
+            <a href="${pageContext.request.contextPath}/dashboard/notification"
                class="sidebar-link ${activeMenu == 'notification'? 'active':''}">
                 <i class="bi bi-bell"></i> Notifications
             </a>
@@ -76,21 +76,21 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/genre" 
+            <a href="${pageContext.request.contextPath}/dashboard/genre" 
                class="sidebar-link ${activeMenu == 'genre'? 'active':''}"">
-                <i class="bi bi-tags"></i> Genre
+                <i class="bi bi-tags"></i> Genres
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/author"
+            <a href="${pageContext.request.contextPath}/dashboard/author"
                class="sidebar-link ${activeMenu == 'author'? 'active':''}">
-                <i class="bi bi-person"></i> Author
+                <i class="bi bi-person"></i> Authors
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="${pageContext.request.contextPath}/inventory"
+            <a href="${pageContext.request.contextPath}/dashboard/inventory"
                class="sidebar-link ${activeMenu == 'inventory'? 'active':''}">
-                <i class="bi bi-box-seam"></i> Inventory
+                <i class="bi bi-box-seam"></i> Inventories
             </a>
         </li>
         <li class="sidebar-item">

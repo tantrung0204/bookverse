@@ -28,7 +28,7 @@
             </button>
 
             <form class="search-form"
-                  action="${pageContext.request.contextPath}/notification"
+                  action="${pageContext.request.contextPath}/dashboard/notification"
                   method="get">
 
                 <input type="hidden" name="action" value="search"/>
@@ -100,7 +100,7 @@
                                         </button>
 
                                         <!-- DELETE -->
-                                        <form action="${pageContext.request.contextPath}/notification"
+                                        <form action="${pageContext.request.contextPath}/dashboard/notification"
                                               method="post"
                                               style="display:inline;">
                                             <input type="hidden" name="action" value="delete"/>
@@ -131,28 +131,88 @@
 
         </c:choose>
 
+        <c:set var="queryString" value="&keyword=${param.keyword}" />
+        <c:set var="startPage" value="${currentPage - 1}" />
+        <c:set var="endPage" value="${currentPage + 1}" />
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+            <c:set var="endPage" value="4"/>
+        </c:if>
+
+        <c:if test="${endPage > totalPages - 1}">
+            <c:set var="endPage" value="${totalPages - 1}"/>
+            <c:set var="startPage" value="${totalPages - 3}"/>
+        </c:if>
+
+        <c:if test="${startPage < 2}">
+            <c:set var="startPage" value="2"/>
+        </c:if>
+
+
         <c:if test="${totalPages > 1}">
             <div class="pagination">
 
+                <!-- Prev -->
                 <c:if test="${currentPage > 1}">
-                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage - 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=${param.action}&page=${currentPage - 1}${queryString}"
                        class="page-btn">«</a>
                 </c:if>
 
-                <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${i}"
-                       class="page-btn ${i == currentPage ? 'active' : ''}">
-                        ${i}
-                    </a>
-                </c:forEach>
+                <!-- Nếu <=5 trang -->
+                <c:if test="${totalPages <= 5}">
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <a href="${pageContext.request.contextPath}/dashboard/notification?action=${param.action}&page=${i}${queryString}"
+                           class="page-btn ${i == currentPage ? 'active' : ''}">
+                            ${i}
+                        </a>
+                    </c:forEach>
+                </c:if>
 
+                <!-- Nếu >5 trang -->
+                <c:if test="${totalPages > 5}">
+
+                    <!-- Page 1 -->
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=${param.action}&page=1${queryString}"
+                       class="page-btn ${currentPage == 1 ? 'active' : ''}">
+                        1
+                    </a>
+
+                    <!-- ... -->
+                    <c:if test="${startPage > 2}">
+                        <span class="page-btn disabled">...</span>
+                    </c:if>
+
+                    <!-- Middle pages -->
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <a href="${pageContext.request.contextPath}/dashboard/notification?action=${param.action}&page=${i}${queryString}"
+                           class="page-btn ${i == currentPage ? 'active' : ''}">
+                            ${i}
+                        </a>
+                    </c:forEach>
+
+                    <!-- ... -->
+                    <c:if test="${endPage < totalPages - 1}">
+                        <span class="page-btn disabled">...</span>
+                    </c:if>
+
+                    <!-- Last page -->
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=${param.action}&page=${totalPages}${queryString}"
+                       class="page-btn ${currentPage == totalPages ? 'active' : ''}">
+                        ${totalPages}
+                    </a>
+
+                </c:if>
+
+                <!-- Next -->
                 <c:if test="${currentPage < totalPages}">
-                    <a href="${pageContext.request.contextPath}/notification?action=list&page=${currentPage + 1}"
+                    <a href="${pageContext.request.contextPath}/dashboard/notification?action=${param.action}&page=${currentPage + 1}${queryString}"
                        class="page-btn">»</a>
                 </c:if>
 
             </div>
         </c:if>
+
 
         <!-- CREATE NOTIFICATION POPUP -->
         <div id="createModal" class="modal-overlay">
@@ -168,7 +228,7 @@
                     </div>
                 </c:if>
 
-                <form action="${pageContext.request.contextPath}/notification"
+                <form action="${pageContext.request.contextPath}/dashboard/notification"
                       method="post"
                       enctype="multipart/form-data">
 

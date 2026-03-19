@@ -7,35 +7,52 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/product-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/inventory.css">
 
 <div class="container-fluid">
-
     <div class="page-header">
         <p class="title">Manage Inventory</p>
         <p class="subtitle">Create and manage inventory for your library</p>
     </div>
-    <a href="inventory">
-        <button type="button" class="btn-add">Import</button>
-    </a>
-    <a href="inventory?view=export-list">
-        <button type="button" class="btn-add">Export</button>
-    </a>
+
+    <div class="tab-container">
+        <a href="${pageContext.request.contextPath}/dashboard/inventory" 
+           class="tab-item ${currentTab == 'import-list' ? 'active' : ''}">
+            <i class="bi bi-box-arrow-in-down"></i> Imports
+        </a>
+        <a href="${pageContext.request.contextPath}/dashboard/inventory?view=export-list" 
+           class="tab-item ${currentTab == 'export-list' ? 'active' : ''}">
+            <i class="bi bi-box-arrow-up"></i> Exports
+        </a>
+    </div>
     <div class="content-card">
 
-        <!--        <div class="toolbar">
-        <%-- Add import --%>
-        <button type="button" class="btn-add" onclick="openCreatePopup()">
-            <i class="bi bi-plus-lg me-1"></i> Add New Import
-        </button>
-        <%-- Filter Import --%>
-        <form action="author" method="get" class="search-form">
-            <input type="hidden" name="view" value="search">
-            <div class="search-box">
-                <i class="bi bi-search"></i>          
-                <input type="text" name="keyword" placeholder="Search categories..." value="${keyword}">
-            </div>
-        </form>
-    </div>-->
+        <div class="toolbar">
+            <%-- Add import --%>
+            <button type="button" class="btn-add" onclick="openCreatePopup()">
+                <i class="bi bi-plus-lg me-1"></i> Add New Import
+            </button>
+            <%-- Filter by date range --%>
+            <form action="inventory" method="get" class="date-filter-form">
+                <input type="hidden" name="view" value="import-list">
+
+                <div class="date-filter">
+                    <span>From</span>
+                    <input type="date" name="fromDate" value="${fromDate}">
+                </div>
+
+                <div class="date-filter">
+                    <span>To</span>
+                    <input type="date" name="toDate" value="${toDate}">
+                </div>
+
+                <button type="submit" class="btn-filter" style="margin-top:18px; background-color:#a68a6d; border-radius: 5px; border">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </form>
+        </div>
         <c:if test="${not empty message}">
             <div class="alert alert-error">
                 ${message}
@@ -52,15 +69,18 @@
             <c:when test="${not empty imports}">
                 <table class="custom-table">                 
                     <tr>
-                        <th width="10%">ID</th>
+                        <th width="15%">ID</th>
 
-                        <th width="20%">Supplier</th>
+                        <th width="30%">Supplier</th>
 
-                        <th width="35%">Staff</th>
+                        <th width="15%">Staff</th>
 
                         <th width="15%">Total cost</th>   
 
                         <th width="15%">Creation date</th>
+
+                        <th width="10%">Action</th>
+
                     </tr>
                     <c:forEach var="i" items="${imports}"> 
                         <tr>
@@ -108,62 +128,114 @@
         <nav class="d-flex justify-content-center">
             <ul class="pagination">
                 <%-- Previous button --%>
-                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="inventory?page=${currentPage - 1}">&laquo;</a>
-                </li>
+                <c:if test="${currentPage > 1}">
+                    <a class="page-btn" href="inventory?page=${currentPage - 1}&fromDate=${fromDate}&toDate=${toDate}">&laquo;</a>
+                </c:if>
                 <%-- If the total <= 5, display all pages. --%>
-                <c:if test="${totalPages <= 5}">
+                <c:if test="${totalPages <= maxNote}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="inventory?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?page=${i}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
                     </c:forEach>
                 </c:if>
                 <%-- If the total > 5 --%>
-                <c:if test="${totalPages > 5}">
-                    <%-- Page 1 always appears --%>
-                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                        <a class="page-link" href="inventory?page=1">1</a>
-                    </li>
+                <c:if test="${totalPages > maxNote}">
+                    <%-- Page 1 always appears --%>                   
+                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="inventory?page=1&fromDate=${fromDate}&toDate=${toDate}">1</a>
                     <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="inventory?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="inventory?page=${i}&fromDate=${fromDate}&toDate=${toDate}">${i}</a>
                     </c:forEach>
                     <%-- The final ellipsis --%>
                     <c:if test="${endPage < totalPages - 1}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- The last page always appears --%>
-                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                        <a class="page-link" href="inventory?page=${totalPages}">
-                            ${totalPages}
-                        </a>
-                    </li>
+                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="inventory?page=${totalPages}&fromDate=${fromDate}&toDate=${toDate}">
+                        ${totalPages}
+                    </a>
                 </c:if>
                 <%-- Next button --%>
-                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="inventory?page=${currentPage + 1}">&raquo;</a>
-                </li>
+                <c:if test="${currentPage < totalPages}">
+                    <a class="page-btn" href="inventory?page=${currentPage + 1}&fromDate=${fromDate}&toDate=${toDate}">&raquo;</a>
+                </c:if>
             </ul>
         </nav>
     </div>
-
+    <form action="inventory" method="post" ></form>
     <script>
         function openCreatePopup() {
-            document.getElementById("createPopup").style.display = "flex";
-            const err = document.getElementById("createErrorMsg");
-            if (err)
-                err.style.display = 'none';
+            fetch("inventory?view=addProductList")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("DATA:", data);
+                        //xem data ở console chơi.
+                        console.log("DATA:", data);
+                        var html = `
+                       <table class="detail-table">
+                          <tr>
+                              <th style="width: 10%">Product Name</th>
+                              <th style="width: 20%">Quantity</th>
+                              <th style="width: 20%">Unit Price</th> 
+                              <th style="width: 20%">Note</th>
+                          </tr>   
+    `;
+                        if (data.length === 0) {
+                            html += `<tr><td colspan="5">No import details found</td></tr>`;
+                        } else {
+                            data.products.forEach(item => {
+                                let proId = item.productId;
+                                console.log(proId);
+                                let proName = item.productName;
+
+                                html += `           
+                                <tr>
+                                    <td><input type="checkbox" 
+                                               name="productIds" 
+                                               value="` + proId + `">` + proName + `</td>                              
+                                    <td><input type="number" 
+                                               name="quantity_` + proId + `"
+                                               min="1"></td>
+                                    <td><input type="number" 
+                                        name="unit_price_` + proId + `"
+                                        min="1"></td>
+                                    <td><input type="text" 
+                                        name="note_` + proId + `" 
+                                        placeholder="note"></td>
+                                </tr> 
+                    `;
+                            });
+                            html += `
+                                <tr>
+                                   
+                                    <td>
+                                        <select name="supplierId" required>
+                                        <option value="">-- Select Supplier --</option>                                                                    
+                            `;
+                            data.suppliers.forEach(item => {
+                                let supId = item.supplierId;
+                                let supName = item.supplierName;
+
+                                html += ` 
+                            <option value="` + item.supplierId + `">
+                                ` + item.supplierName + `
+                            </option>               
+                            `;
+                            });
+                        }
+                        html += `</td> </select></tr></table>`;
+                        document.getElementById("createContent").innerHTML = html;
+                        document.getElementById("createPopup").style.display = "flex";
+                    })
+                    .catch(error => {
+                        document.getElementById("createContent").innerHTML =
+                                "<p style='color:red;text-align:center;'>Failed to load data</p>";
+                        document.getElementById("createPopup").style.display = "flex";
+                        console.error(error);
+                    });
         }
         function closeCreatePopup() {
             document.getElementById("createPopup").style.display = "none";
@@ -243,9 +315,9 @@
     </c:if>
     <!-- ================= CREATE POPUP ================= -->
     <div id="createPopup" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 900px">
             <div class="modal-header">
-                <h3>Add new author</h3>
+                <h3>Add New Import Stock</h3>
             </div>
 
             <c:if test="${not empty createError}">
@@ -254,29 +326,12 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/author" method="post">
+            <form action="${pageContext.request.contextPath}/dashboard/inventory" method="post">
                 <input type="hidden" name="action" value="create">
 
-                <div class="form-group">
-                    <label>Author Name</label>
-                    <input type="text" name="name" class="form-control" value="${createName}">
-                </div>
+                <div id="createContent" style="max-height: 400px;overflow-y: auto;">
 
-                <div class="form-group">
-                    <label>BirthDay</label>
-                    <input type="text" name="birth" class="form-control" value="${birth}">
                 </div>
-
-                <div class="form-group">
-                    <label>Nationality</label>
-                    <input type="text" name="nationality" class="form-control" value="${nationality}">
-                </div>
-
-                <div class="form-group">
-                    <label>Biography</label>
-                    <input type="text" name="biography" class="form-control" value="${biography}">
-                </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeCreatePopup()">Cancel</button>
                     <button type="submit" class="btn-save">Create</button>
@@ -291,11 +346,10 @@
             <div class="modal-header">
                 <h3>Import Detail</h3>
             </div>
-            <div id="popupContent" style="max-height: 400px;overflow-y: auto;"></div>
+            <div id="popupContent" style="max-height: 400px; overflow-y: auto;"></div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeDetailPopup()">Close</button>
             </div>
-
         </div>
 
     </div>

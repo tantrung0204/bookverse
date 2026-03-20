@@ -104,11 +104,11 @@
                         <div>
                             <label for="quantity" class="fw-bold mb-1 d-block">Quantity:</label>
                             <div class="qty-input-group">
-                                <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepDown()">-</button>
+                                <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepDown(); document.getElementById('quantity').dispatchEvent(new Event('input'));">-</button>
                                 <input type="number" id="quantity" name="quantity" class="qty-input" 
                                        value="1" min="1" max="${product.stockQuantity}" required 
                                        ${product.stockQuantity <= 0 ? 'disabled' : ''} />
-                                <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepUp()">+</button>
+                                <button type="button" class="qty-btn" onclick="document.getElementById('quantity').stepUp(); document.getElementById('quantity').dispatchEvent(new Event('input'));">+</button>
                             </div>
                         </div>
 

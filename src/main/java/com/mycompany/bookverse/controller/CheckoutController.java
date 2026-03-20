@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpSession;
 /**
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CheckoutController", urlPatterns = {"/checkout"})
+@WebServlet(name = "CheckoutController", urlPatterns = { "/checkout" })
 public class CheckoutController extends HttpServlet {
 
     private final OrderService orderService = new OrderService();
@@ -209,7 +209,7 @@ public class CheckoutController extends HttpServlet {
     }
 
     // ================================================================
-    // BUY NOW POST (from product detail form)
+    // BUY NOW POST
     // ================================================================
 
     private void handleBuyNowPost(HttpServletRequest request, HttpServletResponse response)
@@ -231,14 +231,10 @@ public class CheckoutController extends HttpServlet {
                 + "/checkout?action=buyNow&productId=" + productId + "&quantity=" + quantity);
     }
 
-    // ================================================================
-    // VOUCHER AJAX ENDPOINTS
-    // ================================================================
-
     /**
      * AJAX: Apply voucher code.
      * Returns JSON: {status, voucherId, voucherName, voucherCode, discountType,
-     *                 discountValue, discount, message}
+     * discountValue, discount, message}
      */
     private void applyVoucher(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -261,7 +257,8 @@ public class CheckoutController extends HttpServlet {
             out.print("\"voucherCode\": \"" + escapeJson(voucher.getVoucherCode()) + "\",");
             out.print("\"discountType\": " + voucher.getDiscountType() + ",");
             out.print("\"discountValue\": " + voucher.getDiscountValue() + ",");
-            out.print("\"minOrderValue\": " + (voucher.getMinOrderValue() != null ? voucher.getMinOrderValue() : 0) + ",");
+            out.print("\"minOrderValue\": " + (voucher.getMinOrderValue() != null ? voucher.getMinOrderValue() : 0)
+                    + ",");
             out.print("\"discount\": " + discount + ",");
             out.print("\"message\": \"Voucher applied successfully! You save " + discount.toPlainString() + " đ\"");
             out.print("}");
@@ -291,17 +288,22 @@ public class CheckoutController extends HttpServlet {
 
             for (int i = 0; i < vouchers.size(); i++) {
                 Voucher v = vouchers.get(i);
-                if (i > 0) sb.append(",");
+                if (i > 0)
+                    sb.append(",");
                 sb.append("{");
                 sb.append("\"voucherId\": ").append(v.getVoucherId()).append(",");
                 sb.append("\"voucherName\": \"").append(escapeJson(v.getVoucherName())).append("\",");
                 sb.append("\"voucherCode\": \"").append(escapeJson(v.getVoucherCode())).append("\",");
                 sb.append("\"discountType\": ").append(v.getDiscountType()).append(",");
                 sb.append("\"discountValue\": ").append(v.getDiscountValue()).append(",");
-                sb.append("\"minOrderValue\": ").append(v.getMinOrderValue() != null ? v.getMinOrderValue() : 0).append(",");
+                sb.append("\"minOrderValue\": ").append(v.getMinOrderValue() != null ? v.getMinOrderValue() : 0)
+                        .append(",");
                 sb.append("\"availableQuantity\": ").append(v.getAvailableQuantity()).append(",");
-                sb.append("\"expiryDate\": \"").append(v.getExpiryDate() != null ?
-                        new java.text.SimpleDateFormat("dd/MM/yyyy").format(v.getExpiryDate()) : "").append("\"");
+                sb.append("\"expiryDate\": \"")
+                        .append(v.getExpiryDate() != null
+                                ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(v.getExpiryDate())
+                                : "")
+                        .append("\"");
                 sb.append("}");
             }
 
@@ -375,8 +377,7 @@ public class CheckoutController extends HttpServlet {
                     customer, productIds, quantities,
                     voucherCode, paymentMethod,
                     receiverName.trim(), receiverPhone.trim(), shippingAddress.trim(),
-                    fromCart
-            );
+                    fromCart);
 
             // Handle payment method
             if ("ONLINE".equals(paymentMethod)) {
@@ -391,8 +392,7 @@ public class CheckoutController extends HttpServlet {
                         order.getTotalAmount(),
                         "BookVerse Order #" + order.getOrderId(),
                         ipAddress,
-                        returnUrl
-                );
+                        returnUrl);
 
                 response.sendRedirect(paymentUrl);
             } else {
@@ -421,20 +421,6 @@ public class CheckoutController extends HttpServlet {
         }
     }
 
-    // ================================================================
-    // ORDER SUCCESS PAGE (GET)
-    // ================================================================
-    // This is handled in doGet via a special action
-
-    // Override doGet to add orderSuccess action
-    // Already handled in doGet switch, we need to add it
-    // Let's handle it directly: if action=orderSuccess, forward to success page
-    // We re-handle doGet to include this
-
-    // ================================================================
-    // HELPER METHODS
-    // ================================================================
-
     private Customer getAuthenticatedCustomer(HttpServletRequest request) {
         HttpSession session = request.getSession();
         String role = (String) session.getAttribute("role");
@@ -447,7 +433,8 @@ public class CheckoutController extends HttpServlet {
     }
 
     private String escapeJson(String value) {
-        if (value == null) return "";
+        if (value == null)
+            return "";
         return value.replace("\\", "\\\\")
                 .replace("\"", "\\\"")
                 .replace("\n", "\\n")
@@ -462,17 +449,29 @@ public class CheckoutController extends HttpServlet {
         private Product product;
         private int quantity;
 
-        public CheckoutItem() {}
+        public CheckoutItem() {
+        }
 
         public CheckoutItem(Product product, int quantity) {
             this.product = product;
             this.quantity = quantity;
         }
 
-        public Product getProduct() { return product; }
-        public void setProduct(Product product) { this.product = product; }
-        public int getQuantity() { return quantity; }
-        public void setQuantity(int quantity) { this.quantity = quantity; }
+        public Product getProduct() {
+            return product;
+        }
+
+        public void setProduct(Product product) {
+            this.product = product;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
 
         public BigDecimal getLineTotal() {
             if (product != null && product.getPrice() != null) {

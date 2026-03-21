@@ -23,12 +23,13 @@ import com.mycompany.bookverse.utils.PaginationConfig;
  *
  * @author TrungNT - CE200064
  */
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2,
-        maxFileSize = 1024 * 1024 * 10,
-        maxRequestSize = 1024 * 1024 * 50
-)
 @WebServlet(name = "CustomerController", urlPatterns = {"/customer"})
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
+
 public class CustomerController extends HttpServlet {
 
     private CustomerService customerService = new CustomerService();
@@ -59,6 +60,28 @@ public class CustomerController extends HttpServlet {
         }
     }
 
+    private boolean isValidFullName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+        return name.matches("^[\\p{L}][\\p{L}\\s]*$");
+    }
+
+    private boolean isValidUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            return false;
+        }
+        return username.matches("^[a-zA-Z0-9][a-zA-Z0-9._-]{4,}$");
+    }
+
+    private boolean isValidEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        email = email.trim();
+        return email.matches("^[a-zA-Z0-9][a-zA-Z0-9._+-]*@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -73,19 +96,37 @@ public class CustomerController extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        if (action == null) {
+        if (action == null || action.trim().isEmpty()) {
+            /////
             action = "list";
         }
 
         switch (action) {
             case "search":
                 String keyword = request.getParameter("keyword");
+
+                if (keyword == null || keyword.trim().isEmpty()) {
+                    response.sendRedirect("customer?action=list");
+                    return;
+                }
+                keyword = keyword.trim();
+
+                if (keyword.length() > 50) {
+                    response.sendRedirect("customer?action=list&msg=error_keyword_long");
+                    return;
+                }
+
+                if (!keyword.matches("^[\\p{L}0-9 @.\\-_]+$")) {
+                    response.sendRedirect("customer?action=list&msg=error_keyword_invalid");
+                    return;
+                }
+
                 List<Customer> searchResults = customerService.searchCustomers(keyword);
                 request.setAttribute("customers", searchResults);
                 request.setAttribute("searchKeyword", keyword);
                 break;
 
-            case "view":
+            case "view": {
                 try {
                     int id = Integer.parseInt(request.getParameter("customerId"));
                     Customer c = customerService.getCustomerById(id);
@@ -100,17 +141,50 @@ public class CustomerController extends HttpServlet {
                 } catch (NumberFormatException e) {
                     System.out.println("Error View Customer: " + e.getMessage());
                 }
-                List<Customer> listForView = customerService.getAllCustomers(1, PaginationConfig.ADMIN_ITEMS_PER_PAGE);
-                request.setAttribute("customers", listForView);
+                int page = 1;
+                ///////
+                String pageStr = request.getParameter("page");
+
+                if (pageStr != null && !pageStr.trim().isEmpty()) {
+                    try {
+                        page = Integer.parseInt(pageStr);
+                        if (page < 1) {
+                            page = 1;
+                        }
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
+                }
+
+                int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+
+                List<Customer> list = customerService.getAllCustomers(page, pageSize);
+                long totalCustomers = customerService.getTotalCustomers();
+                int totalPages = (int) Math.ceil((double) totalCustomers / pageSize);
+
+                request.setAttribute("customers", list);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                request.setAttribute("pageSize", pageSize);
                 break;
+            }
 
             case "list":
-            default:
-                // 1. Lấy trang hiện tại từ URL (mặc định là 1)
+            default: {
+
                 int page = 1;
-                String pageParam = request.getParameter("page");
-                if (pageParam != null && !pageParam.isEmpty()) {
-                    page = Integer.parseInt(pageParam);
+                ///////
+                String pageStr = request.getParameter("page");
+
+                if (pageStr != null && !pageStr.trim().isEmpty()) {
+                    try {
+                        page = Integer.parseInt(pageStr);
+                        if (page < 1) {
+                            page = 1;
+                        }
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
                 }
 
                 // 2. Lấy số lượng trên 1 trang từ PaginationConfig
@@ -127,6 +201,7 @@ public class CustomerController extends HttpServlet {
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("pageSize", pageSize);
                 break;
+            }
         }
 
         request.setAttribute("contentPage", "customer-list.jsp");
@@ -156,72 +231,115 @@ public class CustomerController extends HttpServlet {
         }
 
         switch (action) {
-            case "create":
-                String fullName = request.getParameter("fullName");
-                String email = request.getParameter("email");
-                String password = request.getParameter("password");
-                String username = request.getParameter("username");
-                String phone = request.getParameter("phone"); 
-                String hashedPassword = PasswordUtil.hashPassword(password);
-
-                Customer newCustomer = new Customer();
-                newCustomer.setFullName(fullName);
-                newCustomer.setEmail(email);
-                newCustomer.setPasswordHash(hashedPassword);
-                newCustomer.setUsername(username);
-                newCustomer.setPhoneNumber(phone); 
-                newCustomer.setStatus(1);
-                newCustomer.setCreatedAt(new java.util.Date());
-
-                Part avatarPart = request.getPart("avatar");
-                String fileName = "";
-                if (avatarPart != null && avatarPart.getSize() > 0) {
-                    fileName = java.nio.file.Paths.get(avatarPart.getSubmittedFileName()).getFileName().toString();
-                    newCustomer.setProfileImageUrl(fileName);
-                } else {
-                    newCustomer.setProfileImageUrl("assets/images/default-avt.jpg");
-                }
-                int result = customerService.addCustomer(newCustomer);
-
-                if (result == 1) {
-                    response.sendRedirect("customer?msg=success_add");
-                } else if (result == 2) {
-                    response.sendRedirect("customer?msg=missing_info");
-                } else {
-                    response.sendRedirect("customer?msg=error_db");
-                }
-                break;
-
-            case "edit":
+            case "create": {
                 try {
-                    int id = Integer.parseInt(request.getParameter("customerId"));
-                    Customer editCustomer = customerService.getCustomerById(id);
+                    String fullName = request.getParameter("fullName");
+                    String email = request.getParameter("email");
+                    String password = request.getParameter("password");
+                    String username = request.getParameter("username");
+                    String phone = request.getParameter("phone");
 
-                    if (editCustomer != null) {
-                        editCustomer.setFullName(request.getParameter("fullName"));
-                        editCustomer.setEmail(request.getParameter("email"));
-                        editCustomer.setPhoneNumber(request.getParameter("phone")); 
+                    String msg = customerService.insertCustomer(fullName, email, phone, username, password);
 
-                        String newPassword = request.getParameter("password");
-                        if (newPassword != null && !newPassword.trim().isEmpty()) {
-                            String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
-                            editCustomer.setPasswordHash(hashedNewPassword);
-                        }
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("createError", msg);
+                        request.setAttribute("openCreatePopup", true);
+                        request.setAttribute("createUsername", username);
+                        request.setAttribute("createFullName", fullName);
+                        request.setAttribute("createEmail", email);
 
-                        int resultEdit = customerService.editCustomer(editCustomer);
-                        if (resultEdit == 1) {
-                            response.sendRedirect("customer?msg=success_edit");
-                        } else {
-                            response.sendRedirect("customer?msg=error_edit");
-                        }
-                        
-                        
+                        int page = 1;
+                        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                        List<Customer> customers = customerService.getAllCustomers(page, pageSize);
+                        request.setAttribute("customers", customers);
+                        request.setAttribute("currentPage", page);
+                        request.setAttribute("totalPages", (int) Math.ceil((double) customerService.getTotalCustomers() / pageSize));
+                        request.setAttribute("pageSize", pageSize);
+
+                        request.setAttribute("contentPage", "customer-list.jsp");
+                        request.setAttribute("activeMenu", "customer");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Error Edit - Invalid ID: " + e.getMessage());
-                    response.sendRedirect("customer?msg=error_invalid_id");
+
+                    request.getSession().setAttribute("success", "Create successfully");
+                    response.sendRedirect("customer");
+
+                } catch (Exception e) {
+                    response.sendRedirect("customer");
                 }
                 break;
+            }
+
+            case "edit": {
+                try {
+                    int customerId = Integer.parseInt(request.getParameter("customerId"));
+                    String fullName = request.getParameter("fullName");
+                    String email = request.getParameter("email");
+                    String phone = request.getParameter("phone");
+                    String password = request.getParameter("password");
+                    String username = request.getParameter("username");
+                    String address = request.getParameter("address");
+
+                    String profileImageUrl = null; 
+                    Part filePart = request.getPart("avatarFile"); 
+
+                    if (filePart != null && filePart.getSize() > 0) {
+                    
+                        String fileName = java.nio.file.Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+                       
+                        String uploadPath = getServletContext().getRealPath("") + java.io.File.separator + "assets" + java.io.File.separator + "images";
+                        java.io.File uploadDir = new java.io.File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
+
+                       
+                        String newFileName = System.currentTimeMillis() + "_" + fileName;
+                        filePart.write(uploadPath + java.io.File.separator + newFileName);
+
+                       
+                        profileImageUrl = "assets/images/" + newFileName;
+                    }
+
+                    String msg = customerService.editCustomer(customerId, fullName, email, phone, address, password, profileImageUrl);
+
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("editError", msg);
+                        request.setAttribute("openEditPopup", true);
+
+                        // Giữ lại form
+                        request.setAttribute("editCustomerId", customerId);
+                        request.setAttribute("editCustomerUsername", username);
+                        request.setAttribute("editCustomerFullName", fullName);
+                        request.setAttribute("editCustomerEmail", email);
+                        request.setAttribute("editCustomerPhone", phone);
+                        request.setAttribute("editCustomerAddress", address);
+
+                        // Load bảng nền
+                        int page = 1;
+                        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                        List<Customer> customers = customerService.getAllCustomers(page, pageSize);
+                        request.setAttribute("customers", customers);
+                        request.setAttribute("currentPage", page);
+                        request.setAttribute("totalPages", (int) Math.ceil((double) customerService.getTotalCustomers() / pageSize));
+                        request.setAttribute("pageSize", pageSize);
+
+                        request.setAttribute("contentPage", "customer-list.jsp");
+                        request.setAttribute("activeMenu", "customer");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
+                    }
+
+                    request.getSession().setAttribute("success", "Edit successfully");
+                    response.sendRedirect("customer");
+
+                } catch (Exception e) {
+                    response.sendRedirect("customer");
+                }
+                break;
+            }
 
             case "delete":
                 try {

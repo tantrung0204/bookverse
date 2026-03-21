@@ -53,7 +53,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
+            <a href="${pageContext.request.contextPath}/order" 
                class="sidebar-link ${activeMenu == 'order'? 'active':''}">
                 <i class="bi bi-cart2"></i> Orders
             </a>
@@ -77,7 +77,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" 
+            <a href="${pageContext.request.contextPath}/statistics" 
                class="sidebar-link ${activeMenu == 'statistic'? 'active':''}">
                 <i class="bi bi-bar-chart-steps"></i> Statistics
             </a>

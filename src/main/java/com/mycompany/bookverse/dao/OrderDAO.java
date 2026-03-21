@@ -15,6 +15,68 @@ import java.util.List;
  */
 public class OrderDAO {
 
+    public List<Order> findAll(int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+
+            TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o ORDER BY o.orderId DESC", Order.class);
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long getTotalOrders() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(o) FROM Order o", Long.class).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Find an Order by its ID.
+     */
+    public Order findById(int orderId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Order.class, orderId);
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Order> searchOrders(String keyword, int page, int pageSize) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+
+            String jpql = "SELECT o FROM Order o WHERE LOWER(CONCAT('o00', CAST(o.orderId AS string))) LIKE :kw OR LOWER(o.receiverPhone) LIKE LOWER(:kw) OR LOWER(o.customerId.fullName) LIKE LOWER(:kw) OR LOWER(o.orderStatus) LIKE LOWER(:kw) ORDER BY o.orderId DESC";
+            TypedQuery<Order> query = em.createQuery(jpql, Order.class);
+            query.setParameter("kw", "%" + keyword.toLowerCase() + "%");
+            query.setFirstResult((page - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public long getTotalSearchOrders(String keyword) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+
+            String jpql = "SELECT COUNT(o) FROM Order o WHERE LOWER(CONCAT('o00', CAST(o.orderId AS string))) LIKE :kw OR LOWER(o.receiverPhone) LIKE LOWER(:kw) OR LOWER(o.customerId.fullName) LIKE LOWER(:kw) OR LOWER(o.orderStatus) LIKE LOWER(:kw)";
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            query.setParameter("kw", "%" + keyword.toLowerCase() + "%");
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
     /**
      * Persist a new Order entity and return the generated orderId.
      */
@@ -49,18 +111,6 @@ public class OrderDAO {
                 em.getTransaction().rollback();
             }
             throw e;
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Find an Order by its ID.
-     */
-    public Order findById(int orderId) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Order.class, orderId);
         } finally {
             em.close();
         }
@@ -128,33 +178,32 @@ public class OrderDAO {
      * Get available vouchers: status = 1, availableQuantity > 0,
      * startDate <= now, expiryDate > now.
      */
-   public List<Voucher> findAvailableVouchers(BigDecimal subtotal) {
+    public List<Voucher> findAvailableVouchers(BigDecimal subtotal) {
 
-    EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = JPAUtil.getEntityManager();
 
-    try {
+        try {
 
-        String jpql = "SELECT v FROM Voucher v "
-                + "WHERE v.status = 1 "
-                + "AND v.availableQuantity > 0 "
-                + "AND v.startDate <= :now "
-                + "AND v.expiryDate > :now "
-                + "AND (v.minOrderValue IS NULL OR v.minOrderValue <= :subtotal) "
-                + "ORDER BY v.expiryDate ASC";
+            String jpql = "SELECT v FROM Voucher v "
+                    + "WHERE v.status = 1 "
+                    + "AND v.availableQuantity > 0 "
+                    + "AND v.startDate <= :now "
+                    + "AND v.expiryDate > :now "
+                    + "AND (v.minOrderValue IS NULL OR v.minOrderValue <= :subtotal) "
+                    + "ORDER BY v.expiryDate ASC";
 
-        TypedQuery<Voucher> query = em.createQuery(jpql, Voucher.class);
+            TypedQuery<Voucher> query = em.createQuery(jpql, Voucher.class);
 
-        query.setParameter("now", new Date());
-        query.setParameter("subtotal", subtotal);
+            query.setParameter("now", new Date());
+            query.setParameter("subtotal", subtotal);
 
-        return query.getResultList();
+            return query.getResultList();
 
-    } finally {
-        em.close();
+        } finally {
+            em.close();
+        }
     }
-}
 
-   
     /**
      * Find a voucher by its code.
      */
@@ -216,8 +265,7 @@ public class OrderDAO {
         }
     }
 
-
-     public List<Order> getOrdersByCustomerId(int customerId) {
+    public List<Order> getOrdersByCustomerId(int customerId) {
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
@@ -234,15 +282,19 @@ public class OrderDAO {
         }
     }
 
-    public void update(Order order) {
+    public boolean update(Order order) {
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
             em.getTransaction().begin();
             em.merge(order);
             em.getTransaction().commit();
+            return true;
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return false;
         } finally {
             em.close();
         }

@@ -48,14 +48,14 @@
                         <%-- CASE 2: USER LOGGED IN --%>
                         <c:otherwise>
                             <li class="nav-item me-3">
-                                <a class="nav-link icon-link position-relative" href="#" title="Notifications">
+                                <a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/notification/customer" title="Notifications">
                                     <i class="far fa-bell fa-lg"></i>
                                     <span class="position-absolute top-10 start-100 translate-middle p-1 bg-danger border border-light rounded-circle badge-dot"></span>
                                 </a>
                             </li>
 
                             <li class="nav-item me-4">
-                                <a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/cart" title="Shopping Cart">
+<a class="nav-link icon-link position-relative" href="${pageContext.request.contextPath}/cart" title="Shopping Cart">
                                     <i class="fas fa-shopping-cart fa-lg"></i>
                                 </a>
                             </li>
@@ -79,11 +79,11 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end shadow brand-dropdown" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile"><i class="far fa-user me-2"></i> Profile</a></li>
-                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/order">
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/customer-order">
                                             <i class="fas fa-receipt me-2"></i> My Orders</a></li>
 
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a></li>
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/signout"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a></li>
                                 </ul>
                             </li>
                         </c:otherwise>

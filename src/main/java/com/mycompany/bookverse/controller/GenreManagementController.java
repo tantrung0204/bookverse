@@ -93,7 +93,7 @@ public class GenreManagementController extends HttpServlet {
                 } else if (editError != null) {
                     request.setAttribute("editError", (String) request.getSession().getAttribute("editError"));
                     request.setAttribute("openEditPopup", true);
-                    request.setAttribute("editId",  request.getSession().getAttribute("editId"));
+                    request.setAttribute("editId", request.getSession().getAttribute("editId"));
                     request.setAttribute("editName", (String) request.getSession().getAttribute("editName"));
                     request.setAttribute("editDesc", (String) request.getSession().getAttribute("editDesc"));
                     request.setAttribute("editStatus", request.getSession().getAttribute("editStatus"));
@@ -170,10 +170,10 @@ public class GenreManagementController extends HttpServlet {
                         return;
                     }
                 } catch (NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
             default:
-                response.sendRedirect("genre");
+                response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 break;
         }
     }
@@ -191,7 +191,7 @@ public class GenreManagementController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("genre");
+            response.sendRedirect(request.getContextPath() + "/dashboard/genre");
             return;
         }
         switch (action) {
@@ -208,7 +208,13 @@ public class GenreManagementController extends HttpServlet {
                     String name = request.getParameter("genreName");
                     String des = request.getParameter("descriptionText");
                     int status = Integer.parseInt(request.getParameter("status"));
-                    String msg = genreServices.editGenre(id, name, des, status);
+
+                    Genre genre = new Genre();
+                    genre.setGenreId(id);
+                    genre.setGenreName(name);
+                    genre.setStatus(status);
+                    genre.setDescriptionText(des);
+                    String msg = genreServices.editGenre(genre);
 
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("editError", msg);
@@ -216,13 +222,13 @@ public class GenreManagementController extends HttpServlet {
                         request.getSession().setAttribute("editName", name);
                         request.getSession().setAttribute("editDesc", des);
                         request.getSession().setAttribute("editStatus", status);
-                        response.sendRedirect("genre");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                         return;
                     }
                     request.getSession().setAttribute("success", "Edit successfully");
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 } catch (ServletException | IOException | NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
                 break;
             case "create":
@@ -230,20 +236,25 @@ public class GenreManagementController extends HttpServlet {
                     String name = request.getParameter("name");
                     String description = request.getParameter("description");
                     int status = Integer.parseInt(request.getParameter("status"));
-                    String msg = genreServices.insertGenre(name, description, status);
+
+                    Genre genre = new Genre();
+                    genre.setGenreName(name);
+                    genre.setDescriptionText(description);
+                    genre.setStatus(status);
+                    String msg = genreServices.insertGenre(genre);
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("createError", msg);
                         request.getSession().setAttribute("createName", name);
                         request.getSession().setAttribute("createDesc", description);
                         request.getSession().setAttribute("createStatus", status);
 
-                        response.sendRedirect("genre");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                         return;
                     }
                     request.getSession().setAttribute("success", "Create successfully");
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
                 break;
             case "delete":
@@ -252,17 +263,17 @@ public class GenreManagementController extends HttpServlet {
                     String msg = genreServices.deleteGenre(id);
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("deleteError", msg);
-                        response.sendRedirect("genre");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                         return;
                     }
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
                 request.getSession().setAttribute("success", "Delete successfully");
-                response.sendRedirect("genre");
+                response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 break;
             default:
-                response.sendRedirect("genre");
+                response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 break;
         }
     }

@@ -188,7 +188,7 @@ public class InventoryManagementController extends HttpServlet {
                     }
                     response.getWriter().write(jsonArray.toString());
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("inventory");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
                 }
                 break;
             case "exportDetail":
@@ -216,7 +216,7 @@ public class InventoryManagementController extends HttpServlet {
                     }
                     response.getWriter().write(jsonArray.toString());
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("inventory");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
                 }
                 break;
             case "addProductList":
@@ -245,7 +245,7 @@ public class InventoryManagementController extends HttpServlet {
                 response.getWriter().write(result.toString());
                 break;
             default:
-                response.sendRedirect("inventory");
+                response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
                 break;
         }
     }
@@ -274,20 +274,20 @@ public class InventoryManagementController extends HttpServlet {
                 supplierId = Integer.parseInt(supplierIdStr);// lấy supplier id
             } catch (Exception e) {
                 request.getSession().setAttribute("message", "Id supplier is error");
-                response.sendRedirect("inventory");
+                response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
                 return;
             }
             Supplier supplier = inventoryServices.getSupplier(supplierId);
             if(supplier == null){
                 request.getSession().setAttribute("message", "supplier is not found");
-                response.sendRedirect("inventory");
+                response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
                 return;
             }
             
             String[] productIdsString = request.getParameterValues("productIds");// lấy list product id muốn add
             if (productIdsString == null || productIdsString.length == 0) {
                 request.getSession().setAttribute("message", "No product selected");
-                response.sendRedirect("inventory");
+                response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
                 return;
             }
             
@@ -308,7 +308,7 @@ public class InventoryManagementController extends HttpServlet {
             //tạo import_stock_detail
             if (importId == -1) {
                 request.getSession().setAttribute("message", "Import Stock error");
-                response.sendRedirect("inventory");
+                response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
             } else {
                 importStock.setImportId(importId);
                 boolean allSuccess = true;
@@ -338,10 +338,10 @@ public class InventoryManagementController extends HttpServlet {
                 } else {
                     request.getSession().setAttribute("success", "Some items failed");
                 }
-                response.sendRedirect("inventory");
+                response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
             }
         } catch (IOException | NumberFormatException e) {
-            response.sendRedirect("inventory");
+            response.sendRedirect(request.getContextPath() + "/dashboard/inventory");
         }
 
     }

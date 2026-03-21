@@ -3,383 +3,494 @@
     <%@ page contentType="text/html;charset=UTF-8" language="java" %>
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
-
-                <div class="container-fluid">
-                    <!--    Header-->
-                    <div class="page-header">
-                        <p class="title">Manage Customers</p>
-                        <p class="subtitle">View and manage all user accounts in the system</p>
-                    </div>
+                <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+                    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 
 
-                    <!--    Mô tả những Customer-->
-                    <div class="content-card">
-                        <!--        Nút Add New Customer-->
-                        <div class="toolbar">
-                            <a class="btn-add" href="#" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-                                <i class="bi bi-plus-lg me-1"></i> Add New Customer
-                            </a>
-
-                            <!--            Thanh tìm kiếm -->
-                            <form method="get" action="customer" class="search-form">
-                                <input type="hidden" name="action" value="search">
-                                <div class="search-box">
-                                    <i class="bi bi-search"></i>
-                                    <input type="text" name="keyword" placeholder="Search by name or email..."
-                                        value="${searchKeyword}">
-                                </div>
-                            </form>
+                    <div class="container-fluid">
+                        <!-- ======================== Header ============================= -->
+                        <div class="page-header">
+                            <p class="title">Manage Customers</p>
+                            <p class="subtitle">View and manage all user accounts in the system</p>
                         </div>
 
-                        <!--                Đặc tả về những thuộc tính trong Customer-->
-                        <table class="custom-table">
-                            <!--                Tiêu Đề bảng -->
-                            <thead>
-                                <tr>
-                                    <th width="10%">ID</th>
-                                    <th width="15%">Full Name</th>
-                                    <th width="15%">Phone Number</th>
-                                    <th width="20%">Email</th>
-                                    <th width="20%">Status</th>
-                                    <th width="20%">Actions</th>
-                                </tr>
-                            </thead>
+                        <!-- ==================== Customer ======================== -->
+                        <div class="content-card">
+                            <!-- ====================== Add New Customer button =========================== -->
+                            <div class="toolbar">
+                                <button type="button" class="btn-add" onclick="openCreatePopup()">
+                                    <i class="bi bi-plus-lg me-1"></i> Add New Customer
+                                </button>
+                                <!-- =============================== Search button =================================== -->
+                                <form action="${pageContext.request.contextPath}/customer" method="GET"
+                                    class="search-form">
+                                    <input type="hidden" name="action" value="search">
+                                    <div class="search-box">
+                                        <i class="bi bi-search"></i>
+                                        <input type="text" name="keyword" required maxlength="50"
+                                            placeholder="Search by name..." pattern=".*\S.*" value="${keyword}">
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- ======================================== Notification ================================================== -->
+                            <c:if test="${not empty message}">
+                                <div class="alert alert-error">
+                                    ${message}
+                                </div>
+                            </c:if>
+                            <c:if test="${not empty success}">
+                                <div class="alert alert-success">
+                                    ${success}
+                                </div>
+                                <c:remove var="success" scope="session" />
+                            </c:if>
+                            <c:if test="${not empty deleteError}">
+                                <div class="alert alert-error">${deleteError}</div>
+                                <c:remove var="deleteError" scope="session" />
+                            </c:if>
+                            <!-- ==================================================== CUSTOMER LIST =========================================== -->
 
-                            <tbody>
-                                <c:forEach var="c" items="${customers}">
+                            <c:choose>
+                                <c:when test="${not empty customers}">
+                                    <table class="custom-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="10%">ID</th>
+                                                <th width="15%">Full Name</th>
+                                                <th width="15%">Phone Number</th>
+                                                <th width="20%">Email</th>
+                                                <th width="20%">Status</th>
+                                                <th width="20%">Actions</th>
+                                            </tr>
+                                        </thead>
 
-                                    <tr>
-                                        <td><strong>${c.customerId}</strong></td>
-                                        <td>${c.fullName}</td>
-                                        <td>${c.phoneNumber}</td>
-                                        <td>${c.email}</td>
-                                        <td>
-                                            <span
-                                                class="badge-status ${c.status == 1 ? 'badge-active' : 'badge-inactive'}">
-                                                ${c.status == 1 ? 'Active' : 'Blocked'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <!--                                Nút View Detail Customer-->
-                                                <a href="customer?action=view&customerId=${c.customerId}"
-                                                    class="btn-action btn-detail">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <!--                                Nút Edit Customer-->
-                                                <button type="button" class="btn-action btn-edit"
-                                                    onclick="openEditCustomerPopup('${c.customerId}', '${c.username}', '${c.fullName}', '${c.phoneNumber}', '${c.email}')">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <!--                                    Nút Delete Customer-->
-                                                <form action="customer" method="post" style="display:inline;"
-                                                    onsubmit="return confirm('Xóa khách hàng: ${c.customerId}, ${c.fullName}?')">
-                                                    <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="customerId" value="${c.customerId}">
-                                                    <button type="submit" class="btn-action btn-delete">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
+                                        <tbody>
+                                            <c:forEach var="c" items="${customers}">
+                                                <tr>
+                                                    <td><strong>${c.customerId}</strong></td>
+                                                    <td>${c.fullName}</td>
+                                                    <td>${c.phoneNumber}</td>
+                                                    <td>${c.email}</td>
+                                                    <td>
+                                                        <span
+                                                            class="badge-status ${c.status == 1 ? 'badge-active' : 'badge-inactive'}">
+                                                            ${c.status == 1 ? 'Active' : 'Blocked'}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="action-buttons">
+                                                            <!-- =============================================== View Detail Customer button ============================================== -->
+                                                            <button type="button" class="btn-action btn-detail"
+                                                                title="Detail" onclick="openViewDetailCustomerPopup(
+                                                                '${c.customerId}', '${c.fullName}', '${c.username}', '${c.email}',
+                                                                '${c.phoneNumber}', '${c.status}',
+                                                                '<fmt:formatDate value=" ${c.createdAt}"
+                                                                pattern="dd-MM-yyyy HH:mm" />',
+                                                            '${c.address}',
+                                                            '${c.profileImageUrl}')">
+                                                            <i class="bi bi-eye"></i>
+                                                            </button>
+                                                            <!-- =============================================== Edit Customer button ============================================== -->
+                                                            <button type="button" class="btn-action btn-edit"
+                                                                title="Edit" onclick="openEditCustomerPopup('${c.customerId}',
+                                                                '${c.username}',
+                                                                '${c.fullName}',
+                                                                '${c.email}',
+                                                                '${c.phoneNumber}',
+                                                                '${c.address}')">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </button>
+                                                            <!-- =============================================== Delete Customer button ============================================== -->
+                                                            <form action="${pageContext.request.contextPath}/customer"
+                                                                method="post" style="display:inline;"
+                                                                onsubmit="return confirm('Delete Customer: ${c.fullName} (ID: ${c.customerId})?');">
+                                                                <input type="hidden" name="action" value="delete">
+                                                                <input type="hidden" name="customerId"
+                                                                    value="${c.customerId}">
+                                                                <button type="submit" class="btn-action btn-delete"
+                                                                    title="Delete">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </c:when>
+                            </c:choose>
 
-                                            </div>
-                                        </td>
 
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                        <!--            Phân trang-->
-                        <nav aria-label="Page navigation" class="mt-4">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link"
-                                        href="customer?action=list&page=${currentPage - 1}">Previous</a>
-                                </li>
+                            <!-- ======================================================= Pagination ================================================ -->
+                            <c:set var="startPage" value="${currentPage - 1}" />
+                            <c:set var="endPage" value="${currentPage + 1}" />
 
-                                <c:forEach begin="1" end="${totalPages}" var="i">
-                                    <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                        <a class="page-link" href="customer?action=list&page=${i}">${i}</a>
+                            <c:if test="${startPage < 2}">
+                                <c:set var="startPage" value="2" />
+                                <c:set var="endPage" value="4" />
+                            </c:if>
+
+                            <c:if test="${endPage > totalPages - 1}">
+                                <c:set var="endPage" value="${totalPages - 1}" />
+                                <c:set var="startPage" value="${totalPages - 3}" />
+                            </c:if>
+
+                            <c:if test="${startPage < 2}">
+                                <c:set var="startPage" value="2" />
+                            </c:if>
+                            <nav class="d-flex justify-content-center">
+                                <ul class="pagination">
+
+
+                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                        <a class="page-link" href="customer?page=${currentPage - 1}">&laquo;</a>
                                     </li>
-                                </c:forEach>
-
-                                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="customer?action=list&page=${currentPage + 1}">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
 
 
-                <!-- Pop-up Add Customer-->
-                <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <form action="${pageContext.request.contextPath}/customer" method="POST"
-                                enctype="multipart/form-data">
-                                <input type="hidden" name="action" value="create">
+                                    <c:if test="${totalPages <= 5}">
+                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                            <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                                <a class="page-link" href="customer?page=${i}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                    </c:if>
 
-                                <div class="modal-header border-0 pb-0">
-                                    <h5 class="modal-title fw-bold fs-4" id="addCustomerLabel">Add New Customer</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body pt-0">
-                                    <p class="text-muted mb-4"></p>
-                                    <!--Username-->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Username</label>
-                                        <input type="text" class="form-control" name="username" required
-                                            placeholder="Enter your username">
-                                    </div>
-                                    <!--Full Name-->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Full Name</label>
-                                        <input type="text" class="form-control" name="fullName" required
-                                            placeholder="Enter your full name">
-                                    </div>
 
-                                    <!--Email-->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Email</label>
-                                        <input type="email" class="form-control" name="email" required
-                                            placeholder="Enter your email">
-                                    </div>
-                                    <!--Mật khẩu-->
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Password</label>
-                                        <input type="password" class="form-control" name="password" required
-                                            placeholder="Enter your password">
-                                    </div>
+                                    <c:if test="${totalPages > 5}">
+                                        <li class="page-item ${currentPage == 1 ? 'active' : ''}">
+                                            <a class="page-link" href="customer?page=1">1</a>
+                                        </li>
 
-                                </div>
-                                <div class="modal-footer border-0">
-                                    <button type="button" class="btn btn-cancel px-4"
-                                        data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-add px-4">Add</button>
-                                </div>
-                            </form>
+                                        <c:if test="${startPage > 2}">
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        </c:if>
+
+                                        <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                                            <li class="page-item ${currentPage == i ? 'active' : ''}">
+                                                <a class="page-link" href="customer?page=${i}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+
+                                        <c:if test="${endPage < totalPages - 1}">
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        </c:if>
+
+                                        <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
+                                            <a class="page-link" href="customer?page=${totalPages}">
+                                                ${totalPages}
+                                            </a>
+                                        </li>
+                                    </c:if>
+
+                                    <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+                                        <a class="page-link" href="customer?page=${currentPage + 1}">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
-                </div>
 
-                <!--Pop-up View Detail Customer-->
-
-                <div id="viewDetailPopup" class="modal-overlay" style="${openViewModal ? 'display:flex' : 'none'}">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h3>Customer Detail</h3>
-                            <button type="button" class="btn-close" onclick="closeViewPopup()"></button>
-                        </div>
-
-                        <div class="modal-body text-center" style="padding: 20px;">
-
-                            <div class="mb-3">
-                                <img src="${pageContext.request.contextPath}/uploads/${customerDetail.profileImageUrl}"
-                                    class="rounded-circle shadow-sm"
-                                    style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f8f9fa;"
-                                    onerror="this.src=''">
-                            </div>
-
-                            <h4>${customerDetail.fullName}</h4>
-                            <p>@${customerDetail.username}</p>
-
-                            <div style="text-align: left; background: #fdfaf7; padding: 15px; border-radius: 10px;">
-
-                                <p class="mb-2"><strong>Email:</strong> ${customerDetail.email}</p>
-                                <p class="mb-2"><strong>Status:</strong>
-                                    <span
-                                        class="badge-status ${customerDetail.status == 1 ? 'badge-active' : 'badge-inactive'}">
-                                        ${customerDetail.status == 1 ? 'Active' : 'Blocked'}
-                                    </span>
-                                <p class="mb-2"><strong>Phone Number:</strong> ${customerDetail.phoneNumber}</p>
-                                <p class="mb-2"><strong>Account Creation Date:</strong>
-                                    <fmt:formatDate value="${customerDetail.createdAt}" pattern="dd-MM-yyyy HH:mm" />
-                                </p>
-
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="subtitle" style="font-size: 14px;">Total Orders Purchased:</span>
-                                    <span
-                                        style="font-weight: 700; color: #8B6B4C; font-size: 18px;">${totalOrders}</span>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!--                Pop-up edit Customer-->
-                <div id="editCustomerPopup" class="modal-overlay" style="display: none;">
-
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>Edit Customer</h3>
-                        </div>
-
-                        <form action="customer" method="post">
-
-                            <input type="hidden" name="action" value="edit">
-
-                            <input type="hidden" id="editCustomerId" name="customerId">
-
-                            <div class="form-group mb-3">
-                                <label>Username</label>
-                                <input type="text" id="editCustomerUsername" name="username" class="form-control"
-                                    readonly
-                                    style="background-color: #dfdfdf; color: #777; cursor: not-allowed; border: 1px solid #ccc;">
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label>Full Name</label>
-                                <input type="text" id="editCustomerFullName" name="fullName" class="form-control"
-                                    placeholder="Enter your Full Name">
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label>Email</label>
-                                <input type="email" id="editCustomerEmail" name="email" class="form-control"
-                                    placeholder="Enter your email">
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label>Phone Number</label>
-                                <input type="text" id="editCustomerPhone" name="phone" class="form-control"
-                                    placeholder="Enter your phone number" pattern="[0-9]{10,11}">
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label>Password</label>
-                                <input type="password" id="editCustomerPassword" name="password" class="form-control"
-                                    placeholder="Enter new password">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Upload Image</label>
-                                <div class="input-group w-100">
-                                    <input type="text" class="form-control" id="fileNameDisplay"
-                                        placeholder="PNG, JPG up to 10MB" readonly>
-                                    <button class="btn btn-primary" type="button"
-                                        onclick="document.getElementById('fileInput').click()">
-                                        <i class="fas fa-upload me-1"></i> Choose Image
-                                    </button>
-                                </div>
-                                <input type="file" id="fileInput" name="avatarFile" accept="image/png, image/jpeg"
-                                    style="display: none" onchange="updateFileName(this)">
-                                <div id="fileSizeError" class="text-danger small mt-1" style="display:none">File is too
-                                    large! Max 10MB.</div>
-                            </div>
-
-
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn-cancel"
-                                    onclick="closeEditCustomerPopup()">Cancel</button>
-                                <button type="submit" class="btn-save">Save Changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <script>
-
-                    function closeViewPopup() {
-                        var modalElement = document.getElementById('viewDetailPopup');
-                        if (modalElement) {
-                            modalElement.style.display = 'none';
+                    <script>
+                        // ----------------- CREATE POP-UP -----------------
+                        function openCreatePopup() {
+                            document.getElementById('createPopup').style.display = "flex";
+                            const err = document.getElementById("createErrorMsg");
+                            if (err)
+                                err.style.display = 'none';
                         }
-                    }
 
-                    <c:if test="${openViewModal}">
-                        window.onload = function () {
-        var modal = document.getElementById('viewDetailPopup');
-                        if (modal) {
-                            modal.style.display = 'flex';
-        }
-    };
+                        function closeCreatePopup() {
+                            document.getElementById('createPopup').style.display = "none";
+                        }
+
+                        // ----------------- VIEW DETAIL POP-UP -----------------
+                        function openViewDetailCustomerPopup(id, fullName, username, email, phone, status, createdAt, address, avatarUrl) {
+                            document.getElementById('detailCustomerId').innerText = id;
+                            document.getElementById('detailCustomerFullNameTitle').innerText = fullName;
+                            document.getElementById('detailCustomerUsernameTitle').innerText = username;
+                            document.getElementById('detailCustomerEmail').innerText = email;
+                            document.getElementById('detailCustomerPhone').innerText = phone || 'Not Update yet';
+                            document.getElementById('detailCustomerCreated').innerText = createdAt;
+                            document.getElementById('detailCustomerAddress').innerText = address || 'Not Update yet';
+
+                            document.getElementById('detailCustomerStatus').innerHTML = status == 1 ?
+                                '<span class="badge-status badge-active">Active</span>' :
+                                '<span class="badge-status badge-inactive">Blocked</span>';
+
+                            let avatarImg = document.getElementById('detailCustomerAvatar');
+                            if (avatarUrl && avatarUrl.startsWith('http')) {
+                                avatarImg.src = avatarUrl;
+                            } else if (avatarUrl && avatarUrl.trim() !== '') {
+                                avatarImg.src = '${pageContext.request.contextPath}/' + avatarUrl;
+                            } else {
+                                avatarImg.src = '${pageContext.request.contextPath}/assets/images/default-avt.jpg';
+                            }
+
+                            document.getElementById('viewDetailCustomerPopup').style.display = "flex";
+                        }
+
+                        function closeViewDetailCustomerPopup() {
+                            document.getElementById('viewDetailCustomerPopup').style.display = "none";
+                        }
+
+                        // ----------------- EDIT POP-UP -----------------
+                        function openEditCustomerPopup(id, username, fullName, email, phone, address) {
+                            document.getElementById('editCustomerId').value = id;
+                            document.getElementById('editCustomerUsername').value = username || '';
+                            document.getElementById('editCustomerFullName').value = fullName || '';
+                            document.getElementById('editCustomerEmail').value = email || '';
+                            document.getElementById('editCustomerPhone').value = phone || '';
+                            document.getElementById('editCustomerAddress').value = address || '';
+
+                            const err = document.getElementById("editErrorMsg");
+                            if (err)
+                                err.style.display = 'none';
+
+                            document.getElementById('editCustomerPopup').style.display = "flex";
+                        }
+
+                        function closeEditCustomerPopup() {
+                            document.getElementById('editCustomerPopup').style.display = "none";
+                        }
+
+                        // ----------------- CLICK OUTSIDE TO CLOSE -----------------
+                        window.onclick = function (event) {
+                            var modalCreate = document.getElementById("createPopup");
+                            var modalEdit = document.getElementById("editCustomerPopup");
+                            var modalDetail = document.getElementById("viewDetailCustomerPopup");
+
+                            if (event.target == modalCreate) {
+                                closeCreatePopup();
+                            } else if (event.target == modalEdit) {
+                                closeEditCustomerPopup();
+                            } else if (event.target == modalDetail) {
+                                closeViewDetailCustomerPopup();
+                            }
+                        }
+                    </script>
+
+                    <c:if test="${openCreatePopup}">
+                        <script>
+                            window.onload = function () {
+                                // Đảm bảo DOM đã load xong
+                                setTimeout(function () {
+                                    openCreatePopup();
+                                    const err = document.getElementById("createErrorMsg");
+                                    if (err)
+                                        err.style.display = 'block';
+                                }, 100);
+                            };
+                        </script>
                     </c:if>
 
-                    function updateFileName(input) {
-                        const fileName = input.files[0] ? input.files[0].name : "No file chosen";
-                        const fileSize = input.files[0] ? input.files[0].size / 1024 / 1024 : 0;
-                        const displayInput = document.getElementById('fileNameDisplay');
-                        const errorDiv = document.getElementById('fileSizeError');
+                    <c:if test="${openEditPopup}">
+                        <script>
+                            window.onload = function () {
+                                // Đảm bảo DOM đã load xong
+                                setTimeout(function () {
+                                    openEditCustomerPopup(
+                                        '${editCustomerId}',
+                                        '${editCustomerUsername}',
+                                        '${editCustomerFullName}',
+                                        '${editCustomerEmail}',
+                                        '${editCustomerPhone}',
+                                        '${editCustomerAddress}'
+                                    );
 
-                        displayInput.value = fileName;
+                                    const err = document.getElementById("editErrorMsg");
+                                    if (err)
+                                        err.style.display = 'block';
+                                }, 100);
+                            };
+                        </script>
+                    </c:if>
 
-                        if (fileSize > 10) {
-                            errorDiv.style.display = 'block';
-                            input.value = "";
-                            displayInput.value = "PNG, JPG up to 10MB";
-                        } else {
-                            errorDiv.style.display = 'none';
-                        }
-                    }
+                    <!-- =================== Pop-up Add Customer =========================-->
+                    <div id="createPopup" class="modal-overlay" style="display: none;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Add New Customer</h3>
+                            </div>
 
-                    // Đóng Popup khi click ra ngoài vùng trắng
-                    window.onclick = function (event) {
-                        var modal = document.getElementById("editPopup");
-                        if (event.target == modal) {
-                            closeEditPopup();
-                        }
-                    }
+                            <c:if test="${not empty createError}">
+                                <div class="alert alert-danger" id="createErrorMsg">
+                                    ${createError}
+                                </div>
+                            </c:if>
 
-                    function openEditCustomerPopup(id, user, name, phone, email) {
+                            <form action="${pageContext.request.contextPath}/customer" method="POST">
+                                <input type="hidden" name="action" value="create">
 
-                        const idField = document.getElementById("editCustomerId");
-                        const userField = document.getElementById("editCustomerUsername");
-                        const nameField = document.getElementById("editCustomerFullName");
-                        const phoneField = document.getElementById("editCustomerPhone");
-                        const emailField = document.getElementById("editCustomerEmail");
-                        const passwordField = document.getElementById("editCustomerPassword");
-                        const popup = document.getElementById("editCustomerPopup");
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input type="text" name="username" class="form-control" value="${createUsername}"
+                                        pattern="[a-zA-Z0-9][a-zA-Z0-9._\-]{4,}" required
+                                        placeholder="Enter your username">
+                                </div>
 
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" name="fullName" class="form-control" value="${createFullName}"
+                                        pattern="[a-zA-Zà-ỹ][a-zA-Zà-ỹ\s]*" required placeholder="Enter your full name">
+                                </div>
 
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" name="email" class="form-control" value="${createEmail}"
+                                        pattern="[a-zA-Z0-9][a-zA-Z0-9._\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" required
+                                        placeholder="Enter your email">
+                                </div>
 
-                        // 2. Kiểm tra xem có tìm thấy ID và Popup không
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" name="password" class="form-control"
+                                        pattern="^[a-zA-Z0-9!@#$%^&*]{8,20}$" required placeholder="Enter new password">
+                                </div>
 
-                        if (idField && userField && nameField && popup) {
+                                <div class="modal-footer">
+                                    <button type="button" class="btn-cancel"
+                                        onclick="closeCreatePopup()">Cancel</button>
+                                    <button type="submit" class="btn-save">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
-                            idField.value = id;
-                            userField.value = user;
-                            nameField.value = name;
-                            if (phoneField)
-                                phoneField.value = phone;
-                            if (emailField)
-                                emailField.value = email;
-                            passwordField.value = "";
-                            popup.style.display = "flex";
-                        } else {
+                    <!--  ================== Pop-up edit Customer ==================== -->
+                    <div id="editCustomerPopup" class="modal-overlay" style="display: none;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Edit Customer</h3>
+                            </div>
 
-                            console.error("Lỗi: Kiểm tra lại ID trong HTML, có cái chưa khớp!");
-                        }
-                    }
+                            <c:if test="${not empty editError}">
+                                <div class="alert alert-danger" id="editErrorMsg">
+                                    ${editError}
+                                </div>
+                            </c:if>
 
-                    function closeEditCustomerPopup() {
-                        // Ẩn Modal đi
-                        document.getElementById("editCustomerPopup").style.display = "none";
-                    }
-                </script>
+                            <form action="${pageContext.request.contextPath}/customer" method="POST"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="action" value="edit">
+                                <input type="hidden" id="editCustomerId" name="customerId">
 
-                <c:if test="${openEditPopup}">
-                    <script>
-                        window.onload = function () {
-                            // Đảm bảo DOM đã load xong
-                            setTimeout(function () {
-                                openEditPopup(
-                                    '${editId}',
-                                    '${editName}',
-                                    '${editDesc}',
-                                    '${editStatus}'
-                                );
-                                // Hiển thị lại lỗi
-                                const err = document.getElementById("editErrorMsg");
-                                if (err)
-                                    err.style.display = 'block';
-                            }, 100);
-                        };
-                    </script>
-                </c:if>
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input type="text" id="editCustomerUsername" name="username" class="form-control"
+                                        readonly
+                                        style="background-color: #dfdfdf; color: #777; cursor: not-allowed; border: 1px solid #ccc;">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" id="editCustomerFullName" name="fullName" class="form-control"
+                                        pattern="[a-zA-Zà-ỹ][a-zA-Zà-ỹ\s]*" placeholder="Enter your Full Name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="editCustomerEmail" name="email" class="form-control"
+                                        pattern="[a-zA-Z0-9][a-zA-Z0-9._\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                                        placeholder="Enter your email">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="text" id="editCustomerPhone" name="phone" class="form-control"
+                                        placeholder="Enter your phone number" pattern="^0(3|5|7|8|9)[0-9]{8}$">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <input type="text" id="editCustomerAddress" name="address" class="form-control"
+                                        placeholder="Enter your address">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" id="editCustomerPassword" name="password"
+                                        class="form-control" pattern="^[a-zA-Z0-9!@#$%^&*]{8,20}$"
+                                        placeholder="Enter new password">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Upload Image</label>
+                                    <div class="input-group w-100">
+                                        <input type="text" class="form-control" id="fileNameDisplayAdd"
+                                            placeholder="PNG, JPG up to 10MB" readonly>
+                                        <button class="btn btn-primary" type="button"
+                                            onclick="document.getElementById('fileInputAdd').click()">
+                                            <i class="fas fa-upload me-1"></i> Chosen Image
+                                        </button>
+                                    </div>
+                                    <input type="file" id="fileInputAdd" name="avatarFile"
+                                        accept="image/png, image/jpeg" style="display: none"
+                                        onchange="updateFileNameAdd(this)">
+                                    <div id="fileSizeErrorAdd" class="text-danger small mt-1" style="display:none">File
+                                        is too large! Max 10MB.</div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn-cancel"
+                                        onclick="closeEditCustomerPopup()">Cancel</button>
+                                    <button type="submit" class="btn-save">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ============================== Pop-up View Detail Customer ====================================== -->
+                    <div id="viewDetailCustomerPopup" class="modal-overlay" style="display: none;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Customer Detail</h3>
+                            </div>
+
+                            <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                                <img id="detailCustomerAvatar"
+                                    src="${pageContext.request.contextPath}/assets/images/default-avt.jpg" alt="Avatar"
+                                    class="rounded-circle shadow-sm"
+                                    style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f8f9fa;">
+
+                                <h4 id="detailCustomerFullNameTitle" style="margin-top: 15px; margin-bottom: 5px;"></h4>
+                                <p id="detailCustomerUsernameTitle" style="color: #777; margin-bottom: 0;"></p>
+                            </div>
+
+                            <table class="detail-table" style="width: 100%;">
+                                <tr>
+                                    <th style="width: 40%;">ID:</th>
+                                    <td id="detailCustomerId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td id="detailCustomerEmail"></td>
+                                </tr>
+                                <tr>
+                                    <th>Phone Number:</th>
+                                    <td id="detailCustomerPhone"></td>
+                                </tr>
+                                <tr>
+                                    <th>Address:</th>
+                                    <td id="detailCustomerAddress"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td id="detailCustomerStatus"></td>
+                                </tr>
+                                <tr>
+                                    <th>Account Created:</th>
+                                    <td id="detailCustomerCreated"></td>
+                                </tr>
+                            </table>
+
+                            <div class="modal-footer" style="margin-top: 20px;">
+                                <button type="button" class="btn-cancel"
+                                    onclick="closeViewDetailCustomerPopup()">Close</button>
+                            </div>
+                        </div>
+                    </div>

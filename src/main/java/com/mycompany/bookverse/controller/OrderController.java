@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name = "OrderController", urlPatterns = {"/order"})
+@WebServlet(name = "CustomerOrderController", urlPatterns = { "/customer-order" })
 public class OrderController extends HttpServlet {
 
     private OrderService orderService = new OrderService();
@@ -32,10 +32,10 @@ public class OrderController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,14 +54,15 @@ public class OrderController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -88,10 +89,10 @@ public class OrderController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -109,7 +110,7 @@ public class OrderController extends HttpServlet {
                 break;
 
             default:
-                response.sendRedirect("order?action=list");
+                response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
         }
     }
 
@@ -155,8 +156,7 @@ public class OrderController extends HttpServlet {
 
                 boolean reviewed = orderService.isReviewed(
                         customer.getCustomerId(),
-                        item.getProductId().getProductId()
-                );
+                        item.getProductId().getProductId());
 
                 item.setReviewed(reviewed);
             }
@@ -177,7 +177,7 @@ public class OrderController extends HttpServlet {
 
         orderService.cancelOrder(orderId);
 
-        response.sendRedirect("order?action=list");
+        response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
     }
 
     /* ================= CONFIRM RECEIVED ================= */
@@ -188,7 +188,7 @@ public class OrderController extends HttpServlet {
 
         orderService.confirmReceived(orderId);
 
-        response.sendRedirect("order?action=list");
+        response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
     }
 
     /**

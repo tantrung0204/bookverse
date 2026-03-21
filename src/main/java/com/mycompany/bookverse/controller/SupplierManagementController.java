@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Supplier;
 import com.mycompany.bookverse.service.SupplierService;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,8 +19,8 @@ import java.util.List;
  *
  * @author NganTTK-CE190411
  */
-@WebServlet(name = "SupplierController", urlPatterns = {"/supplier"})
-public class SupplierController extends HttpServlet {
+@WebServlet(name = "SupplierController", urlPatterns = {"/dashboard/supplier"})
+public class SupplierManagementController extends HttpServlet {
 
     private SupplierService supplierService = new SupplierService();
 
@@ -144,6 +145,7 @@ public class SupplierController extends HttpServlet {
         request.setAttribute("keyword", keyword);
          request.setAttribute("currentPage", 1);
          request.setAttribute("totalPages", totalPages);
+          request.setAttribute("maxPageNodes", PaginationConfig.MAX_PAGE_NODES);
          
         request.setAttribute("contentPage", "supplier-list.jsp");
         request.setAttribute("activeMenu", "supplier");
@@ -169,7 +171,7 @@ public class SupplierController extends HttpServlet {
         try {
             supplierService.createSupplier(name, email, phone, address, statusRaw);
             request.getSession().setAttribute("successMsg", "Create supplier successfully");
-            response.sendRedirect(request.getContextPath() + "/supplier");
+            response.sendRedirect(request.getContextPath() + "/dashboard/supplier");
         } catch (IllegalArgumentException e) {
             request.setAttribute("createError", e.getMessage());
             request.setAttribute("openCreatePopup", true);
@@ -203,7 +205,7 @@ public class SupplierController extends HttpServlet {
 
             request.getSession().setAttribute("successMsg", "Edit supplier successfully");
 
-            response.sendRedirect(request.getContextPath() + "/supplier");
+            response.sendRedirect(request.getContextPath() + "/dashboard/supplier");
         } catch (IllegalArgumentException e) {
 
             request.setAttribute("editError", e.getMessage());
@@ -240,7 +242,7 @@ public class SupplierController extends HttpServlet {
                     "Delete supplier successfully");
         }
 
-        response.sendRedirect("supplier");
+        response.sendRedirect(request.getContextPath() + "/dashboard/supplier");
     }
 
 }

@@ -104,7 +104,7 @@
     <div class="order-buttons">
 
         <div class="left-btn">
-            <button onclick="window.location.href = '${pageContext.request.contextPath}/order?action=list'">
+            <button onclick="window.location.href = '${pageContext.request.contextPath}/customer-order?action=list'">
                 ← Back
             </button>
         </div>
@@ -114,7 +114,7 @@
             <!-- Cancel Order -->
             <c:if test="${order.orderStatus == 'Pending'}">
                 <form method="post"
-                      action="${pageContext.request.contextPath}/order"
+                      action="${pageContext.request.contextPath}/customer-order"
                       class="action-form">
 
                     <input type="hidden" name="action" value="cancel">
@@ -132,7 +132,7 @@
             <!-- Confirm Received -->
             <c:if test="${order.orderStatus == 'Shipping'}">
                 <form method="post"
-                      action="${pageContext.request.contextPath}/order"
+                      action="${pageContext.request.contextPath}/customer-order"
                       class="action-form">
 
                     <input type="hidden" name="action" value="confirm">
@@ -140,7 +140,7 @@
 
                     <button type="submit"
                             class="btn-confirm"
-                            onclick="return confirm('Are you sure you want to confirm received?')">
+                            onclick="return confirm('Confirmation that the order has been received?')">
                         Received
                     </button>
 

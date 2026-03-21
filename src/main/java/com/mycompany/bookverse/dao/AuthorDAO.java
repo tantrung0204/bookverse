@@ -7,7 +7,6 @@ package com.mycompany.bookverse.dao;
 import com.mycompany.bookverse.model.Author;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 

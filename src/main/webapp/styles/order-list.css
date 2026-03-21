@@ -109,9 +109,14 @@ body{
     color:#9a6a00;
 }
 
-.status.shipping{
+.status.confirmed{
     background:#dbe6f5;
     color:#3c5a87;
+}
+
+.status.shipping{
+    background:#d3eb9d;
+    color:#363832;
 }
 
 .status.completed{

@@ -22,6 +22,7 @@
 
         <button class="tab active" onclick="filterOrder('all')">All</button>
         <button class="tab" onclick="filterOrder('pending')">Pending</button>
+        <button class="tab" onclick="filterOrder('confirmed')">Confirmed</button>
         <button class="tab" onclick="filterOrder('shipping')">Shipping</button>
         <button class="tab" onclick="filterOrder('completed')">Completed</button>
         <button class="tab" onclick="filterOrder('canceled')">Canceled</button>
@@ -52,7 +53,7 @@
 
                     <a class="btn-view"
                        href="${pageContext.request.contextPath}/order?action=detail&id=${o.orderId}">
-                        View Details
+                        View Detail
                     </a>
 
                     <!-- CANCEL -->

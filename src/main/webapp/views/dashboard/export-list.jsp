@@ -69,13 +69,13 @@
             <c:when test="${not empty exports}">
                 <table class="custom-table">                 
                     <tr>
-                        <th width="15%">ID</th>
+                        <th width="10%">ID</th>
 
-                        <th width="30%">Staff</th>
+                        <th width="15%">Staff</th>
 
                         <th width="15%">Total cost</th>   
 
-                        <th width="15%">Creation date</th>
+                        <th width="20%">Creation date</th>
 
                         <th width="10%">Action</th>
                     </tr>

@@ -53,7 +53,7 @@
 
                         <th width="20%">Genre name</th>
 
-                        <th width="35%">Description</th>
+                        <th width="25%">Description</th>
 
                         <th width="15%">Status</th>   
 

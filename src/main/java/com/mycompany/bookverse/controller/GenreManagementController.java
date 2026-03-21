@@ -93,7 +93,7 @@ public class GenreManagementController extends HttpServlet {
                 } else if (editError != null) {
                     request.setAttribute("editError", (String) request.getSession().getAttribute("editError"));
                     request.setAttribute("openEditPopup", true);
-                    request.setAttribute("editId",  request.getSession().getAttribute("editId"));
+                    request.setAttribute("editId", request.getSession().getAttribute("editId"));
                     request.setAttribute("editName", (String) request.getSession().getAttribute("editName"));
                     request.setAttribute("editDesc", (String) request.getSession().getAttribute("editDesc"));
                     request.setAttribute("editStatus", request.getSession().getAttribute("editStatus"));
@@ -208,7 +208,13 @@ public class GenreManagementController extends HttpServlet {
                     String name = request.getParameter("genreName");
                     String des = request.getParameter("descriptionText");
                     int status = Integer.parseInt(request.getParameter("status"));
-                    String msg = genreServices.editGenre(id, name, des, status);
+
+                    Genre genre = new Genre();
+                    genre.setGenreId(id);
+                    genre.setGenreName(name);
+                    genre.setStatus(status);
+                    genre.setDescriptionText(des);
+                    String msg = genreServices.editGenre(genre);
 
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("editError", msg);
@@ -230,7 +236,12 @@ public class GenreManagementController extends HttpServlet {
                     String name = request.getParameter("name");
                     String description = request.getParameter("description");
                     int status = Integer.parseInt(request.getParameter("status"));
-                    String msg = genreServices.insertGenre(name, description, status);
+
+                    Genre genre = new Genre();
+                    genre.setGenreName(name);
+                    genre.setDescriptionText(description);
+                    genre.setStatus(status);
+                    String msg = genreServices.insertGenre(genre);
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("createError", msg);
                         request.getSession().setAttribute("createName", name);

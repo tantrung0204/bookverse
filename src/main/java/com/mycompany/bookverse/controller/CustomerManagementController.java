@@ -4,9 +4,8 @@
  */
 package com.mycompany.bookverse.controller;
 
-import com.mycompany.bookverse.model.Staff;
-import com.mycompany.bookverse.service.StaffService;
-import com.mycompany.bookverse.utils.PaginationConfig;
+import com.mycompany.bookverse.model.Customer;
+import com.mycompany.bookverse.service.CustomerService;
 import com.mycompany.bookverse.utils.PasswordUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,16 +17,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.util.List;
+import com.mycompany.bookverse.utils.PaginationConfig;
 
 /**
  *
  * @author TrungNT - CE200064
  */
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
-@WebServlet(name = "StaffController", urlPatterns = { "/staff" })
-public class StaffController extends HttpServlet {
+@WebServlet(name = "CustomerController", urlPatterns = { "/customer" })
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 
-    private StaffService staffService = new StaffService();
+public class CustomerManagementController extends HttpServlet {
+
+    private CustomerService customerService = new CustomerService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -69,6 +73,14 @@ public class StaffController extends HttpServlet {
         return username.matches("^[a-zA-Z0-9][a-zA-Z0-9._-]{4,}$");
     }
 
+    private boolean isValidEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        email = email.trim();
+        return email.matches("^[a-zA-Z0-9][a-zA-Z0-9._+-]*@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
     // + sign on the left to edit the code.">
     /**
@@ -85,6 +97,7 @@ public class StaffController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         if (action == null || action.trim().isEmpty()) {
+            /////
             action = "list";
         }
 
@@ -93,39 +106,45 @@ public class StaffController extends HttpServlet {
                 String keyword = request.getParameter("keyword");
 
                 if (keyword == null || keyword.trim().isEmpty()) {
-                    response.sendRedirect("staff?action=list");
+                    response.sendRedirect("customer?action=list");
                     return;
                 }
                 keyword = keyword.trim();
 
                 if (keyword.length() > 50) {
-                    response.sendRedirect("staff?action=list&msg=error_keyword_long");
+                    response.sendRedirect("customer?action=list&msg=error_keyword_long");
                     return;
                 }
 
-                if (!keyword.matches("^[a-zA-Z0-9À-ỹ\\s._-]+$")) {
-                    response.sendRedirect("staff?action=list&msg=error_keyword_invalid");
+                if (!keyword.matches("^[\\p{L}0-9 @.\\-_]+$")) {
+                    response.sendRedirect("customer?action=list&msg=error_keyword_invalid");
                     return;
                 }
 
-                List<Staff> searchResults = staffService.searchStaffs(keyword);
-                request.setAttribute("staffs", searchResults);
+                List<Customer> searchResults = customerService.searchCustomers(keyword);
+                request.setAttribute("customers", searchResults);
                 request.setAttribute("searchKeyword", keyword);
                 break;
 
             case "view": {
                 try {
-                    int id = Integer.parseInt(request.getParameter("staffId"));
-                    Staff c = staffService.getStaffById(id);
+                    int id = Integer.parseInt(request.getParameter("customerId"));
+                    Customer c = customerService.getCustomerById(id);
                     if (c != null) {
-                        request.setAttribute("staffDetail", c);
+
+                        int totalOrders = (c.getOrderCollection() != null) ? c.getOrderCollection().size() : 0;
+                        request.setAttribute("customerDetail", c);
+                        request.setAttribute("totalOrders", totalOrders);
                         request.setAttribute("openViewModal", true);
+
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Error View Staff: " + e.getMessage());
+                    System.out.println("Error View Customer: " + e.getMessage());
                 }
                 int page = 1;
+                ///////
                 String pageStr = request.getParameter("page");
+
                 if (pageStr != null && !pageStr.trim().isEmpty()) {
                     try {
                         page = Integer.parseInt(pageStr);
@@ -137,12 +156,13 @@ public class StaffController extends HttpServlet {
                     }
                 }
 
-                int pageSize = com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-                List<Staff> listForView = staffService.getAllStaffs(page, pageSize);
-                long totalStaffs = staffService.getTotalStaffs();
-                int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
+                int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
-                request.setAttribute("staffs", listForView);
+                List<Customer> list = customerService.getAllCustomers(page, pageSize);
+                long totalCustomers = customerService.getTotalCustomers();
+                int totalPages = (int) Math.ceil((double) totalCustomers / pageSize);
+
+                request.setAttribute("customers", list);
                 request.setAttribute("currentPage", page);
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("pageSize", pageSize);
@@ -150,10 +170,12 @@ public class StaffController extends HttpServlet {
             }
 
             case "list":
-            default:
+            default: {
 
                 int page = 1;
+                ///////
                 String pageStr = request.getParameter("page");
+
                 if (pageStr != null && !pageStr.trim().isEmpty()) {
                     try {
                         page = Integer.parseInt(pageStr);
@@ -165,20 +187,25 @@ public class StaffController extends HttpServlet {
                     }
                 }
 
-                int pageSize = com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-                List<Staff> listForView = staffService.getAllStaffs(page, pageSize);
-                long totalStaffs = staffService.getTotalStaffs();
-                int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
+                // 2. Lấy số lượng trên 1 trang từ PaginationConfig
+                int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
 
-                request.setAttribute("staffs", listForView);
+                // 3. Lấy dữ liệu danh sách và tổng số trang
+                List<Customer> list = customerService.getAllCustomers(page, pageSize);
+                long totalCustomers = customerService.getTotalCustomers();
+                int totalPages = (int) Math.ceil((double) totalCustomers / pageSize);
+
+                // 4. Gửi dữ liệu sang JSP
+                request.setAttribute("customers", list);
                 request.setAttribute("currentPage", page);
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("pageSize", pageSize);
                 break;
+            }
         }
 
-        request.setAttribute("contentPage", "staff-list.jsp");
-        request.setAttribute("activeMenu", "staff");
+        request.setAttribute("contentPage", "customer-list.jsp");
+        request.setAttribute("activeMenu", "customer");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
     }
 
@@ -199,7 +226,7 @@ public class StaffController extends HttpServlet {
 
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("staff");
+            response.sendRedirect("customer");
             return;
         }
 
@@ -207,49 +234,55 @@ public class StaffController extends HttpServlet {
             case "create": {
                 try {
                     String fullName = request.getParameter("fullName");
+                    String email = request.getParameter("email");
                     String password = request.getParameter("password");
                     String username = request.getParameter("username");
-                    String roleName = request.getParameter("roleName");
-                    String msg = staffService.insertStaff(fullName, username, password, roleName);
+                    String phone = request.getParameter("phone");
+
+                    String msg = customerService.insertCustomer(fullName, email, phone, username, password);
 
                     if (!msg.contains("successfully")) {
                         request.setAttribute("createError", msg);
                         request.setAttribute("openCreatePopup", true);
                         request.setAttribute("createUsername", username);
                         request.setAttribute("createFullName", fullName);
+                        request.setAttribute("createEmail", email);
 
                         int page = 1;
                         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-                        List<Staff> staffs = staffService.getAllStaffs(page, pageSize);
-                        request.setAttribute("staffs", staffs);
+                        List<Customer> customers = customerService.getAllCustomers(page, pageSize);
+                        request.setAttribute("customers", customers);
                         request.setAttribute("currentPage", page);
                         request.setAttribute("totalPages",
-                                (int) Math.ceil((double) staffService.getTotalStaffs() / pageSize));
+                                (int) Math.ceil((double) customerService.getTotalCustomers() / pageSize));
                         request.setAttribute("pageSize", pageSize);
 
-                        request.setAttribute("contentPage", "staff-list.jsp");
-                        request.setAttribute("activeMenu", "staff");
+                        request.setAttribute("contentPage", "customer-list.jsp");
+                        request.setAttribute("activeMenu", "customer");
                         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                         return;
                     }
 
                     request.getSession().setAttribute("success", "Create successfully");
-                    response.sendRedirect("staff");
+                    response.sendRedirect("customer");
 
                 } catch (Exception e) {
-                    response.sendRedirect("staff");
+                    response.sendRedirect("customer");
                 }
                 break;
             }
+
             case "edit": {
                 try {
-                    int staffId = Integer.parseInt(request.getParameter("staffId"));
-                    String editFullName = request.getParameter("fullName");
-                    String editPassword = request.getParameter("password");
-                    String editUsername = request.getParameter("username");
-                    String editRole = request.getParameter("roleName");
-                    String profileImageUrl = null;
+                    int customerId = Integer.parseInt(request.getParameter("customerId"));
+                    String fullName = request.getParameter("fullName");
+                    String email = request.getParameter("email");
+                    String phone = request.getParameter("phone");
+                    String password = request.getParameter("password");
+                    String username = request.getParameter("username");
+                    String address = request.getParameter("address");
 
+                    String profileImageUrl = null;
                     Part filePart = request.getPart("avatarFile");
 
                     if (filePart != null && filePart.getSize() > 0) {
@@ -270,61 +303,64 @@ public class StaffController extends HttpServlet {
                         profileImageUrl = "assets/images/" + newFileName;
                     }
 
-                    String msg = staffService.editStaff(staffId, editFullName, editPassword, profileImageUrl, editRole);
+                    String msg = customerService.editCustomer(customerId, fullName, email, phone, address, password,
+                            profileImageUrl);
 
                     if (!msg.contains("successfully")) {
                         request.setAttribute("editError", msg);
                         request.setAttribute("openEditPopup", true);
 
                         // Giữ lại form
-                        request.setAttribute("editStaffId", staffId);
-                        request.setAttribute("editStaffUsername", editUsername);
-                        request.setAttribute("editStaffFullName", editFullName);
-                        request.setAttribute("editStaffRole", editRole);
+                        request.setAttribute("editCustomerId", customerId);
+                        request.setAttribute("editCustomerUsername", username);
+                        request.setAttribute("editCustomerFullName", fullName);
+                        request.setAttribute("editCustomerEmail", email);
+                        request.setAttribute("editCustomerPhone", phone);
+                        request.setAttribute("editCustomerAddress", address);
 
                         // Load bảng nền
                         int page = 1;
                         int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-                        List<Staff> staffs = staffService.getAllStaffs(page, pageSize);
-                        request.setAttribute("staffs", staffs);
+                        List<Customer> customers = customerService.getAllCustomers(page, pageSize);
+                        request.setAttribute("customers", customers);
                         request.setAttribute("currentPage", page);
                         request.setAttribute("totalPages",
-                                (int) Math.ceil((double) staffService.getTotalStaffs() / pageSize));
+                                (int) Math.ceil((double) customerService.getTotalCustomers() / pageSize));
                         request.setAttribute("pageSize", pageSize);
 
-                        request.setAttribute("contentPage", "staff-list.jsp");
-                        request.setAttribute("activeMenu", "staff");
+                        request.setAttribute("contentPage", "customer-list.jsp");
+                        request.setAttribute("activeMenu", "customer");
                         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
                         return;
                     }
 
                     request.getSession().setAttribute("success", "Edit successfully");
-                    response.sendRedirect("staff");
+                    response.sendRedirect("customer");
 
                 } catch (Exception e) {
-                    response.sendRedirect("staff");
+                    response.sendRedirect("customer");
                 }
                 break;
             }
 
             case "delete":
                 try {
-                    int idDelete = Integer.parseInt(request.getParameter("staffId"));
-                    boolean success = staffService.deleteStaff(idDelete);
+                    int idDelete = Integer.parseInt(request.getParameter("customerId"));
+                    boolean success = customerService.deleteCustomer(idDelete);
 
                     if (success) {
-                        response.sendRedirect("staff?msg=success_delete");
+                        response.sendRedirect("customer?msg=success_delete");
                     } else {
-                        response.sendRedirect("staff?msg=error_delete");
+                        response.sendRedirect("customer?msg=error_delete");
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Error Delete - Invalid ID: " + e.getMessage());
-                    response.sendRedirect("staff?msg=error_invalid_id");
+                    response.sendRedirect("customer?msg=error_invalid_id");
                 }
                 break;
 
             default:
-                response.sendRedirect("staff");
+                response.sendRedirect("customer");
                 break;
         }
     }

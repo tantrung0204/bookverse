@@ -20,6 +20,34 @@ public class OrderService {
 
     private final OrderDAO orderDAO = new OrderDAO();
 
+    public List<Order> getAllOrders(int page, int pageSize) {
+        return orderDAO.findAll(page, pageSize);
+    }
+
+    public long getTotalOrders() {
+        return orderDAO.getTotalOrders();
+    }
+
+    public List<Order> searchOrders(String keyword, int page, int pageSize) {
+        return orderDAO.searchOrders(keyword, page, pageSize);
+    }
+
+    public long getTotalSearchOrders(String keyword) {
+        return orderDAO.getTotalSearchOrders(keyword);
+    }
+
+    public String editOrder(int id, boolean isPaid, String orderStatus) {
+        Order oldOrder = orderDAO.findById(id);
+        if (oldOrder != null) {
+            oldOrder.setIsPaid(isPaid);
+            oldOrder.setOrderStatus(orderStatus);
+
+            boolean result = orderDAO.update(oldOrder);
+            return result ? "Edit successfully" : "Edit false";
+        }
+        return "Order not found";
+    }
+
     // =============================================
     // VALIDATION METHODS
     // =============================================
@@ -162,15 +190,15 @@ public class OrderService {
     /**
      * Place an order.
      *
-     * @param customer The customer placing the order
-     * @param productIds List of product IDs
-     * @param quantities List of quantities (same order as productIds)
-     * @param voucherCode Voucher code (nullable)
-     * @param paymentMethod "COD" or "ONLINE"
-     * @param receiverName Receiver's name
-     * @param receiverPhone Receiver's phone number
+     * @param customer        The customer placing the order
+     * @param productIds      List of product IDs
+     * @param quantities      List of quantities (same order as productIds)
+     * @param voucherCode     Voucher code (nullable)
+     * @param paymentMethod   "COD" or "ONLINE"
+     * @param receiverName    Receiver's name
+     * @param receiverPhone   Receiver's phone number
      * @param shippingAddress Shipping address
-     * @param fromCart Whether the order is from cart (to clear cart after)
+     * @param fromCart        Whether the order is from cart (to clear cart after)
      * @return The created Order with orderId set
      */
     public Order placeOrder(Customer customer,

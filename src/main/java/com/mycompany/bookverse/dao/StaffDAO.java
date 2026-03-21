@@ -17,16 +17,11 @@ import java.util.List;
 public class StaffDAO {
 
     public List<Staff> findAll(int page, int pageSize) {
-        // Khởi tạo entity manager
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // Câu lệnh JPQL (Lấy đối tượng Staff)
-            String jpql = "SELECT s FROM Staff s ORDER BY s.staffId DESC";
-            TypedQuery<Staff> query = em.createQuery(jpql, Staff.class);
-            query.setMaxResults(com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE);
+            TypedQuery<Staff> query = em.createQuery("SELECT s FROM Staff s ORDER BY s.staffId DESC", Staff.class);
             query.setFirstResult((page - 1) * pageSize);
             query.setMaxResults(pageSize);
-
             return query.getResultList();
         } finally {
             em.close();
@@ -90,14 +85,14 @@ public class StaffDAO {
     public boolean delete(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            em.getTransaction().begin();
             Staff staff = em.find(Staff.class, id);
-            if (staff != null) {
-                em.remove(staff);
-                em.getTransaction().commit();
-                return true;
+            if (staff == null) {
+                return false;
             }
-            return false;
+            em.getTransaction().begin();
+            em.remove(staff);
+            em.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -112,10 +107,24 @@ public class StaffDAO {
     public List<Staff> search(String keyword) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String hql = "SELECT s FROM Staff s WHERE s.fullName LIKE :keyword OR s.email LIKE :keyword OR s.phoneNumber LIKE :keyword";
+            String hql = "SELECT s FROM Staff s WHERE LOWER(s.fullName) LIKE LOWER(:keyword) OR LOWER(s.username) LIKE LOWER(:keyword) ORDER BY s.staffId DESC";
             TypedQuery<Staff> query = em.createQuery(hql, Staff.class);
-            query.setParameter("keyword", "%" + keyword + "%");
+            query.setParameter("keyword", "%" + keyword.toLowerCase() + "%");
             return query.getResultList();
+        } finally { em.close(); }
+    }
+    
+    public boolean checkUsernameExists(String username) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(c) FROM Staff c WHERE c.username = :username";
+            Long count = em.createQuery(jpql, Long.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         } finally {
             em.close();
         }

@@ -23,7 +23,7 @@ import com.mycompany.bookverse.utils.PaginationConfig;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "CustomerController", urlPatterns = { "/customer" })
+@WebServlet(name = "CustomerManagementController", urlPatterns = { "/dashboard/customer" })
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
         maxRequestSize = 1024 * 1024 * 50 // 50MB
@@ -106,18 +106,18 @@ public class CustomerManagementController extends HttpServlet {
                 String keyword = request.getParameter("keyword");
 
                 if (keyword == null || keyword.trim().isEmpty()) {
-                    response.sendRedirect("customer?action=list");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer?action=list");
                     return;
                 }
                 keyword = keyword.trim();
 
                 if (keyword.length() > 50) {
-                    response.sendRedirect("customer?action=list&msg=error_keyword_long");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer?action=list&msg=error_keyword_long");
                     return;
                 }
 
                 if (!keyword.matches("^[\\p{L}0-9 @.\\-_]+$")) {
-                    response.sendRedirect("customer?action=list&msg=error_keyword_invalid");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer?action=list&msg=error_keyword_invalid");
                     return;
                 }
 
@@ -226,7 +226,7 @@ public class CustomerManagementController extends HttpServlet {
 
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("customer");
+            response.sendRedirect(request.getContextPath() + "/dashboard/customer");
             return;
         }
 
@@ -264,10 +264,10 @@ public class CustomerManagementController extends HttpServlet {
                     }
 
                     request.getSession().setAttribute("success", "Create successfully");
-                    response.sendRedirect("customer");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer");
 
                 } catch (Exception e) {
-                    response.sendRedirect("customer");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer");
                 }
                 break;
             }
@@ -335,10 +335,10 @@ public class CustomerManagementController extends HttpServlet {
                     }
 
                     request.getSession().setAttribute("success", "Edit successfully");
-                    response.sendRedirect("customer");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer");
 
                 } catch (Exception e) {
-                    response.sendRedirect("customer");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer");
                 }
                 break;
             }
@@ -349,18 +349,18 @@ public class CustomerManagementController extends HttpServlet {
                     boolean success = customerService.deleteCustomer(idDelete);
 
                     if (success) {
-                        response.sendRedirect("customer?msg=success_delete");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/customer?msg=success_delete");
                     } else {
-                        response.sendRedirect("customer?msg=error_delete");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/customer?msg=error_delete");
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Error Delete - Invalid ID: " + e.getMessage());
-                    response.sendRedirect("customer?msg=error_invalid_id");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/customer?msg=error_invalid_id");
                 }
                 break;
 
             default:
-                response.sendRedirect("customer");
+                response.sendRedirect(request.getContextPath() + "/dashboard/customer");
                 break;
         }
     }

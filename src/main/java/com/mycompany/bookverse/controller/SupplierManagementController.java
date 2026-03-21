@@ -242,7 +242,7 @@ public class SupplierManagementController extends HttpServlet {
                     "Delete supplier successfully");
         }
 
-        response.sendRedirect("supplier");
+        response.sendRedirect(request.getContextPath() + "/dashboard/supplier");
     }
 
 }

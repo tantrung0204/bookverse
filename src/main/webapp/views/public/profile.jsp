@@ -42,7 +42,7 @@
                                 <a href="${pageContext.request.contextPath}/profile?view=changePassword"
                                    class="sidebar-link ${activeMenu eq 'changePassword'? 'active':''}">Change Password</a>
 
-                                <a href="${pageContext.request.contextPath}/order"
+                                <a href="${pageContext.request.contextPath}/customer-order"
                                    class="sidebar-link ${activeMenu eq 'orderHistory'? 'active':''}">Orders History</a>
                                 <a href="${pageContext.request.contextPath}/feedback"
                                    class="sidebar-link ${activeMenu eq 'ownFeedback'? 'active':''}">Review</a>

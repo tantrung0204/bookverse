@@ -17,7 +17,7 @@
 
     <div class="content-card">
         <div class="toolbar">
-            <form action="${pageContext.request.contextPath}/order" method="GET" class="search-form" style="width: 100%; max-width: 400px;">
+            <form action="${pageContext.request.contextPath}/dashboard/order" method="GET" class="search-form" style="width: 100%; max-width: 400px;">
                 <input type="hidden" name="action" value="search">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
@@ -82,7 +82,7 @@
                                         </button>
 
                                         <c:if test="${o.orderStatus != 'Cancelled'}">
-                                            <form action="${pageContext.request.contextPath}/order" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel Order #O00${o.orderId}?');">
+                                            <form action="${pageContext.request.contextPath}/dashboard/order" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel Order #O00${o.orderId}?');">
                                                 <input type="hidden" name="action" value="cancel">
                                                 <input type="hidden" name="orderId" value="${o.orderId}">
                                                 <button type="submit" class="btn-action btn-delete" title="Cancel Order">
@@ -123,17 +123,17 @@
                     <nav class="d-flex justify-content-center" style="margin-top: 20px;">
                         <ul class="pagination">
                             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="${pageContext.request.contextPath}/order?action=${not empty searchKeyword ? 'search' : 'list'}${not empty searchKeyword ? '&keyword='.concat(searchKeyword) : ''}&page=${currentPage - 1}">&laquo;</a>
+                                <a class="page-link" href="${pageContext.request.contextPath}/dashboard/order?action=${not empty searchKeyword ? 'search' : 'list'}${not empty searchKeyword ? '&keyword='.concat(searchKeyword) : ''}&page=${currentPage - 1}">&laquo;</a>
                             </li>
 
                             <c:forEach begin="${startPage}" end="${endPage}" var="i">
                                 <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                    <a class="page-link" href="${pageContext.request.contextPath}/order?action=${not empty searchKeyword ? 'search' : 'list'}${not empty searchKeyword ? '&keyword='.concat(searchKeyword) : ''}&page=${i}">${i}</a>
+                                    <a class="page-link" href="${pageContext.request.contextPath}/dashboard/order?action=${not empty searchKeyword ? 'search' : 'list'}${not empty searchKeyword ? '&keyword='.concat(searchKeyword) : ''}&page=${i}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="${pageContext.request.contextPath}/order?action=${not empty searchKeyword ? 'search' : 'list'}${not empty searchKeyword ? '&keyword='.concat(searchKeyword) : ''}&page=${currentPage + 1}">&raquo;</a>
+                                <a class="page-link" href="${pageContext.request.contextPath}/dashboard/order?action=${not empty searchKeyword ? 'search' : 'list'}${not empty searchKeyword ? '&keyword='.concat(searchKeyword) : ''}&page=${currentPage + 1}">&raquo;</a>
                             </li>
                         </ul>
                     </nav>
@@ -149,7 +149,7 @@
             <p style="font-size: 12px; color: gray;">Update Orders information and settings</p>
         </div>
 
-        <form action="${pageContext.request.contextPath}/order" method="POST">
+        <form action="${pageContext.request.contextPath}/dashboard/order" method="POST">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" id="editOrderId" name="orderId">
 

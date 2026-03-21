@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet(name = "OrderController", urlPatterns = { "/order" })
+@WebServlet(name = "OrderManagementController", urlPatterns = { "/dashboard/order" })
 public class OrderManagementController extends HttpServlet {
 
     private OrderService orderService = new OrderService();
@@ -30,7 +30,7 @@ public class OrderManagementController extends HttpServlet {
             case "search":
                 String keyword = request.getParameter("keyword");
                 if (keyword == null || keyword.trim().isEmpty()) {
-                    response.sendRedirect("order?action=list");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/order?action=list");
                     return;
                 }
                 keyword = keyword.trim();
@@ -99,7 +99,7 @@ public class OrderManagementController extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action == null) {
-            response.sendRedirect("order");
+            response.sendRedirect(request.getContextPath() + "/dashboard/order");
             return;
         }
 
@@ -125,7 +125,7 @@ public class OrderManagementController extends HttpServlet {
                     e.printStackTrace();
                     request.getSession().setAttribute("error_edit", "Invalid input format!");
                 }
-                response.sendRedirect("order");
+                response.sendRedirect(request.getContextPath() + "/dashboard/order");
                 break;
 
             case "cancel":
@@ -144,11 +144,11 @@ public class OrderManagementController extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                response.sendRedirect("order");
+                response.sendRedirect(request.getContextPath() + "/dashboard/order");
                 break;
 
             default:
-                response.sendRedirect("order");
+                response.sendRedirect(request.getContextPath() + "/dashboard/order");
                 break;
         }
     }

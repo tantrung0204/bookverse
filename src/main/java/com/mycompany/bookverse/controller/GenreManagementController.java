@@ -170,10 +170,10 @@ public class GenreManagementController extends HttpServlet {
                         return;
                     }
                 } catch (NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
             default:
-                response.sendRedirect("genre");
+                response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 break;
         }
     }
@@ -191,7 +191,7 @@ public class GenreManagementController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("genre");
+            response.sendRedirect(request.getContextPath() + "/dashboard/genre");
             return;
         }
         switch (action) {
@@ -222,13 +222,13 @@ public class GenreManagementController extends HttpServlet {
                         request.getSession().setAttribute("editName", name);
                         request.getSession().setAttribute("editDesc", des);
                         request.getSession().setAttribute("editStatus", status);
-                        response.sendRedirect("genre");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                         return;
                     }
                     request.getSession().setAttribute("success", "Edit successfully");
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 } catch (ServletException | IOException | NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
                 break;
             case "create":
@@ -248,13 +248,13 @@ public class GenreManagementController extends HttpServlet {
                         request.getSession().setAttribute("createDesc", description);
                         request.getSession().setAttribute("createStatus", status);
 
-                        response.sendRedirect("genre");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                         return;
                     }
                     request.getSession().setAttribute("success", "Create successfully");
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
                 break;
             case "delete":
@@ -263,17 +263,17 @@ public class GenreManagementController extends HttpServlet {
                     String msg = genreServices.deleteGenre(id);
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("deleteError", msg);
-                        response.sendRedirect("genre");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                         return;
                     }
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("genre");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 }
                 request.getSession().setAttribute("success", "Delete successfully");
-                response.sendRedirect("genre");
+                response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 break;
             default:
-                response.sendRedirect("genre");
+                response.sendRedirect(request.getContextPath() + "/dashboard/genre");
                 break;
         }
     }

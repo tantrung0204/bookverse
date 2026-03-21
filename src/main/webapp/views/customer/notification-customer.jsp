@@ -12,7 +12,7 @@
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/order-list.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/notification-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/notification-customer.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">

@@ -247,7 +247,7 @@ public class CategoryManagementController extends HttpServlet {
                     "Delete category successfully");
         }
 
-        response.sendRedirect("category");
+        response.sendRedirect(request.getContextPath() + "/dashboard/category");
     }
 
 }

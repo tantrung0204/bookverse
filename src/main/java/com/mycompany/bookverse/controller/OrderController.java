@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name = "OrderController", urlPatterns = { "/order" })
+@WebServlet(name = "CustomerOrderController", urlPatterns = { "/customer-order" })
 public class OrderController extends HttpServlet {
 
     private OrderService orderService = new OrderService();
@@ -110,7 +110,7 @@ public class OrderController extends HttpServlet {
                 break;
 
             default:
-                response.sendRedirect("order?action=list");
+                response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
         }
     }
 
@@ -177,7 +177,7 @@ public class OrderController extends HttpServlet {
 
         orderService.cancelOrder(orderId);
 
-        response.sendRedirect("order?action=list");
+        response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
     }
 
     /* ================= CONFIRM RECEIVED ================= */
@@ -188,7 +188,7 @@ public class OrderController extends HttpServlet {
 
         orderService.confirmReceived(orderId);
 
-        response.sendRedirect("order?action=list");
+        response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
     }
 
     /**

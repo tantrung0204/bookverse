@@ -24,8 +24,8 @@ import java.util.List;
  * @author TrungNT - CE200064
  */
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10, maxRequestSize = 1024 * 1024 * 50)
-@WebServlet(name = "StaffController", urlPatterns = { "/staff" })
-public class StaffController extends HttpServlet {
+@WebServlet(name = "StaffManagementController", urlPatterns = { "/dashboard/staff" })
+public class StaffManagementController extends HttpServlet {
 
     private StaffService staffService = new StaffService();
 
@@ -93,18 +93,18 @@ public class StaffController extends HttpServlet {
                 String keyword = request.getParameter("keyword");
 
                 if (keyword == null || keyword.trim().isEmpty()) {
-                    response.sendRedirect("staff?action=list");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff?action=list");
                     return;
                 }
                 keyword = keyword.trim();
 
                 if (keyword.length() > 50) {
-                    response.sendRedirect("staff?action=list&msg=error_keyword_long");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff?action=list&msg=error_keyword_long");
                     return;
                 }
 
                 if (!keyword.matches("^[a-zA-Z0-9À-ỹ\\s._-]+$")) {
-                    response.sendRedirect("staff?action=list&msg=error_keyword_invalid");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff?action=list&msg=error_keyword_invalid");
                     return;
                 }
 
@@ -199,7 +199,7 @@ public class StaffController extends HttpServlet {
 
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("staff");
+            response.sendRedirect(request.getContextPath() + "/dashboard/staff");
             return;
         }
 
@@ -234,10 +234,10 @@ public class StaffController extends HttpServlet {
                     }
 
                     request.getSession().setAttribute("success", "Create successfully");
-                    response.sendRedirect("staff");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff");
 
                 } catch (Exception e) {
-                    response.sendRedirect("staff");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff");
                 }
                 break;
             }
@@ -299,10 +299,10 @@ public class StaffController extends HttpServlet {
                     }
 
                     request.getSession().setAttribute("success", "Edit successfully");
-                    response.sendRedirect("staff");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff");
 
                 } catch (Exception e) {
-                    response.sendRedirect("staff");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff");
                 }
                 break;
             }
@@ -313,18 +313,18 @@ public class StaffController extends HttpServlet {
                     boolean success = staffService.deleteStaff(idDelete);
 
                     if (success) {
-                        response.sendRedirect("staff?msg=success_delete");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/staff?msg=success_delete");
                     } else {
-                        response.sendRedirect("staff?msg=error_delete");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/staff?msg=error_delete");
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Error Delete - Invalid ID: " + e.getMessage());
-                    response.sendRedirect("staff?msg=error_invalid_id");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/staff?msg=error_invalid_id");
                 }
                 break;
 
             default:
-                response.sendRedirect("staff");
+                response.sendRedirect(request.getContextPath() + "/dashboard/staff");
                 break;
         }
     }

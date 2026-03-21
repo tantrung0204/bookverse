@@ -171,10 +171,10 @@ public class AuthorManagementController extends HttpServlet {
                         return;
                     }
                 } catch (NumberFormatException e) {
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 }
             default:
-                response.sendRedirect("author");
+                response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 break;
         }
     }
@@ -192,7 +192,7 @@ public class AuthorManagementController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect("author");
+            response.sendRedirect(request.getContextPath() + "/dashboard/author");
             return;
         }
         switch (action) {
@@ -226,13 +226,13 @@ public class AuthorManagementController extends HttpServlet {
                         request.getSession().setAttribute("editBirth", birthStr);
                         request.getSession().setAttribute("editNat", nat);
                         request.getSession().setAttribute("editBio", bio);
-                        response.sendRedirect("author");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/author");
                         return;
                     }
                     request.getSession().setAttribute("success", "Edit successfully");
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 } catch (ServletException | IOException | NumberFormatException e) {
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 }
                 break;
             case "create":
@@ -254,13 +254,13 @@ public class AuthorManagementController extends HttpServlet {
                         request.getSession().setAttribute("birth", birth);
                         request.getSession().setAttribute("nationality", nat);
                         request.getSession().setAttribute("biography", bio);
-                        response.sendRedirect("author");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/author");
                         return;
                     }
                     request.getSession().setAttribute("success", "Create successfully");
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 }
                 break;
             case "delete":
@@ -269,18 +269,18 @@ public class AuthorManagementController extends HttpServlet {
                     String msg = authorServices.deleteAuthor(id);
                     if (!msg.contains("successfully")) {
                         request.getSession().setAttribute("deleteError", msg);
-                        response.sendRedirect("author");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/author");
                         return;
                     }
                     request.getSession().setAttribute("success", "Delete successfully");
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 } catch (IOException | NumberFormatException e) {
-                    response.sendRedirect("author");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 }
 
                 break;
             default:
-                response.sendRedirect("author");
+                response.sendRedirect(request.getContextPath() + "/dashboard/author");
                 break;
         }
     }

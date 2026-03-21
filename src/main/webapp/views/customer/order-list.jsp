@@ -47,14 +47,14 @@
                                     <div class="order-actions">
 
                                         <a class="btn-view"
-                                            href="${pageContext.request.contextPath}/order?action=detail&id=${o.orderId}">
+                                            href="${pageContext.request.contextPath}/customer-order?action=detail&id=${o.orderId}">
                                             View Details
                                         </a>
 
                                         <!-- CANCEL -->
                                         <c:if test="${o.orderStatus == 'Pending'}">
 
-                                            <form method="post" action="${pageContext.request.contextPath}/order">
+                                            <form method="post" action="${pageContext.request.contextPath}/customer-order">
 
                                                 <input type="hidden" name="action" value="cancel">
                                                 <input type="hidden" name="orderId" value="${o.orderId}">
@@ -71,7 +71,7 @@
                                         <!-- CONFIRM RECEIVED -->
                                         <c:if test="${o.orderStatus == 'Shipping'}">
 
-                                            <form method="post" action="${pageContext.request.contextPath}/order">
+                                            <form method="post" action="${pageContext.request.contextPath}/customer-order">
 
                                                 <input type="hidden" name="action" value="confirm">
                                                 <input type="hidden" name="orderId" value="${o.orderId}">

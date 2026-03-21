@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "ProductManagementController", urlPatterns = {"/product"})
+@WebServlet(name = "ProductManagementController", urlPatterns = {"/dashboard/product"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2,
         maxFileSize = 1024 * 1024 * 10,
@@ -324,7 +324,7 @@ public class ProductManagementController extends HttpServlet {
 
             // 5. Thành công
             request.getSession().setAttribute("successMsg", "Product added successfully.");
-            response.sendRedirect(request.getContextPath() + "/product?tab=" + type.toLowerCase());
+            response.sendRedirect(request.getContextPath() + "/dashboard/product?tab=" + type.toLowerCase());
             
         } catch (Exception e) {
             returnToCreateFormWithError(request, response, tempProduct, type, e.getMessage());
@@ -511,7 +511,7 @@ public class ProductManagementController extends HttpServlet {
 
             // 5. Thành công
             request.getSession().setAttribute("successMsg", "Product updated successfully.");
-            response.sendRedirect(request.getContextPath() + "/product?tab=" + tab);
+            response.sendRedirect(request.getContextPath() + "/dashboard/product?tab=" + tab);
             
         } catch (Exception e) {
             // Bắt lỗi trùng tên từ Service ném ra
@@ -563,7 +563,7 @@ public class ProductManagementController extends HttpServlet {
         } catch (Exception e) {
             request.getSession().setAttribute("errorMsg", "Cannot delete the product.");
         }
-        response.sendRedirect(request.getContextPath() + "/product?tab=" + tab);
+        response.sendRedirect(request.getContextPath() + "/dashboard/product?tab=" + tab);
     }
     
     @Override

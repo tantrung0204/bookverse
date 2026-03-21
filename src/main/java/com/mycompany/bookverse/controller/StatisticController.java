@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author huyqu
  */
-@WebServlet(name = "StatisticController", urlPatterns = {"/statistics"})
+@WebServlet(name = "StatisticController", urlPatterns = {"/dashboard/statistics"})
 public class StatisticController extends HttpServlet {
 
     private StatisticService statisticService = new StatisticService();

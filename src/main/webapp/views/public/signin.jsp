@@ -42,6 +42,12 @@
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" minlength="8" required />
+                    <div style="text-align: right; margin-top: 6px;">
+                        <a href="${pageContext.request.contextPath}/forgot-password" 
+                           style="color: #8B6B4C; font-size: 13px; text-decoration: none; font-weight: 500;"
+                           onmouseover="this.style.textDecoration='underline'" 
+                           onmouseout="this.style.textDecoration='none'">Forgot Password?</a>
+                    </div>
                 </div>
 
                 <label>Sign in as:</label>
@@ -75,6 +81,15 @@
                 });
             </script>
             <c:remove var="errorMessage" scope="session"/>
+        </c:if>
+
+        <c:if test="${not empty sessionScope.successMessage}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    showToastJS('${sessionScope.successMessage}', 'success');
+                });
+            </script>
+            <c:remove var="successMessage" scope="session"/>
         </c:if>
 
         <script>

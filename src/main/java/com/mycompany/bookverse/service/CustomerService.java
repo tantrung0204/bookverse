@@ -89,4 +89,20 @@ public class CustomerService {
         }
         return null;
     }
+
+    // ==========================================
+    // FORGOT PASSWORD
+    // ==========================================
+    public Customer getCustomerByEmail(String email) {
+        return customerDAO.findByEmail(email);
+    }
+
+    public boolean updatePassword(String email, String newPlainPassword) {
+        Customer customer = customerDAO.findByEmail(email);
+        if (customer != null) {
+            customer.setPasswordHash(PasswordUtil.hashPassword(newPlainPassword));
+            return customerDAO.update(customer);
+        }
+        return false;
+    }
 }

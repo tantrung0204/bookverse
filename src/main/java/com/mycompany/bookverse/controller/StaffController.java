@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Staff;
 import com.mycompany.bookverse.service.StaffService;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import com.mycompany.bookverse.utils.PasswordUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -57,6 +58,20 @@ public class StaffController extends HttpServlet {
             out.println("</html>");
         }
     }
+    
+    private boolean isValidFullName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+        return name.matches("^[\\p{L}][\\p{L}\\s]*$");
+    }
+
+    private boolean isValidUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            return false;
+        }
+        return username.matches("^[a-zA-Z0-9][a-zA-Z0-9._-]{4,}$");
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -72,19 +87,36 @@ public class StaffController extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        if (action == null) {
+        if (action == null || action.trim().isEmpty()) {
             action = "list";
         }
 
         switch (action) {
             case "search":
                 String keyword = request.getParameter("keyword");
+
+                if (keyword == null || keyword.trim().isEmpty()) {
+                    response.sendRedirect("staff?action=list");
+                    return;
+                }
+                keyword = keyword.trim();
+
+                if (keyword.length() > 50) {
+                    response.sendRedirect("staff?action=list&msg=error_keyword_long");
+                    return;
+                }
+
+                if (!keyword.matches("^[a-zA-Z0-9À-ỹ\\s._-]+$")) {
+                    response.sendRedirect("staff?action=list&msg=error_keyword_invalid");
+                    return;
+                }
+
                 List<Staff> searchResults = staffService.searchStaffs(keyword);
                 request.setAttribute("staffs", searchResults);
                 request.setAttribute("searchKeyword", keyword);
                 break;
 
-            case "view":
+            case "view": {
                 try {
                     int id = Integer.parseInt(request.getParameter("staffId"));
                     Staff c = staffService.getStaffById(id);
@@ -95,29 +127,53 @@ public class StaffController extends HttpServlet {
                 } catch (NumberFormatException e) {
                     System.out.println("Error View Staff: " + e.getMessage());
                 }
-                List<Staff> listForView = staffService.getAllStaffs(1, com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE);
+                int page = 1;
+                String pageStr = request.getParameter("page");
+                if (pageStr != null && !pageStr.trim().isEmpty()) {
+                    try {
+                        page = Integer.parseInt(pageStr);
+                        if (page < 1) {
+                            page = 1; 
+                        }
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
+                }
+
+                int pageSize = com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                List<Staff> listForView = staffService.getAllStaffs(page, pageSize);
+                long totalStaffs = staffService.getTotalStaffs();
+                int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
+
                 request.setAttribute("staffs", listForView);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                request.setAttribute("pageSize", pageSize);
                 break;
+            }
 
             case "list":
             default:
-                // 1. Lấy trang hiện tại từ URL (mặc định là 1)
+                
                 int page = 1;
-                String pageParam = request.getParameter("page");
-                if (pageParam != null && !pageParam.isEmpty()) {
-                    page = Integer.parseInt(pageParam);
+                String pageStr = request.getParameter("page");
+                if (pageStr != null && !pageStr.trim().isEmpty()) {
+                    try {
+                        page = Integer.parseInt(pageStr);
+                        if (page < 1) {
+                            page = 1; 
+                        }
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
                 }
-                
-                // 2. Lấy số lượng trên 1 trang từ PaginationConfig
+
                 int pageSize = com.mycompany.bookverse.utils.PaginationConfig.ADMIN_ITEMS_PER_PAGE;
-                
-                // 3. Lấy dữ liệu danh sách và tổng số trang
-                List<Staff> list = staffService.getAllStaffs(page, pageSize);
+                List<Staff> listForView = staffService.getAllStaffs(page, pageSize);
                 long totalStaffs = staffService.getTotalStaffs();
                 int totalPages = (int) Math.ceil((double) totalStaffs / pageSize);
-                
-                // 4. Gửi dữ liệu sang JSP
-                request.setAttribute("staffs", list);
+
+                request.setAttribute("staffs", listForView);
                 request.setAttribute("currentPage", page);
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("pageSize", pageSize);
@@ -151,71 +207,105 @@ public class StaffController extends HttpServlet {
         }
 
         switch (action) {
-            case "create":
-                String fullName = request.getParameter("fullName");
-                String email = request.getParameter("email");
-                String password = request.getParameter("password");
-                String username = request.getParameter("username");
-                String roleName = request.getParameter("roleName");
-                String hashedPassword = PasswordUtil.hashPassword(password);
-
-                Staff newStaff = new Staff();
-                newStaff.setFullName(fullName);
-                //newStaff.setEmail(email);
-                newStaff.setPasswordHash(hashedPassword);
-                newStaff.setUsername(username);
-                newStaff.setStatus(1);
-                newStaff.setCreatedAt(new java.util.Date());
-                newStaff.setRoleName(roleName);
-
-                Part avatarPart = request.getPart("avatar");
-                String fileName = "";
-                if (avatarPart != null && avatarPart.getSize() > 0) {
-                    fileName = java.nio.file.Paths.get(avatarPart.getSubmittedFileName()).getFileName().toString();
-                    newStaff.setProfileImageUrl(fileName);
-                } else {
-                    newStaff.setProfileImageUrl("assets/images/default-avt.jpg");
-                }
-                int result = staffService.addStaff(newStaff);
-
-                if (result == 1) {
-                    response.sendRedirect("staff?msg=success_add");
-                } else if (result == 2) {
-                    response.sendRedirect("staff?msg=missing_info");
-                } else {
-                    response.sendRedirect("staff?msg=error_db");
-                }
-                break;
-
-            case "edit":
+            case "create": {
                 try {
-                    int id = Integer.parseInt(request.getParameter("staffId"));
-                    Staff editStaff = staffService.getStaffById(id);
+                    String fullName = request.getParameter("fullName");
+                    String password = request.getParameter("password");
+                    String username = request.getParameter("username");
+                    String roleName = request.getParameter("roleName");
+                    String msg = staffService.insertStaff(fullName, username, password, roleName);
 
-                    if (editStaff != null) {
-                        editStaff.setFullName(request.getParameter("fullName"));
-                        //editStaff.setEmail(request.getParameter("email"));
-                        editStaff.setRoleName(request.getParameter("roleName"));
-                        
-                        String newPassword = request.getParameter("password");
-                        if (newPassword != null && !newPassword.trim().isEmpty()) {
-                            String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
-                            editStaff.setPasswordHash(hashedNewPassword);
-                        }
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("createError", msg);
+                        request.setAttribute("openCreatePopup", true);
+                        request.setAttribute("createUsername", username);
+                        request.setAttribute("createFullName", fullName);
 
-                        int resultEdit = staffService.editStaff(editStaff);
-                        if (resultEdit == 1) {
-                            response.sendRedirect("staff?msg=success_edit");
-                        } else {
-                            response.sendRedirect("staff?msg=error_edit");
-                        }
+                        int page = 1;
+                        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                        List<Staff> staffs = staffService.getAllStaffs(page, pageSize);
+                        request.setAttribute("staffs", staffs);
+                        request.setAttribute("currentPage", page);
+                        request.setAttribute("totalPages", (int) Math.ceil((double) staffService.getTotalStaffs() / pageSize));
+                        request.setAttribute("pageSize", pageSize);
+
+                        request.setAttribute("contentPage", "staff-list.jsp");
+                        request.setAttribute("activeMenu", "staff");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Error Edit - Invalid ID: " + e.getMessage());
-                    response.sendRedirect("staff?msg=error_invalid_id");
+
+                    request.getSession().setAttribute("success", "Create successfully");
+                    response.sendRedirect("staff");
+
+                } catch (Exception e) {
+                    response.sendRedirect("staff");
                 }
                 break;
+}
+            case "edit": {
+                try {
+                    int staffId = Integer.parseInt(request.getParameter("staffId"));
+                    String editFullName = request.getParameter("fullName");
+                    String editPassword = request.getParameter("password");
+                    String editUsername = request.getParameter("username");
+                    String editRole = request.getParameter("roleName");
+                    String profileImageUrl = null; 
+                    
+                    Part filePart = request.getPart("avatarFile"); 
+                    
+                    if (filePart != null && filePart.getSize() > 0) {
+                        
+                        String fileName = java.nio.file.Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                        
+                        String uploadPath = getServletContext().getRealPath("") + java.io.File.separator + "assets" + java.io.File.separator + "images";
+                        java.io.File uploadDir = new java.io.File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
+                       
+                        String newFileName = System.currentTimeMillis() + "_" + fileName;
+                        filePart.write(uploadPath + java.io.File.separator + newFileName);
+                       
+                        profileImageUrl = "assets/images/" + newFileName;
+                    }
 
+                    String msg = staffService.editStaff(staffId, editFullName, editPassword, profileImageUrl, editRole);
+
+                    if (!msg.contains("successfully")) {
+                        request.setAttribute("editError", msg);
+                        request.setAttribute("openEditPopup", true);
+
+                        // Giữ lại form
+                        request.setAttribute("editStaffId", staffId);
+                        request.setAttribute("editStaffUsername", editUsername);
+                        request.setAttribute("editStaffFullName", editFullName);
+                        request.setAttribute("editStaffRole", editRole);
+
+                        // Load bảng nền
+                        int page = 1;
+                        int pageSize = PaginationConfig.ADMIN_ITEMS_PER_PAGE;
+                        List<Staff> staffs = staffService.getAllStaffs(page, pageSize);
+                        request.setAttribute("staffs", staffs);
+                        request.setAttribute("currentPage", page);
+                        request.setAttribute("totalPages", (int) Math.ceil((double) staffService.getTotalStaffs() / pageSize));
+                        request.setAttribute("pageSize", pageSize);
+
+                        request.setAttribute("contentPage", "staff-list.jsp");
+                        request.setAttribute("activeMenu", "staff");
+                        request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
+                        return;
+                    }
+
+                    request.getSession().setAttribute("success", "Edit successfully");
+                    response.sendRedirect("staff");
+
+                } catch (Exception e) {
+                    response.sendRedirect("staff");
+                }
+                break;
+}
+            
             case "delete":
                 try {
                     int idDelete = Integer.parseInt(request.getParameter("staffId"));

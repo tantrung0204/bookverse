@@ -1,144 +1,144 @@
 <%-- Document : order-list Created on : Mar 7, 2026, 3:54:31 PM Author : Admin --%>
 
-    <%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 
-        <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-            <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-                <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-                    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/order-list-customer.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/order-list-customer.css">
 
-                    <div class="order-container">
+<div class="order-container">
 
-                        <h2 class="page-title">My Orders</h2>
+    <h2 class="page-title">My Orders</h2>
 
-                        <!-- STATUS TABS -->
+    <!-- STATUS TABS -->
 
-                        <div class="order-tabs">
+    <div class="order-tabs">
+        <button class="tab active" onclick="filterOrder('all')">All</button>
+        <button class="tab" onclick="filterOrder('pending')">Pending</button>
+        <button class="tab" onclick="filterOrder('confirmed')">Confirmed</button>
+        <button class="tab" onclick="filterOrder('shipping')">Shipping</button>
+        <button class="tab" onclick="filterOrder('completed')">Completed</button>
+        <button class="tab" onclick="filterOrder('canceled')">Canceled</button>
+    </div>
 
-                            <button class="tab active" onclick="filterOrder('all')">All</button>
-                            <button class="tab" onclick="filterOrder('pending')">Pending</button>
-                            <button class="tab" onclick="filterOrder('shipping')">Shipping</button>
-                            <button class="tab" onclick="filterOrder('completed')">Completed</button>
-                            <button class="tab" onclick="filterOrder('canceled')">Canceled</button>
+    <!-- ORDER LIST -->
 
-                        </div>
+    <c:forEach var="o" items="${orders}">
 
-                        <!-- ORDER LIST -->
+        <div class="order-card" data-status="${fn:toLowerCase(o.orderStatus)}">
 
-                        <c:forEach var="o" items="${orders}">
+            <div class="order-header">
 
-                            <div class="order-card" data-status="${fn:toLowerCase(o.orderStatus)}">
+                <div class="order-left">
 
-                                <div class="order-header">
+                    <span class="order-id">
+                        ORD-${o.orderId}
+                    </span>
 
-                                    <div class="order-left">
+                    <span class="status ${fn:toLowerCase(o.orderStatus)}">
+                        ${o.orderStatus}
+                    </span>
 
-                                        <span class="order-id">
-                                            ORD-${o.orderId}
-                                        </span>
+                </div>
 
-                                        <span class="status ${fn:toLowerCase(o.orderStatus)}">
-                                            ${o.orderStatus}
-                                        </span>
+                <div class="order-actions">
 
-                                    </div>
+                    <a class="btn-view"
+                       href="${pageContext.request.contextPath}/customer-order?action=detail&id=${o.orderId}">
+                        View Detail
+                    </a>
 
-                                    <div class="order-actions">
+                    <!-- CANCEL -->
+                    <c:if test="${o.orderStatus == 'Pending'}">
 
-                                        <a class="btn-view"
-                                            href="${pageContext.request.contextPath}/customer-order?action=detail&id=${o.orderId}">
-                                            View Details
-                                        </a>
+                        <form method="post" action="${pageContext.request.contextPath}/customer-order">
 
-                                        <!-- CANCEL -->
-                                        <c:if test="${o.orderStatus == 'Pending'}">
+                            <input type="hidden" name="action" value="cancel">
+                            <input type="hidden" name="orderId" value="${o.orderId}">
 
-                                            <form method="post" action="${pageContext.request.contextPath}/customer-order">
+                            <button class="btn-cancel"
+                                    onclick="return confirm('Are you sure you want to cancel this order?')">
+                                Cancel Order
+                            </button>
 
-                                                <input type="hidden" name="action" value="cancel">
-                                                <input type="hidden" name="orderId" value="${o.orderId}">
+                        </form>
 
-                                                <button class="btn-cancel"
-                                                    onclick="return confirm('Cancel this order?')">
-                                                    Cancel Order
-                                                </button>
+                    </c:if>
 
-                                            </form>
+                    <!-- CONFIRM RECEIVED -->
+                    <c:if test="${o.orderStatus == 'Shipping'}">
 
-                                        </c:if>
+                        <form method="post" action="${pageContext.request.contextPath}/customer-order">
 
-                                        <!-- CONFIRM RECEIVED -->
-                                        <c:if test="${o.orderStatus == 'Shipping'}">
+                            <input type="hidden" name="action" value="confirm">
+                            <input type="hidden" name="orderId" value="${o.orderId}">
 
-                                            <form method="post" action="${pageContext.request.contextPath}/customer-order">
+                            <button class="btn-confirm"
+                                    onclick="return confirm('Confirmation that the order has been received?')">
+                                Received
+                            </button>
 
-                                                <input type="hidden" name="action" value="confirm">
-                                                <input type="hidden" name="orderId" value="${o.orderId}">
+                        </form>
 
-                                                <button class="btn-confirm">
-                                                    Received
-                                                </button>
+                    </c:if>
 
-                                            </form>
+                </div>
 
-                                        </c:if>
+            </div>
 
-                                    </div>
+            <div class="order-body">
 
-                                </div>
+                <div class="order-block">
 
-                                <div class="order-body">
+                    <span>Order Date</span>
 
-                                    <div class="order-block">
+                    <p>
+                        <fmt:formatDate value="${o.createdAt}" pattern="MMM dd, yyyy" />
+                    </p>
 
-                                        <span>Order Date</span>
+                </div>
 
-                                        <p>
-                                            <fmt:formatDate value="${o.createdAt}" pattern="MMM dd, yyyy" />
-                                        </p>
+                <div class="order-block">
 
-                                    </div>
+                    <span>Total Amount</span>
 
-                                    <div class="order-block">
+                    <p>${o.totalAmount}</p>
 
-                                        <span>Total Amount</span>
+                </div>
 
-                                        <p>${o.totalAmount}</p>
+            </div>
 
-                                    </div>
+        </div>
 
-                                </div>
+    </c:forEach>
 
-                            </div>
+</div>
 
-                        </c:forEach>
+<script>
+    function filterOrder(status) {
 
-                    </div>
+        let orders = document.querySelectorAll(".order-card");
+        let tabs = document.querySelectorAll(".tab");
 
-                    <script>
-                        function filterOrder(status) {
+        // remove active khỏi tất cả tab
+        tabs.forEach(t => t.classList.remove("active"));
 
-                            let orders = document.querySelectorAll(".order-card");
-                            let tabs = document.querySelectorAll(".tab");
+        // thêm active cho tab được click
+        event.target.classList.add("active");
 
-                            // remove active khỏi tất cả tab
-                            tabs.forEach(t => t.classList.remove("active"));
+        orders.forEach(o => {
 
-                            // thêm active cho tab được click
-                            event.target.classList.add("active");
+            let s = o.dataset.status;
 
-                            orders.forEach(o => {
+            if (status === "all" || s === status.toLowerCase()) {
+                o.style.display = "block";
+            } else {
+                o.style.display = "none";
+            }
 
-                                let s = o.dataset.status;
+        });
 
-                                if (status === "all" || s === status.toLowerCase()) {
-                                    o.style.display = "block";
-                                } else {
-                                    o.style.display = "none";
-                                }
-
-                            });
-
-                        }
-                    </script>
+    }
+</script>

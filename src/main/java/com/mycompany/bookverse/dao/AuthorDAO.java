@@ -73,25 +73,7 @@ public class AuthorDAO {
         }
     }
 
-    public boolean checkAuthorExist(int id, String name) {
-        List<Author> list = findAll();
-        for (Author author : list) {
-            if (author.getAuthorId() != id && author.getAuthorName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkAuthorExistByName(String name) {
-        List<Author> list = findAll();
-        for (Author author : list) {
-            if (author.getAuthorName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
+   
 
     public long countBooksByAuthorId(int authorId) {
         EntityManager em = JPAUtil.getEntityManager();

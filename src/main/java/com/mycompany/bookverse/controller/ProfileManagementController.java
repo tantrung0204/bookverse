@@ -138,8 +138,10 @@ public class ProfileManagementController extends HttpServlet {
 
         String action = request.getParameter("action");
         HttpSession session = request.getSession(false);
+        String role = (String) session.getAttribute("role");
+        String error;
         if (session != null && session.getAttribute("user") != null) {
-            String error = "";
+            
             switch (action) {
 
                 case "changeAvatar":
@@ -164,7 +166,7 @@ public class ProfileManagementController extends HttpServlet {
 
                     String imagePath = "assets/images/avatars/" + fileName;
 
-                    if ("customer".equals(session.getAttribute("role"))) {
+                    if ("customer".equals(role)) {
                         Customer customer = (Customer) session.getAttribute("user");
                         customer.setProfileImageUrl(imagePath);
                         profileService.updateInforForCustomer(customer);
@@ -181,44 +183,28 @@ public class ProfileManagementController extends HttpServlet {
                     String fullName = request.getParameter("fullName");
                     String phoneNumber = request.getParameter("phoneNumber");
                     String address = request.getParameter("address");
-                    String password = request.getParameter("password");
 
-                    if (fullName == null || fullName.trim().isEmpty()) {
-                        error += "Full name can't be empty.<br>";
-                    } else if (!fullName.matches("^[A-Za-zÀ-ỹ0-9]+( [A-Za-zÀ-ỹ0-9]+)*$")) {
-                        error += "Full name contains invalid characters.\n";
-                    }
-                    String hashedNewPassword = PasswordUtil.hashPassword(password);
-
-                    if ("customer".equals(session.getAttribute("role"))) {
-                        if (!phoneNumber.matches("^0(3|5|7|8|9)[0-9]{8}$")) {
-                            error += "Phone number must start with +84, 84, or 0 and contain 10 digits (Vietnam phone format).<br>";
-                        } else if (!address.matches("^[a-zA-Z0-9À-ỹ\\s,./-]{5,100}$")) {
-                            error += "Invalid address. It must be 5–100 characters and only include letters, numbers, spaces, and , . / -<br>";
-                        }
+                    if ("customer".equals(role)) {
+                        Customer customer = (Customer) session.getAttribute("user");
+                        error = profileService.CheckValidEditInformation(fullName, phoneNumber, address, role, customer.getCustomerId());
                         if (error.isEmpty()) {
-                            Customer customer = (Customer) session.getAttribute("user");
                             customer.setFullName(fullName);
                             customer.setPhoneNumber(phoneNumber);
                             customer.setAddress(address);
                             profileService.updateInforForCustomer(customer);
-                            session.setAttribute("success", "edit successfully");
                         }
                     } else {
-                        if (!password.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
-                            error += "Password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
-                        }
-
+                        Staff staff = (Staff) session.getAttribute("user");
+                        error = profileService.CheckValidEditInformation(fullName, phoneNumber, address, role, 0);
                         if (error.isEmpty()) {
-                            Staff staff = (Staff) session.getAttribute("user");
                             staff.setFullName(fullName);
-                            staff.setPasswordHash(hashedNewPassword);
                             profileService.updateInforForStaff(staff);
-                            session.setAttribute("success", "edit successfully");
                         }
                     }
                     if (!error.isEmpty()) {
                         session.setAttribute("error", error);
+                    } else {
+                        session.setAttribute("success", "edit successfully" + error);
                     }
                     response.sendRedirect("profile?view=edit");
                     break;
@@ -226,30 +212,30 @@ public class ProfileManagementController extends HttpServlet {
                     String oldPass = request.getParameter("oldPassword").toLowerCase();
                     String newPass = request.getParameter("newPassword").toLowerCase();
                     String reNewPass = request.getParameter("reNewPassword").toLowerCase();
-                    Customer customer = (Customer) session.getAttribute("user");
+                    String hashedNewPassword = PasswordUtil.hashPassword(reNewPass);
 
-                    if (!oldPass.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
-                        error += "old password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
-                    } else if (!PasswordUtil.checkPassword(oldPass, customer.getPasswordHash())) {//kiểm tra mật khẩu cũ có đúng ko.
-                        error += "The current password is incorrect.<br>";
-                    } else if (!newPass.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
-                        error += "new Password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
-                    } else if (!reNewPass.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
-                        error += "Re-new password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
-                    } else if (!newPass.equals(reNewPass)) {
-                        error += "New password and confirm password do not match.<br>";
+                    if ("customer".equals(role)) {
+                        Customer customer = (Customer) session.getAttribute("user");
+                        error = profileService.CheckValidChangePassword(oldPass, newPass, reNewPass, customer, null);
+                        if (error.isEmpty()) {
+                            customer.setPasswordHash(hashedNewPassword);
+                            profileService.updateInforForCustomer(customer);
+                        }
+                    } else {
+                        Staff staff = (Staff) session.getAttribute("user");
+                        error = profileService.CheckValidChangePassword(oldPass, newPass, reNewPass, null, staff);
+                        if (error.isEmpty()) {
+                            staff.setPasswordHash(hashedNewPassword);
+                            profileService.updateInforForStaff(staff);
+                        }
                     }
 
                     if (!error.isEmpty()) {
                         session.setAttribute("oldPass", oldPass);
                         session.setAttribute("newPass", newPass);
                         session.setAttribute("reNewPass", reNewPass);
-
                         session.setAttribute("error", error);
                     } else {
-                        hashedNewPassword = PasswordUtil.hashPassword(reNewPass);
-                        customer.setPasswordHash(hashedNewPassword);
-                        profileService.updateInforForCustomer(customer);
                         session.setAttribute("success", "Change password successfully");
                     }
                     response.sendRedirect("profile?view=changePassword");
@@ -259,7 +245,6 @@ public class ProfileManagementController extends HttpServlet {
             }
         } else {
             request.getRequestDispatcher("/views/public/signin.jsp").forward(request, response);
-            return;
         }
     }
 

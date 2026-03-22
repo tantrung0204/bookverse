@@ -52,7 +52,7 @@ public class AuthorService {
             error += "Year of birth must be between 1 and the current year.<br>";
         }
         if (error.isEmpty()) {
-            boolean checkExist = authorDAO.checkAuthorExistByName(name);
+            boolean checkExist = checkAuthorExistByName(name);
             if (!checkExist) {
                 if (authorDAO.createAuthor(author)) {
                     return "Create Author successfully";
@@ -88,7 +88,7 @@ public class AuthorService {
         } else if (!(author.getBirthYear() > 0 && author.getBirthYear() < LocalDate.now().getYear())) {
             error += "Year of birth must be between 1 and the current year.<br>";
         }
-        boolean checkExist = authorDAO.checkAuthorExist(author.getAuthorId(), author.getAuthorName());
+        boolean checkExist = checkAuthorExist(author.getAuthorId(), author.getAuthorName());
         Author old = authorDAO.findById(author.getAuthorId());
         if (checkExist) {
             return "Author name already exist.";
@@ -142,5 +142,24 @@ public class AuthorService {
     public int getTotalPagesByKeyword(String keyword, int pageSize) {
         long totalItems = authorDAO.countByKeyword(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
+    }
+     public boolean checkAuthorExist(int id, String name) {
+        List<Author> list = authorDAO.findAll();
+        for (Author author : list) {
+            if (author.getAuthorId() != id && author.getAuthorName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAuthorExistByName(String name) {
+        List<Author> list = authorDAO.findAll();
+        for (Author author : list) {
+            if (author.getAuthorName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

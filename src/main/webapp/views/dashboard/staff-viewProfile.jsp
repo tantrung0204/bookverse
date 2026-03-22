@@ -72,26 +72,46 @@
                                value="${user.fullName}"
                                name="fullName">
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control"
-                               placeholder="Enter your new Password"
-                               name="password">
-                    </div>
-
                     <div class="d-flex gap-3">
                         <button class="btn btn-success flex-fill" type="submit">
-                            ✓ Save Changes
-                        </button>
-
-                        <button class="btn btn-outline-secondary flex-fill">
-                            ✕ Cancel
-                        </button>
+                            Save Changes
+                        </button>                    
                     </div>
 
                 </form>
+                <form 
+                    action="${pageContext.request.contextPath}/profile?action=changePassword"
+                    method="post"
+                    >
+                    <div class="mb-3">
+                        <label class="form-label">Old Password</label>
+                        <input type="text" class="form-control"
+                               placeholder="Enter your old password"
+                               value="${oldPass}"
+                               name="oldPassword">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="text" class="form-control"
+                               placeholder="Enter your new password"
+                               value="${newPass}"
+                               name="newPassword">
+                    </div>         
 
+                    <div class="mb-3">
+                        <label class="form-label">Re-New Password</label>
+                        <input type="text" class="form-control"
+                               placeholder="Enter your re-new password"
+                               value="${reNewPass}"
+                               name="reNewPassword">
+                    </div> 
+
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-success flex-fill" type="submit">
+                            change password
+                        </button>                    
+                    </div>
+                </form>
             </div>
 
         </div>

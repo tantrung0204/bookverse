@@ -123,6 +123,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     color: #2e7d32;
 }
 
+
+.status.confirmed{
+    background:#dbe6f5;
+    color:#3c5a87;
+}
+
+.status.shipping{
+    background:#d3eb9d;
+    color:#363832;
+}
+
+.status.completed{
+    background:#dbeee5;
+    color:#2c7a63;
+}
 .badge-inactive {
     background-color: #ffebee;
     color: #c62828;

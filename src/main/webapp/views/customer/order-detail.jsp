@@ -140,7 +140,7 @@
 
                     <button type="submit"
                             class="btn-confirm"
-                            onclick="return confirm('Are you sure you want to confirm received?')">
+                            onclick="return confirm('Confirmation that the order has been received?')">
                         Received
                     </button>
 

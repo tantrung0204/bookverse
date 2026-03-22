@@ -109,6 +109,11 @@ body {
     color: #9a6a00;
 }
 
+.status.confirmed {
+    background: #d7f7f1;
+    color: #3a3b3b;
+}
+
 .status.shipping {
     background: #dbe6f5;
     color: #3c5a87;

@@ -1,19 +1,15 @@
 <%-- Document : staff-list Created on : Feb 9, 2026, 4:23:54 PM Author : TrungNT - CE200064 --%>
-
     <%@ page contentType="text/html;charset=UTF-8" language="java" %>
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
             <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
                     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
-
-
                     <div class="container-fluid">
                         <!-- ============================================ Header ================================================= -->
                         <div class="page-header">
                             <p class="title">Manage Staffs</p>
                             <p class="subtitle">Manage and monitor all staff accounts</p>
                         </div>
-
                         <!--  ============================================ Staff ================================================= -->
                         <div class="content-card">
                             <!-- ======================================== Add New Staff Button ======================================= -->
@@ -48,7 +44,6 @@
                                 <div class="alert alert-error">${deleteError}</div>
                                 <c:remove var="deleteError" scope="session" />
                             </c:if>
-
                             <!-- ========================================= Staff List ================================================ -->
                             <c:choose>
                                 <c:when test="${not empty staffs}">
@@ -62,7 +57,6 @@
                                                 <th width="20%">Actions</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
                                             <c:forEach var="s" items="${staffs}">
                                                 <tr>
@@ -94,7 +88,8 @@
                                                                 <i class="bi bi-pencil"></i>
                                                             </button>
                                                             <!-- =============================================== Delete Staff button ============================================== -->
-                                                            <form action="${pageContext.request.contextPath}/dashboard/staff"
+                                                            <form
+                                                                action="${pageContext.request.contextPath}/dashboard/staff"
                                                                 method="post" style="display:inline;"
                                                                 onsubmit="return confirm('Delete Staff: ${s.fullName} (ID: ${s.staffId})?');">
                                                                 <input type="hidden" name="action" value="delete">
@@ -105,7 +100,6 @@
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </form>
-
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -114,80 +108,70 @@
                                     </table>
                                 </c:when>
                             </c:choose>
-
                             <!-- ======================================================= Pagination ================================================ -->
                             <c:set var="startPage" value="${currentPage - 1}" />
                             <c:set var="endPage" value="${currentPage + 1}" />
-
                             <c:if test="${startPage < 2}">
                                 <c:set var="startPage" value="2" />
                                 <c:set var="endPage" value="4" />
                             </c:if>
-
                             <c:if test="${endPage > totalPages - 1}">
                                 <c:set var="endPage" value="${totalPages - 1}" />
                                 <c:set var="startPage" value="${totalPages - 3}" />
                             </c:if>
-
                             <c:if test="${startPage < 2}">
                                 <c:set var="startPage" value="2" />
                             </c:if>
                             <nav class="d-flex justify-content-center">
                                 <ul class="pagination">
-
-
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}">&laquo;</a>
+                                        <a class="page-link"
+                                            href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}">&laquo;</a>
                                     </li>
-
-
                                     <c:if test="${totalPages <= 5}">
                                         <c:forEach begin="1" end="${totalPages}" var="i">
                                             <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link" href="${pageContext.request.contextPath}/dashboard/staff?page=${i}">${i}</a>
+                                                <a class="page-link"
+                                                    href="${pageContext.request.contextPath}/dashboard/staff?page=${i}">${i}</a>
                                             </li>
                                         </c:forEach>
                                     </c:if>
-
-
                                     <c:if test="${totalPages > 5}">
                                         <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                                            <a class="page-link" href="${pageContext.request.contextPath}/dashboard/staff?page=1">1</a>
+                                            <a class="page-link"
+                                                href="${pageContext.request.contextPath}/dashboard/staff?page=1">1</a>
                                         </li>
-
                                         <c:if test="${startPage > 2}">
                                             <li class="page-item disabled">
                                                 <span class="page-link">...</span>
                                             </li>
                                         </c:if>
-
                                         <c:forEach begin="${startPage}" end="${endPage}" var="i">
                                             <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link" href="${pageContext.request.contextPath}/dashboard/staff?page=${i}">${i}</a>
+                                                <a class="page-link"
+                                                    href="${pageContext.request.contextPath}/dashboard/staff?page=${i}">${i}</a>
                                             </li>
                                         </c:forEach>
-
                                         <c:if test="${endPage < totalPages - 1}">
                                             <li class="page-item disabled">
                                                 <span class="page-link">...</span>
                                             </li>
                                         </c:if>
-
                                         <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                                            <a class="page-link" href="${pageContext.request.contextPath}/dashboard/staff?page=${totalPages}">
+                                            <a class="page-link"
+                                                href="${pageContext.request.contextPath}/dashboard/staff?page=${totalPages}">
                                                 ${totalPages}
                                             </a>
                                         </li>
                                     </c:if>
-
                                     <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                        <a class="page-link" href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}">&raquo;</a>
+                                        <a class="page-link"
+                                            href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}">&raquo;</a>
                                     </li>
                                 </ul>
                             </nav>
                         </div>
                     </div>
-
                     <script>
                         // ----------------- CREATE POP-UP -----------------
                         function openCreatePopup() {
@@ -196,11 +180,9 @@
                             if (err)
                                 err.style.display = 'none';
                         }
-
                         function closeCreatePopup() {
                             document.getElementById('createPopup').style.display = "none";
                         }
-
                         // ----------------- VIEW DETAIL POP-UP -----------------
                         function openViewDetailStaffPopup(id, fullName, username, role, status, createdAt, avatarUrl) {
                             document.getElementById('detailStaffId').innerText = id;
@@ -210,7 +192,6 @@
                             document.getElementById('detailStaffStatus').innerHTML = status == 1 ?
                                 '<span class="badge-status badge-active">Active</span>' :
                                 '<span class="badge-status badge-inactive">Blocked</span>';
-
                             let avatarImg = document.getElementById('detailStaffAvatar');
                             if (avatarUrl && avatarUrl.startsWith('http')) {
                                 avatarImg.src = avatarUrl;
@@ -219,41 +200,32 @@
                             } else {
                                 avatarImg.src = '${pageContext.request.contextPath}/assets/images/default-avt.jpg';
                             }
-
                             document.getElementById('viewDetailStaffPopup').style.display = "flex";
                         }
-
                         function closeViewDetailStaffPopup() {
                             document.getElementById('viewDetailStaffPopup').style.display = "none";
                         }
-
                         // ----------------- EDIT POP-UP -----------------
                         function openEditStaffPopup(id, username, fullName, roleName) {
                             document.getElementById('editStaffId').value = id;
                             document.getElementById('editStaffUsername').value = username || '';
                             document.getElementById('editStaffFullName').value = fullName || '';
-
                             if (role) {
                                 document.getElementById('editStaffRole').value = role;
                             }
-
                             const err = document.getElementById("editErrorMsg");
                             if (err)
                                 err.style.display = 'none';
-
                             document.getElementById('editStaffPopup').style.display = "flex";
                         }
-
                         function closeEditStaffPopup() {
                             document.getElementById('editStaffPopup').style.display = "none";
                         }
-
                         // ----------------- CLICK OUTSIDE TO CLOSE -----------------
                         window.onclick = function (event) {
                             var modalCreate = document.getElementById("createPopup");
                             var modalEdit = document.getElementById("editStaffPopup");
                             var modalDetail = document.getElementById("viewDetailStaffPopup");
-
                             if (event.target == modalCreate) {
                                 closeCreatePopup();
                             } else if (event.target == modalEdit) {
@@ -263,7 +235,6 @@
                             }
                         }
                     </script>
-
                     <c:if test="${openCreatePopup}">
                         <script>
                             window.onload = function () {
@@ -277,7 +248,6 @@
                             };
                         </script>
                     </c:if>
-
                     <c:if test="${openEditPopup}">
                         <script>
                             window.onload = function () {
@@ -288,7 +258,6 @@
                                         '${editStaffUsername}',
                                         '${editStaffFullName}'
                                     );
-
                                     const err = document.getElementById("editErrorMsg");
                                     if (err)
                                         err.style.display = 'block';
@@ -296,43 +265,35 @@
                             };
                         </script>
                     </c:if>
-
-
                     <!-- =================== Pop-up Add Staff =========================-->
                     <div id="createPopup" class="modal-overlay" style="display: none;">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3>Add New Staff</h3>
                             </div>
-
                             <c:if test="${not empty createError}">
                                 <div class="alert alert-danger" id="createErrorMsg">
                                     ${createError}
                                 </div>
                             </c:if>
-
                             <form action="${pageContext.request.contextPath}/dashboard/staff" method="POST">
                                 <input type="hidden" name="action" value="create">
-
                                 <div class="form-group">
                                     <label>Username</label>
                                     <input type="text" name="username" class="form-control" value="${createUsername}"
                                         pattern="[a-zA-Z0-9][a-zA-Z0-9._\-]{4,}" required
                                         placeholder="Enter your username">
                                 </div>
-
                                 <div class="form-group">
                                     <label>Full Name</label>
                                     <input type="text" name="fullName" class="form-control" value="${createFullName}"
                                         pattern="[a-zA-Zà-ỹ][a-zA-Zà-ỹ\s]*" required placeholder="Enter your full name">
                                 </div>
-
                                 <div class="form-group">
                                     <label>Password</label>
                                     <input type="password" name="password" class="form-control"
                                         pattern="^[a-zA-Z0-9!@#$%^&*]{8,20}$" required placeholder="Enter new password">
                                 </div>
-
                                 <div class="form-group">
                                     <label>Role</label>
                                     <select class="form-control" name="roleName" required>
@@ -341,7 +302,6 @@
                                         <option value="staff">Seller</option>
                                     </select>
                                 </div>
-
                                 <div class="modal-footer">
                                     <button type="button" class="btn-cancel"
                                         onclick="closeCreatePopup()">Cancel</button>
@@ -350,24 +310,20 @@
                             </form>
                         </div>
                     </div>
-
                     <!-- ============================== Pop-up View Detail Staff ====================================== -->
                     <div id="viewDetailStaffPopup" class="modal-overlay" style="display: none;">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3>Staff Detail</h3>
                             </div>
-
                             <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
                                 <img id="detailStaffAvatar"
                                     src="${pageContext.request.contextPath}/assets/images/default-avt.jpg" alt="Avatar"
                                     class="rounded-circle shadow-sm"
                                     style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f8f9fa;">
-
                                 <h4 id="detailStaffFullNameTitle" style="margin-top: 15px; margin-bottom: 5px;"></h4>
                                 <p id="detailStaffUsernameTitle" style="color: #777; margin-bottom: 0;"></p>
                             </div>
-
                             <table class="detail-table" style="width: 100%;">
                                 <tr>
                                     <th style="width: 40%;">ID:</th>
@@ -382,46 +338,38 @@
                                     <td id="detailStaffCreated"></td>
                                 </tr>
                             </table>
-
                             <div class="modal-footer" style="margin-top: 20px;">
                                 <button type="button" class="btn-cancel"
                                     onclick="closeViewDetailStaffPopup()">Close</button>
                             </div>
                         </div>
                     </div>
-
-
                     <!--  ================== Pop-up edit Staff ==================== -->
                     <div id="editStaffPopup" class="modal-overlay" style="display: none;">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3>Edit Staff</h3>
                             </div>
-
                             <c:if test="${not empty editError}">
                                 <div class="alert alert-danger" id="editErrorMsg">
                                     ${editError}
                                 </div>
                             </c:if>
-
                             <form action="${pageContext.request.contextPath}/dashboard/staff" method="POST"
                                 enctype="multipart/form-data">
                                 <input type="hidden" name="action" value="edit">
                                 <input type="hidden" id="editStaffId" name="staffId">
-
                                 <div class="form-group">
                                     <label>Username</label>
                                     <input type="text" id="editStaffUsername" name="username" class="form-control"
                                         readonly
                                         style="background-color: #dfdfdf; color: #777; cursor: not-allowed; border: 1px solid #ccc;">
                                 </div>
-
                                 <div class="form-group">
                                     <label>Full Name</label>
                                     <input type="text" id="editStaffFullName" name="fullName" class="form-control"
                                         pattern="[a-zA-Zà-ỹ][a-zA-Zà-ỹ\s]*" placeholder="Enter your Full Name">
                                 </div>
-
                                 <div class="form-group">
                                     <label>Role</label>
                                     <select id="editStaffRole" name="roleName" class="form-control" required>
@@ -430,13 +378,11 @@
                                         <option value="seller">Seller</option>
                                     </select>
                                 </div>
-
                                 <div class="form-group">
                                     <label>Password</label>
                                     <input type="password" id="editStaffPassword" name="password" class="form-control"
                                         pattern="^[a-zA-Z0-9!@#$%^&*]{8,20}$" placeholder="Enter new password">
                                 </div>
-
                                 <div class="form-group">
                                     <label>Upload Image</label>
                                     <div class="input-group w-100">
@@ -453,7 +399,6 @@
                                     <div id="fileSizeErrorAdd" class="text-danger small mt-1" style="display:none">File
                                         is too large! Max 10MB.</div>
                                 </div>
-
                                 <div class="modal-footer">
                                     <button type="button" class="btn-cancel"
                                         onclick="closeEditStaffPopup()">Cancel</button>

@@ -348,9 +348,7 @@ public class InventoryManagementController extends HttpServlet {
                     if (allSuccess) {
                         request.getSession().setAttribute("success", "Add successfully");
                     }
-                    //else {
-//                    request.getSession().setAttribute("success", "Some items failed");
-//                }
+
                     response.sendRedirect("inventory");
                 }
             } catch (IOException | NumberFormatException e) {

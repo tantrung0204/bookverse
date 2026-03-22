@@ -95,5 +95,18 @@ public class NotificationService {
         long totalItems = dao.countSearch(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
     }
+    
+    public List<CustomerNotification> getCustomerNotifications(int customerId, int page, int pageSize) {
+        return customerNotificationDAO.getNotificationsByCustomer(customerId, page, pageSize);
+    }
+    public void markAsRead(int id) {
+
+        customerNotificationDAO.markAsRead(id);
+
+    }
+
+    public CustomerNotification getCustomerNotificationById(int id) {
+        return customerNotificationDAO.getById(id);
+    }
 
 }

@@ -65,7 +65,7 @@ public class SigninController extends HttpServlet {
             if (staff != null) {
                 session.setAttribute("user", staff);
                 session.setAttribute("role", staff.getRoleName());
-                response.sendRedirect(request.getContextPath() + "/dashboard"); // Chuyển đến dashboard
+                response.sendRedirect(request.getContextPath() + "/dashboard");
                 return;
             }
         }

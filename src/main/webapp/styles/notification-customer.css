@@ -1,0 +1,66 @@
+body{
+    font-family: 'Playfair Display', serif;
+    background:#fcffef;
+}
+
+/* reuse order-container */
+.order-container{
+    width:900px;
+    margin:40px auto;
+}
+
+/* empty */
+.empty-notification{
+    text-align:center;
+    padding:40px;
+    background:white;
+    border-radius:10px;
+    border:1px solid #eee2cc;
+    color:#9a8b73;
+}
+
+/* unread highlight */
+.notification-card-item.unread{
+    border-left:5px solid #e7c98f;
+}
+
+/* hover effect */
+.notification-card-item:hover{
+    transform:translateY(-2px);
+    transition:0.2s;
+}
+
+/* content text */
+.order-block p{
+    line-height:1.5;
+}
+/* EMPTY */
+.empty-notification{
+    text-align:center;
+    padding:40px;
+    background:white;
+    border-radius:10px;
+    border:1px solid #eee2cc;
+    color:#9a8b73;
+}
+
+/* UNREAD nổi bật giống Shopee */
+.notification-card-item.unread{
+    border-left:6px solid #e7c98f;
+    background:#fffaf1;
+}
+
+/* hover giống web xịn */
+.notification-card-item{
+    transition:0.2s;
+}
+
+.notification-card-item:hover{
+    transform:translateY(-3px);
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* content dễ đọc hơn */
+.notification-card-item .order-block p{
+    line-height:1.6;
+}

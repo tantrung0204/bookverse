@@ -3,6 +3,7 @@
  */
 package com.mycompany.bookverse.service;
 
+import com.mycompany.bookverse.dao.FeedbackDAO;
 import com.mycompany.bookverse.dao.OrderDAO;
 import com.mycompany.bookverse.model.*;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import com.mycompany.bookverse.dao.OrderItemDAO;
 
 /**
  * @author TrungNT - CE200064
@@ -18,13 +20,40 @@ public class OrderService {
 
     private final OrderDAO orderDAO = new OrderDAO();
 
+    public List<Order> getAllOrders(int page, int pageSize) {
+        return orderDAO.findAll(page, pageSize);
+    }
+
+    public long getTotalOrders() {
+        return orderDAO.getTotalOrders();
+    }
+
+    public List<Order> searchOrders(String keyword, int page, int pageSize) {
+        return orderDAO.searchOrders(keyword, page, pageSize);
+    }
+
+    public long getTotalSearchOrders(String keyword) {
+        return orderDAO.getTotalSearchOrders(keyword);
+    }
+
+    public String editOrder(int id, boolean isPaid, String orderStatus) {
+        Order oldOrder = orderDAO.findById(id);
+        if (oldOrder != null) {
+            oldOrder.setIsPaid(isPaid);
+            oldOrder.setOrderStatus(orderStatus);
+
+            boolean result = orderDAO.update(oldOrder);
+            return result ? "Edit successfully" : "Edit false";
+        }
+        return "Order not found";
+    }
+
     // =============================================
     // VALIDATION METHODS
     // =============================================
-
     /**
-     * Validate a single product for checkout (Buy Now).
-     * Returns error message or null if valid.
+     * Validate a single product for checkout (Buy Now). Returns error message
+     * or null if valid.
      */
     public String validateProductForCheckout(int productId, int quantity) {
         Product product = orderDAO.findProductById(productId);
@@ -47,8 +76,8 @@ public class OrderService {
     }
 
     /**
-     * Validate all cart items for checkout.
-     * Returns list of error messages (empty if all valid).
+     * Validate all cart items for checkout. Returns list of error messages
+     * (empty if all valid).
      */
     public List<String> validateCartForCheckout(List<Cart> cartItems) {
         List<String> errors = new ArrayList<>();
@@ -81,17 +110,17 @@ public class OrderService {
     // =============================================
     // VOUCHER METHODS
     // =============================================
-
     /**
      * Get all available vouchers for display in the modal.
      */
-    public List<Voucher> getAvailableVouchers() {
-        return orderDAO.findAvailableVouchers();
+    public List<Voucher> getAvailableVouchers(BigDecimal subtotal) {
+        return orderDAO.findAvailableVouchers(subtotal);
     }
 
     /**
      * Validate a voucher code and check if it can be applied to the order.
-     * Returns the Voucher if valid, throws Exception with error message otherwise.
+     * Returns the Voucher if valid, throws Exception with error message
+     * otherwise.
      */
     public Voucher validateVoucher(String voucherCode, BigDecimal orderTotal) throws Exception {
         if (voucherCode == null || voucherCode.trim().isEmpty()) {
@@ -129,8 +158,8 @@ public class OrderService {
     }
 
     /**
-     * Calculate the discount amount for a voucher.
-     * discountType 1 = percentage, discountType 2 = fixed amount.
+     * Calculate the discount amount for a voucher. discountType 1 = percentage,
+     * discountType 2 = fixed amount.
      */
     public BigDecimal calculateDiscount(Voucher voucher, BigDecimal orderTotal) {
         if (voucher == null || voucher.getDiscountValue() == null) {
@@ -158,7 +187,6 @@ public class OrderService {
     // =============================================
     // PLACE ORDER
     // =============================================
-
     /**
      * Place an order.
      *
@@ -288,4 +316,53 @@ public class OrderService {
     public Order getOrderById(int orderId) {
         return orderDAO.findById(orderId);
     }
+
+    public List<Order> getOrdersByCustomer(int customerId) {
+        return orderDAO.getOrdersByCustomerId(customerId);
+    }
+
+    public Order getOrder(int orderId) {
+        return orderDAO.findById(orderId);
+    }
+
+    public boolean cancelOrder(int orderId) {
+
+        Order order = orderDAO.findById(orderId);
+
+        if (order != null && "Pending".equalsIgnoreCase(order.getOrderStatus())) {
+
+            order.setOrderStatus("Canceled");
+            orderDAO.update(order);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean confirmReceived(int orderId) {
+
+        Order order = orderDAO.findById(orderId);
+
+        if (order != null && "Shipping".equalsIgnoreCase(order.getOrderStatus())) {
+
+            order.setOrderStatus("Completed");
+            orderDAO.update(order);
+            return true;
+        }
+
+        return false;
+    }
+
+    private OrderItemDAO orderItemDAO = new OrderItemDAO();
+
+    public List<OrderItem> getOrderItems(int orderId) {
+        return orderItemDAO.getByOrder(orderId);
+    }
+
+    private FeedbackDAO feedbackDAO = new FeedbackDAO();
+
+    public boolean isReviewed(int customerId, int productId) {
+        return feedbackDAO.isProductReviewed(customerId, productId);
+    }
+
 }

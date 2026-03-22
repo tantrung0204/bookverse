@@ -8,12 +8,15 @@ import com.mycompany.bookverse.model.CustomerNotification;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import java.util.List;
 
 /**
  *
  * @author Admin
  */
 public class CustomerNotificationDAO {
+
+    public static List<CustomerNotification> getNotificationsByCustomer;
 
     public void create(CustomerNotification cn) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -69,5 +72,63 @@ public class CustomerNotificationDAO {
             em.close();
         }
     }
+    
+    public List<CustomerNotification> getNotificationsByCustomer(int customerId, int page, int pageSize) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+
+            int offset = Math.max(0, (page - 1) * pageSize);
+
+            return em.createQuery(
+                    "SELECT cn FROM CustomerNotification cn "
+                    + "WHERE cn.customerId.customerId = :customerId "
+                    + "ORDER BY cn.notificationId.createdAt DESC",
+                    CustomerNotification.class)
+                    .setParameter("customerId", customerId)
+                    .setFirstResult(offset)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+    
+    public void markAsRead(int id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+
+            tx.begin();
+
+            CustomerNotification cn = em.find(CustomerNotification.class, id);
+
+            if (cn != null) {
+                cn.setIsRead(true);
+            }
+
+            tx.commit();
+
+        } finally {
+            em.close();
+        }
+    }
+    
+    public CustomerNotification getById(int id) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.find(CustomerNotification.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+
 
 }

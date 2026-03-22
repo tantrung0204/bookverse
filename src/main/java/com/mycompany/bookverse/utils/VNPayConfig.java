@@ -16,9 +16,9 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class VNPayConfig {
 
-    // VNPay Sandbox credentials (thay bằng thông tin thực tế từ VNPay)
-    public static final String VNP_TMN_CODE = "CGXZLS0Z";
-    public static final String VNP_HASH_SECRET = "XNBCJFAKAZQSGTARRLGCHVZWCIOIGSHN";
+    // VNPay Sandbox credentials
+    public static final String VNP_TMN_CODE = "9A7MKQYR";
+    public static final String VNP_HASH_SECRET = "Z1JOD8L79VXXRXM98YEXBZ9VLOZ0IAN8";
     public static final String VNP_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static final String VNP_RETURN_URL = "/vnpay-return";
     public static final String VNP_VERSION = "2.1.0";
@@ -28,11 +28,11 @@ public class VNPayConfig {
     /**
      * Create VNPay payment URL.
      *
-     * @param orderId    The order ID
-     * @param amount     Total amount in VND (will be multiplied by 100)
-     * @param orderInfo  Order description
-     * @param ipAddress  Client's IP address
-     * @param returnUrl  Full return URL (e.g. http://localhost:8080/bookverse-1.0-SNAPSHOT/vnpay-return)
+     * @param orderId   The order ID
+     * @param amount    Total amount in VND (will be multiplied by 100)
+     * @param orderInfo Order description
+     * @param ipAddress Client's IP address
+     * @param returnUrl Full return URL
      * @return Full VNPay payment URL
      */
     public static String createPaymentUrl(int orderId, BigDecimal amount,
@@ -60,6 +60,7 @@ public class VNPayConfig {
         StringBuilder query = new StringBuilder();
         StringBuilder hashData = new StringBuilder();
         Iterator<Map.Entry<String, String>> itr = vnpParams.entrySet().iterator();
+        boolean first = true;
 
         while (itr.hasNext()) {
             Map.Entry<String, String> entry = itr.next();
@@ -67,6 +68,10 @@ public class VNPayConfig {
             String fieldValue = entry.getValue();
 
             if (fieldValue != null && !fieldValue.isEmpty()) {
+                if (!first) {
+                    query.append('&');
+                    hashData.append('&');
+                }
                 // Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
@@ -77,10 +82,7 @@ public class VNPayConfig {
                 query.append('=');
                 query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
 
-                if (itr.hasNext()) {
-                    query.append('&');
-                    hashData.append('&');
-                }
+                first = false;
             }
         }
 
@@ -106,17 +108,19 @@ public class VNPayConfig {
 
         StringBuilder hashData = new StringBuilder();
         Iterator<Map.Entry<String, String>> itr = sortedParams.entrySet().iterator();
+        boolean first = true;
 
         while (itr.hasNext()) {
             Map.Entry<String, String> entry = itr.next();
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
                 try {
+                    if (!first) {
+                        hashData.append('&');
+                    }
                     hashData.append(entry.getKey());
                     hashData.append('=');
                     hashData.append(URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII.toString()));
-                    if (itr.hasNext()) {
-                        hashData.append('&');
-                    }
+                    first = false;
                 } catch (Exception e) {
                     // ignore
                 }
@@ -148,7 +152,7 @@ public class VNPayConfig {
             byte[] bytes = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             for (byte b : bytes) {
-                sb.append(String.format("%02x", b));
+                sb.append(String.format("%02x", b & 0xff));
             }
             return sb.toString();
         } catch (Exception e) {

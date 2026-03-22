@@ -49,7 +49,7 @@ public class CategoryDAO {
 
         try {
             return em.createQuery(
-                    "SELECT COUNT(c) FROM Category c",
+                    "SELECT COUNT(c) FROM Category c  WHERE c.parent IS NOT NULL",
                     Long.class)
                     .getSingleResult();
         } finally {

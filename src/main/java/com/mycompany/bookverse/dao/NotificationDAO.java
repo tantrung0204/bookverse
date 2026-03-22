@@ -138,4 +138,10 @@ public class NotificationDAO {
         }
     }
 
+//    public static void main(String[] args) {
+//        NotificationDAO dao = new NotificationDAO();
+//        Notification n = new Notification();
+//        dao.create(n);
+//    }
+    
 }

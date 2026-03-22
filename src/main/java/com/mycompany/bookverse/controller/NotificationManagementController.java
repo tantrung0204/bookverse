@@ -26,9 +26,9 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name = "NotificationController", urlPatterns = {"/notification"})
+@WebServlet(name = "NotificationController", urlPatterns = {"/dashboard/notification"})
 @MultipartConfig
-public class NotificationController extends HttpServlet {
+public class NotificationManagementController extends HttpServlet {
 
     private NotificationService service = new NotificationService();
 
@@ -189,7 +189,7 @@ public class NotificationController extends HttpServlet {
                 }
 
                 request.getSession().setAttribute("successMessage", msgCreate);
-                response.sendRedirect(request.getContextPath() + "/notification");
+                response.sendRedirect(request.getContextPath() + "/dashboard/notification");
                 break;
 
             case "delete":
@@ -197,7 +197,7 @@ public class NotificationController extends HttpServlet {
                 String msgDelete = service.delete(idDelete);
 
                 request.getSession().setAttribute("successMessage", msgDelete);
-                response.sendRedirect(request.getContextPath() + "/notification");
+                response.sendRedirect(request.getContextPath() + "/dashboard/notification");
                 break;
         }
 

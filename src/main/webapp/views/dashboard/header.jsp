@@ -30,7 +30,7 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li>
-                        <a class="dropdown-item py-2 text-danger" href="#">
+                        <a class="dropdown-item py-2 text-danger" href="${pageContext.request.contextPath}/signout">
                             <i class="bi bi-box-arrow-right me-2"></i> Logout
                         </a>
                     </li>

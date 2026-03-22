@@ -4,8 +4,8 @@ body {
 
 .main-content {
     color: #333;
-    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
-    padding: 40px 0;
+    font-family: 'Playfair Display', serif;
+    padding: 40px 20px;   /* thêm padding ngang */
     max-width: 1200px;
     margin: 0 auto;
 }

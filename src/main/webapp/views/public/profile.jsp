@@ -14,14 +14,19 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css"  type="text/css"/>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css" rel="stylesheet"
+              type="text/css" />
+
     </head>
     <body class="d-flex flex-column min-vh-100">
-        <jsp:include page="../public/header-index.jsp" />
-        <jsp:include page="../public/navbar.jsp">
-            <jsp:param name="activePage" value="" />
-        </jsp:include>
+        <c:if test="${not empty openCustomerProfile}">
+            <jsp:include page="header-index.jsp" />
+        </c:if>
+        <c:if test="${not empty openStaffProfile}">
+            <jsp:include page="../dashboard/header.jsp" />
+        </c:if>
         <main class="flex-grow-1">
             <div class="container mt-5">
                 <div class="row g-4">
@@ -42,12 +47,8 @@
                                 <a href="${pageContext.request.contextPath}/profile?view=changePassword"
                                    class="sidebar-link ${activeMenu eq 'changePassword'? 'active':''}">Change Password</a>
 
-                                <a href="${pageContext.request.contextPath}/customer-order"
-                                   class="sidebar-link ${activeMenu eq 'orderHistory'? 'active':''}">Orders History</a>
-                                <a href="${pageContext.request.contextPath}/feedback"
-                                   class="sidebar-link ${activeMenu eq 'ownFeedback'? 'active':''}">Review</a>
-                                <a href="${pageContext.request.contextPath}/notification/customer"
-                                   class="sidebar-link ${activeMenu eq 'notification'? 'active':''}">Notifications</a>
+                                <a href="#">Orders History</a>
+                                <a href="#">Review</a>
                             </c:if>
                             <c:if test="${not empty openStaffProfile}">
                                 <a href="${pageContext.request.contextPath}/profile"
@@ -71,23 +72,13 @@
                     <c:if test="${not empty openStaffProfile}">
                         <jsp:include page="../dashboard/staff-viewProfile.jsp"/>
                     </c:if>
-                    <c:if test="${not empty openOrderHistory}">
-                        <jsp:include page="../customer/order-list.jsp"/>
-                    </c:if>
-                    <c:if test="${not empty openOwnFeedback}">
-                        <jsp:include page="../customer/own-feedback.jsp"/>
-                    </c:if>
-                    <c:if test="${not empty openNotification}">
-                        <jsp:include page="../customer/notification-customer.jsp"/>
-                    </c:if>
                 </div>
             </div>
         </main>
         <c:if test="${not empty openCustomerProfile}">
             <jsp:include page="footer-index.jsp" />
-        </c:if> 
+        </c:if>
         <script src="${pageContext.request.contextPath}/boostrap/bootstrap.bundle.min.js"
         type="text/javascript"></script>
-
     </body>
 </html>

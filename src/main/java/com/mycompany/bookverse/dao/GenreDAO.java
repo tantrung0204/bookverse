@@ -7,7 +7,6 @@ package com.mycompany.bookverse.dao;
 import com.mycompany.bookverse.model.Genre;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -83,26 +82,6 @@ public class GenreDAO {
         } finally {
             em.close();
         }
-    }
-
-    public boolean checkGenreExist(int id, String name) {
-        List<Genre> list = findAll();
-        for (Genre genre : list) {
-            if (genre.getGenreId() != id && genre.getGenreName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkGenreExistByName(String name) {
-        List<Genre> list = findAll();
-        for (Genre genre : list) {
-            if (genre.getGenreName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public long checkGenreInUse(int id) {

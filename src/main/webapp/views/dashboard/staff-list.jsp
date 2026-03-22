@@ -108,68 +108,71 @@
                                     </table>
                                 </c:when>
                             </c:choose>
-                            <!-- ======================================================= Pagination ================================================ -->
-                            <c:set var="startPage" value="${currentPage - 1}" />
-                            <c:set var="endPage" value="${currentPage + 1}" />
-                            <c:if test="${startPage < 2}">
-                                <c:set var="startPage" value="2" />
-                                <c:set var="endPage" value="4" />
-                            </c:if>
-                            <c:if test="${endPage > totalPages - 1}">
-                                <c:set var="endPage" value="${totalPages - 1}" />
-                                <c:set var="startPage" value="${totalPages - 3}" />
-                            </c:if>
-                            <c:if test="${startPage < 2}">
-                                <c:set var="startPage" value="2" />
-                            </c:if>
-                            <nav class="d-flex justify-content-center">
-                                <ul class="pagination">
-                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link"
-                                            href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}">&laquo;</a>
-                                    </li>
-                                    <c:if test="${totalPages <= 5}">
-                                        <c:forEach begin="1" end="${totalPages}" var="i">
-                                            <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link"
-                                                    href="${pageContext.request.contextPath}/dashboard/staff?page=${i}">${i}</a>
-                                            </li>
-                                        </c:forEach>
+                            <c:if test="${totalPages > 1}">
+                                <div class="pagination">
+
+                                    <!-- Previous -->
+                                    <c:if test="${currentPage > 1}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}" 
+                                           class="page-btn">«</a>
                                     </c:if>
-                                    <c:if test="${totalPages > 5}">
-                                        <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                                            <a class="page-link"
-                                                href="${pageContext.request.contextPath}/dashboard/staff?page=1">1</a>
-                                        </li>
-                                        <c:if test="${startPage > 2}">
-                                            <li class="page-item disabled">
-                                                <span class="page-link">...</span>
-                                            </li>
-                                        </c:if>
-                                        <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                                            <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link"
-                                                    href="${pageContext.request.contextPath}/dashboard/staff?page=${i}">${i}</a>
-                                            </li>
-                                        </c:forEach>
-                                        <c:if test="${endPage < totalPages - 1}">
-                                            <li class="page-item disabled">
-                                                <span class="page-link">...</span>
-                                            </li>
-                                        </c:if>
-                                        <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                                            <a class="page-link"
-                                                href="${pageContext.request.contextPath}/dashboard/staff?page=${totalPages}">
-                                                ${totalPages}
-                                            </a>
-                                        </li>
+
+                                    <!-- Page 1 -->
+                                    <a href="${pageContext.request.contextPath}/dashboard/staff?page=1"
+                                       class="page-btn ${currentPage == 1 ? 'active' : ''}">
+                                        1
+                                    </a>
+
+                                    <!-- ... trước -->
+                                    <c:if test="${currentPage > 3}">
+                                        <span class="page-btn">...</span>
                                     </c:if>
-                                    <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                        <a class="page-link"
-                                            href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}">&raquo;</a>
-                                    </li>
-                                </ul>
-                            </nav>
+
+                                    <!-- Trang trước current -->
+                                    <c:if test="${currentPage - 1 > 1}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}"
+                                           class="page-btn">
+                                            ${currentPage - 1}
+                                        </a>
+                                    </c:if>
+
+                                    <!-- Current -->
+                                    <c:if test="${currentPage != 1 && currentPage != totalPages}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage}"
+                                           class="page-btn active">
+                                            ${currentPage}
+                                        </a>
+                                    </c:if>
+
+                                    <!-- Trang sau current -->
+                                    <c:if test="${currentPage + 1 < totalPages}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}"
+                                           class="page-btn">
+                                            ${currentPage + 1}
+                                        </a>
+                                    </c:if>
+
+                                    <!-- ... sau -->
+                                    <c:if test="${currentPage < totalPages - 2}">
+                                        <span class="page-btn">...</span>
+                                    </c:if>
+
+                                    <!-- Last page -->
+                                    <c:if test="${totalPages > 1}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/staff?page=${totalPages}"
+                                           class="page-btn ${currentPage == totalPages ? 'active' : ''}">
+                                            ${totalPages}
+                                        </a>
+                                    </c:if>
+
+                                    <!-- Next -->
+                                    <c:if test="${currentPage < totalPages}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}" 
+                                           class="page-btn">»</a>
+                                    </c:if>
+
+                                </div>
+                            </c:if>
                         </div>
                     </div>
                     <script>

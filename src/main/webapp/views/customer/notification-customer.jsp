@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/cart.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
 
 <body>
     <div class="order-container">

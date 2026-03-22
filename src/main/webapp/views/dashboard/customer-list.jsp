@@ -22,7 +22,7 @@
                                     <i class="bi bi-plus-lg me-1"></i> Add New Customer
                                 </button>
                                 <!-- =============================== Search button =================================== -->
-                                <form action="${pageContext.request.contextPath}/customer" method="GET"
+                                <form action="${pageContext.request.contextPath}/dashboard/customer" method="GET"
                                     class="search-form">
                                     <input type="hidden" name="action" value="search">
                                     <div class="search-box">
@@ -84,7 +84,7 @@
                                                                 title="Detail" onclick="openViewDetailCustomerPopup(
                                                                 '${c.customerId}', '${c.fullName}', '${c.username}', '${c.email}',
                                                                 '${c.phoneNumber}', '${c.status}',
-                                                                '<fmt:formatDate value=" ${c.createdAt}"
+                                                                '<fmt:formatDate value="${c.createdAt}"
                                                                 pattern="dd-MM-yyyy HH:mm" />',
                                                             '${c.address}',
                                                             '${c.profileImageUrl}')">
@@ -101,7 +101,7 @@
                                                                 <i class="bi bi-pencil"></i>
                                                             </button>
                                                             <!-- =============================================== Delete Customer button ============================================== -->
-                                                            <form action="${pageContext.request.contextPath}/customer"
+                                                            <form action="${pageContext.request.contextPath}/dashboard/customer"
                                                                 method="post" style="display:inline;"
                                                                 onsubmit="return confirm('Delete Customer: ${c.fullName} (ID: ${c.customerId})?');">
                                                                 <input type="hidden" name="action" value="delete">
@@ -144,14 +144,14 @@
 
 
                                     <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="customer?page=${currentPage - 1}">&laquo;</a>
+                                        <a class="page-link" href="${pageContext.request.contextPath}/dashboard/customer?page=${currentPage - 1}">&laquo;</a>
                                     </li>
 
 
                                     <c:if test="${totalPages <= 5}">
                                         <c:forEach begin="1" end="${totalPages}" var="i">
                                             <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link" href="customer?page=${i}">${i}</a>
+                                                <a class="page-link" href="${pageContext.request.contextPath}/dashboard/customer?page=${i}">${i}</a>
                                             </li>
                                         </c:forEach>
                                     </c:if>
@@ -159,7 +159,7 @@
 
                                     <c:if test="${totalPages > 5}">
                                         <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                                            <a class="page-link" href="customer?page=1">1</a>
+                                            <a class="page-link" href="${pageContext.request.contextPath}/dashboard/customer?page=1">1</a>
                                         </li>
 
                                         <c:if test="${startPage > 2}">
@@ -170,7 +170,7 @@
 
                                         <c:forEach begin="${startPage}" end="${endPage}" var="i">
                                             <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link" href="customer?page=${i}">${i}</a>
+                                                <a class="page-link" href="${pageContext.request.contextPath}/dashboard/customer?page=${i}">${i}</a>
                                             </li>
                                         </c:forEach>
 
@@ -181,14 +181,14 @@
                                         </c:if>
 
                                         <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                                            <a class="page-link" href="customer?page=${totalPages}">
+                                            <a class="page-link" href="${pageContext.request.contextPath}/dashboard/customer?page=${totalPages}">
                                                 ${totalPages}
                                             </a>
                                         </li>
                                     </c:if>
 
                                     <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                        <a class="page-link" href="customer?page=${currentPage + 1}">&raquo;</a>
+                                        <a class="page-link" href="${pageContext.request.contextPath}/dashboard/customer?page=${currentPage + 1}">&raquo;</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -323,7 +323,7 @@
                                 </div>
                             </c:if>
 
-                            <form action="${pageContext.request.contextPath}/customer" method="POST">
+                            <form action="${pageContext.request.contextPath}/dashboard/customer" method="POST">
                                 <input type="hidden" name="action" value="create">
 
                                 <div class="form-group">
@@ -374,7 +374,7 @@
                                 </div>
                             </c:if>
 
-                            <form action="${pageContext.request.contextPath}/customer" method="POST"
+                            <form action="${pageContext.request.contextPath}/dashboard/customer" method="POST"
                                 enctype="multipart/form-data">
                                 <input type="hidden" name="action" value="edit">
                                 <input type="hidden" id="editCustomerId" name="customerId">

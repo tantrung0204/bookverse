@@ -14,8 +14,11 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css"  type="text/css"/>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css" rel="stylesheet"
+              type="text/css" />
+
     </head>
     <body class="d-flex flex-column min-vh-100">
         <c:if test="${not empty openCustomerProfile}">
@@ -75,5 +78,7 @@
         <c:if test="${not empty openCustomerProfile}">
             <jsp:include page="footer-index.jsp" />
         </c:if>
+        <script src="${pageContext.request.contextPath}/boostrap/bootstrap.bundle.min.js"
+        type="text/javascript"></script>
     </body>
 </html>

@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-md-9">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mb-4">
         <div class="col-md-7">
 
             <div class="edit-profile-card">
@@ -89,12 +89,10 @@
                     </div> 
                     <div class="d-flex gap-3">
                         <button class="btn btn-success flex-fill" type="submit">
-                            ✓ Save Changes
+                            Save Changes
                         </button>
 
-                        <button class="btn btn-outline-secondary flex-fill">
-                            ✕ Cancel
-                        </button>
+
                     </div>
 
                 </form>

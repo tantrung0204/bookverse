@@ -243,10 +243,12 @@ public class InventoryManagementController extends HttpServlet {
                         supplierArray.put(sup);
                     }
                     for (Product p : productList) {
-                        JSONObject pro = new JSONObject();
-                        pro.put("productId", p.getProductId());
-                        pro.put("productName", p.getName());
-                        productArray.put(pro);
+                        if (p.getStatus() != null && p.getStatus() == 1) {
+                            JSONObject pro = new JSONObject();
+                            pro.put("productId", p.getProductId());
+                            pro.put("productName", p.getName());
+                            productArray.put(pro);
+                        }
                     }
                     JSONObject result = new JSONObject();
                     result.put("suppliers", supplierArray);
@@ -279,6 +281,8 @@ public class InventoryManagementController extends HttpServlet {
 
                 int supplierId;
                 String supplierIdStr = request.getParameter("supplierId");
+                String importDateStr = request.getParameter("importDate");
+                
                 String[] productIdsString = request.getParameterValues("productIds");// lấy list product id muốn add
                 BigDecimal totalCost = BigDecimal.ZERO;
                 Supplier supplier = new Supplier();
@@ -290,6 +294,28 @@ public class InventoryManagementController extends HttpServlet {
                         notes.add(request.getParameter("note_" + id));
                     }
                 }
+                
+                Date importDate = new Date();
+                try {
+                    if (importDateStr != null && !importDateStr.isEmpty()) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        importDate = sdf.parse(importDateStr);
+                        
+                        // Validation: importDate not to exceed current date
+                        Calendar currentCal = Calendar.getInstance();                     
+                        currentCal.set(Calendar.HOUR_OF_DAY, 23);
+                        currentCal.set(Calendar.MINUTE, 59);
+                        currentCal.set(Calendar.SECOND, 59);
+                        if (importDate.after(currentCal.getTime())) {
+                            throw new Exception("Import date cannot exceed current date");
+                        }
+                    }
+                } catch (Exception e) {
+                    request.getSession().setAttribute("createError", e.getMessage());
+                    response.sendRedirect("inventory");
+                    return;
+                }
+
                 try {
                     inventoryServices.checkValid(supplierIdStr, productIdsString, quantitys, UnitPrices, notes);
                     supplierId = Integer.parseInt(supplierIdStr);// lấy supplier id
@@ -309,8 +335,7 @@ public class InventoryManagementController extends HttpServlet {
                 importStock.setStaffId(staff);
                 importStock.setSupplierId(supplier);
                 importStock.setTotalCost(totalCost);
-                Date date = new Date();
-                importStock.setCreatedAt(date);
+                importStock.setCreatedAt(importDate);
                 int importId = inventoryServices.insertImportStock(importStock);
 
                 //tạo import_stock_detail

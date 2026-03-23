@@ -222,7 +222,7 @@
                 <!-- ================= DETAIL POPUP ================= -->
                 <c:if test="${not empty productDetail}">
                     <div id="detailPopup" class="modal-overlay" style="display: flex;">
-                        <div class="modal-content" style="width: 700px; max-width: 90%;">
+                        <div class="modal-content" style="width: 700px; max-width: 90%; max-height: 90vh; overflow-y: auto;">
                             <div class="modal-header">
                                 <h3>Product Detail</h3>
                             </div>
@@ -649,7 +649,7 @@
                                     <label>Current Image:</label><br>
                                     <c:if test="${not empty productEdit.imageUrl}">
                                         <img src="${productEdit.imageUrl}"
-                                            style="max-height: 100px; margin-bottom: 10px;"><br>
+                                            style="max-height: 100px; margin-bottom: 10px;" onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';"><br>
                                     </c:if>
                                     <label>Upload New Image (leaves current if empty):</label>
                                     <input type="file" name="imageFile" accept="image/*" class="form-control"

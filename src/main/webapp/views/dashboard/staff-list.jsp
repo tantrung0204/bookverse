@@ -59,50 +59,51 @@
                     </thead>
                     <tbody>
                         <c:forEach var="s" items="${staffs}">
-                            <tr>
-                                <td><strong>${s.staffId}</strong></td>
-                                <td>${s.fullName}</td>
-                                <td>${s.roleName}</td>
-                                <td>
-                                    <span
-                                        class="badge-status ${s.status == 1 ? 'badge-active' : 'badge-inactive'}">
-                                        ${s.status == 1 ? 'Active' : 'Blocked'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <!-- =============================================== View Detail Staff button ============================================== -->
-                                        <button type="button" class="btn-action btn-detail"
-                                                title="Detail" onclick="openViewDetailStaffPopup(
-                                                                                '${s.staffId}', '${s.fullName}', '${s.username}',
-                                                                                '${s.roleName}', '${s.status}',
-                                                                                '<fmt:formatDate value="${s.createdAt}"
-                                                                pattern="dd-MM-yyyy HH:mm" />',
-                                                                                '${s.profileImageUrl}')">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <!-- =============================================== Edit Staff button ============================================== -->
-                                        <button type="button" class="btn-action btn-edit"
-                                                title="Edit"
-                                                onclick="openEditStaffPopup('${s.staffId}', '${s.username}', '${s.fullName}', '${s.roleName}')">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <!-- =============================================== Delete Staff button ============================================== -->
-                                        <form
-                                            action="${pageContext.request.contextPath}/dashboard/staff"
-                                            method="post" style="display:inline;"
-                                            onsubmit="return confirm('Delete Staff: ${s.fullName} (ID: ${s.staffId})?');">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="staffId"
-                                                   value="${s.staffId}">
-                                            <button type="submit" class="btn-action btn-delete"
-                                                    title="Delete">
-                                                <i class="bi bi-trash"></i>
+                            <c:if test="${s.staffId != sessionScope.user.staffId}">
+                                <tr>
+                                    <td><strong>${s.staffId}</strong></td>
+                                    <td>${s.fullName}</td>
+                                    <td>${s.roleName}</td>
+                                    <td>
+                                        <span
+                                            class="badge-status ${s.status == 1 ? 'badge-active' : 'badge-inactive'}">
+                                            ${s.status == 1 ? 'Active' : 'Blocked'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <!-- =============================================== View Detail Staff button ============================================== -->
+                                            <button type="button" class="btn-action btn-detail"
+                                                    title="Detail" onclick="openViewDetailStaffPopup(
+                                                                '${s.staffId}', '${s.fullName}', '${s.username}',
+                                                                '${s.roleName}', '${s.status}',
+                                                                '<fmt:formatDate value="${s.createdAt}" pattern="dd-MM-yyyy HH:mm" />',
+                                                                '${s.profileImageUrl}')">
+                                                <i class="bi bi-eye"></i>
                                             </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                                            <!-- =============================================== Edit Staff button ============================================== -->
+                                            <button type="button" class="btn-action btn-edit"
+                                                    title="Edit"
+                                                    onclick="openEditStaffPopup('${s.staffId}', '${s.username}', '${s.fullName}', '${s.roleName}')">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <!-- =============================================== Delete Staff button ============================================== -->
+                                            <form
+                                                action="${pageContext.request.contextPath}/dashboard/staff"
+                                                method="post" style="display:inline;"
+                                                onsubmit="return confirm('Delete Staff: ${s.fullName} (ID: ${s.staffId})?');">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="staffId"
+                                                       value="${s.staffId}">
+                                                <button type="submit" class="btn-action btn-delete"
+                                                        title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:if>
                         </c:forEach>
                     </tbody>
                 </table>
@@ -113,7 +114,7 @@
 
                 <!-- Previous -->
                 <c:if test="${currentPage > 1}">
-                    <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}" 
+                    <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage - 1}"
                        class="page-btn">«</a>
                 </c:if>
 
@@ -167,7 +168,7 @@
 
                 <!-- Next -->
                 <c:if test="${currentPage < totalPages}">
-                    <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}" 
+                    <a href="${pageContext.request.contextPath}/dashboard/staff?page=${currentPage + 1}"
                        class="page-btn">»</a>
                 </c:if>
 

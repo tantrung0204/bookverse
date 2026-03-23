@@ -18,7 +18,7 @@ public class EmailUtil {
      * Sends an OTP verification email to the specified address.
      *
      * @param toEmail recipient email address
-     * @param otp     the OTP code to send
+     * @param otp the OTP code to send
      * @return true if email sent successfully, false otherwise
      */
     public static boolean sendOTP(String toEmail, String otp) {

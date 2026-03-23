@@ -1,6 +1,7 @@
 package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.model.Order;
+import com.mycompany.bookverse.model.Staff;
 import com.mycompany.bookverse.service.OrderService;
 import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
@@ -35,7 +36,6 @@ public class OrderManagementController extends HttpServlet {
                 }
                 keyword = keyword.trim();
 
-                // Lấy page hiện tại (giống y chang case "list")
                 int searchPage = 1;
                 String searchPageStr = request.getParameter("page");
                 if (searchPageStr != null && !searchPageStr.trim().isEmpty()) {
@@ -88,7 +88,7 @@ public class OrderManagementController extends HttpServlet {
         }
 
         request.setAttribute("contentPage", "order-list.jsp");
-        request.setAttribute("activeMenu", "order"); // Để menu sáng lên
+        request.setAttribute("activeMenu", "order");
         request.getRequestDispatcher("/views/dashboard/dashboard.jsp").forward(request, response);
     }
 
@@ -103,53 +103,87 @@ public class OrderManagementController extends HttpServlet {
             return;
         }
 
+        HttpSession session = request.getSession();
+
         switch (action) {
-            case "edit":
+            case "confirm": {
                 try {
                     int orderId = Integer.parseInt(request.getParameter("orderId"));
-
-                    String isPaidStr = request.getParameter("status");
-                    boolean isPaid = "1".equals(isPaidStr);
-
-                    String orderStatus = request.getParameter("orderStatus");
-
-                    // Gọi Service update (hàm này mình đã làm chuẩn ở mấy bước trước)
-                    String msg = orderService.editOrder(orderId, isPaid, orderStatus);
-
-                    if (msg.contains("successfully")) {
-                        request.getSession().setAttribute("success_edit", "Update Order Successfully!");
+                    // Get logged-in staff from session
+                    Staff staff = (Staff) session.getAttribute("user");
+                    if (staff == null) {
+                        session.setAttribute("error_edit", "Staff session expired. Please login again.");
+                        break;
+                    }
+                    String error = orderService.confirmOrderByStaff(orderId, staff);
+                    if (error == null) {
+                        session.setAttribute("success_edit",
+                                "Order #O00" + orderId + " has been confirmed!");
                     } else {
-                        request.getSession().setAttribute("error_edit", "Update Order Failed: " + msg);
+                        session.setAttribute("error_edit", error);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    request.getSession().setAttribute("error_edit", "Invalid input format!");
+                    session.setAttribute("error_edit", "Failed to confirm order: " + e.getMessage());
                 }
-                response.sendRedirect(request.getContextPath() + "/dashboard/order");
                 break;
+            }
 
-            case "cancel":
+            case "ship": {
                 try {
-                    int orderIdCancel = Integer.parseInt(request.getParameter("orderId"));
-
-                    // Gọi hàm cancelOrder từ Service (Hàm này chuyển orderStatus thành "Cancelled")
-                    boolean success = orderService.cancelOrder(orderIdCancel);
-
-                    if (success) {
-                        request.getSession().setAttribute("success_edit",
-                                "Order #O00" + orderIdCancel + " has been cancelled!");
+                    int orderId = Integer.parseInt(request.getParameter("orderId"));
+                    String error = orderService.shipOrder(orderId);
+                    if (error == null) {
+                        session.setAttribute("success_edit",
+                                "Order #O00" + orderId + " is now Shipping!");
                     } else {
-                        request.getSession().setAttribute("error_edit", "Failed to cancel order!");
+                        session.setAttribute("error_edit", error);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    session.setAttribute("error_edit", "Failed to ship order: " + e.getMessage());
                 }
-                response.sendRedirect(request.getContextPath() + "/dashboard/order");
                 break;
+            }
+
+            case "complete": {
+                try {
+                    int orderId = Integer.parseInt(request.getParameter("orderId"));
+                    String error = orderService.completeOrder(orderId);
+                    if (error == null) {
+                        session.setAttribute("success_edit",
+                                "Order #O00" + orderId + " has been completed!");
+                    } else {
+                        session.setAttribute("error_edit", error);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    session.setAttribute("error_edit", "Failed to complete order: " + e.getMessage());
+                }
+                break;
+            }
+
+            case "cancel": {
+                try {
+                    int orderId = Integer.parseInt(request.getParameter("orderId"));
+                    String error = orderService.cancelOrder(orderId);
+                    if (error == null) {
+                        session.setAttribute("success_edit",
+                                "Order #O00" + orderId + " has been cancelled!");
+                    } else {
+                        session.setAttribute("error_edit", error);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    session.setAttribute("error_edit", "Failed to cancel order: " + e.getMessage());
+                }
+                break;
+            }
 
             default:
-                response.sendRedirect(request.getContextPath() + "/dashboard/order");
                 break;
         }
+
+        response.sendRedirect(request.getContextPath() + "/dashboard/order");
     }
 }

@@ -6,6 +6,21 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/order-list.css">
 
+<style>
+/* Synchronize order status colors with customer side */
+.badge-order-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+.badge-order-status.Pending { background: #f5e6bf; color: #9a6a00; } /* vàng */
+.badge-order-status.Confirmed, .badge-order-status.Completed { background: #dbeee5; color: #2c7a63; } /* xanh lá */
+.badge-order-status.Shipping { background: #e0d4f5; color: #5a3c87; } /* tím xanh */
+.badge-order-status.Cancelled { background: #f5d6d6; color: #9a3333; } /* đỏ */
+</style>
+
 <div class="container-fluid">
     <div class="page-header">
         <p class="title">Manage Orders</p>
@@ -29,9 +44,13 @@
             <div class="alert alert-success">${sessionScope.success}</div>
             <c:remove var="success" scope="session" />
         </c:if>
-        <c:if test="${not empty sessionScope.deleteError}">
-            <div class="alert alert-danger">${sessionScope.deleteError}</div>
-            <c:remove var="deleteError" scope="session" />
+        <c:if test="${not empty sessionScope.error_edit}">
+            <div class="alert alert-danger">${sessionScope.error_edit}</div>
+            <c:remove var="error_edit" scope="session" />
+        </c:if>
+        <c:if test="${not empty sessionScope.success_edit}">
+            <div class="alert alert-success">${sessionScope.success_edit}</div>
+            <c:remove var="success_edit" scope="session" />
         </c:if>
 
         <c:choose>
@@ -69,8 +88,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        style="font-weight: bold; color: ${o.orderStatus == 'Completed' ? '#28a745' : (o.orderStatus == 'Pending' ? '#ffc107' : '#dc3545')};">
+                                    <span class="badge-order-status ${o.orderStatus}">
                                         ${o.orderStatus}
                                     </span>
                                 </td>
@@ -81,26 +99,63 @@
                                             <i class="bi bi-eye"></i>
                                         </button>
 
-                                        <button type="button" class="btn-action btn-edit"
-                                                title="Edit Order" onclick="openEditOrderPopup('${o.orderId}', '${not empty o.receiverName ? o.receiverName : o.customerId.fullName}',
-                                                                            '<fmt:formatDate value="${o.createdAt}" pattern="yyyy-MM-dd" />',
-                                                                            '${o.totalAmount}', '${o.paymentMethod}', '${o.isPaid}',
-                                                                            '${o.orderStatus}', '${not empty o.receiverPhone ?
-                                                   o.receiverPhone : o.customerId.phoneNumber}')">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                        <!-- CONFIRM: Pending + (COD or ONLINE+paid) -->
+                                        <c:if test="${o.orderStatus == 'Pending'}">
+                                            <c:choose>
+                                                <c:when test="${o.paymentMethod == 'ONLINE' && !o.isPaid}">
+                                                    <span class="badge-status badge-inactive" title="Waiting for online payment" style="font-size: 11px; cursor: default;">
+                                                        Waiting Payment
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form action="${pageContext.request.contextPath}/dashboard/order"
+                                                          method="POST" style="display:inline;"
+                                                          onsubmit="return confirm('Confirm Order #O00${o.orderId}?');">
+                                                        <input type="hidden" name="action" value="confirm">
+                                                        <input type="hidden" name="orderId" value="${o.orderId}">
+                                                        <button type="submit" class="btn-action btn-edit" title="Confirm Order">
+                                                            <i class="bi bi-check-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:if>
 
-                                        <c:if test="${o.orderStatus != 'Cancelled'}">
-                                            <form
-                                                action="${pageContext.request.contextPath}/dashboard/order"
-                                                method="POST" style="display:inline;"
-                                                onsubmit="return confirm('Are you sure you want to cancel Order #O00${o.orderId}?');">
+                                        <!-- SHIP: Confirmed -->
+                                        <c:if test="${o.orderStatus == 'Confirmed'}">
+                                            <form action="${pageContext.request.contextPath}/dashboard/order"
+                                                  method="POST" style="display:inline;"
+                                                  onsubmit="return confirm('Ship Order #O00${o.orderId}?');">
+                                                <input type="hidden" name="action" value="ship">
+                                                <input type="hidden" name="orderId" value="${o.orderId}">
+                                                <button type="submit" class="btn-action btn-edit" title="Ship Order">
+                                                    <i class="bi bi-truck"></i>
+                                                </button>
+                                            </form>
+                                        </c:if>
+
+                                        <!-- COMPLETE: Shipping -->
+                                        <c:if test="${o.orderStatus == 'Shipping'}">
+                                            <form action="${pageContext.request.contextPath}/dashboard/order"
+                                                  method="POST" style="display:inline;"
+                                                  onsubmit="return confirm('Complete Order #O00${o.orderId}?');">
+                                                <input type="hidden" name="action" value="complete">
+                                                <input type="hidden" name="orderId" value="${o.orderId}">
+                                                <button type="submit" class="btn-action btn-edit" title="Complete Order">
+                                                    <i class="bi bi-check-all"></i>
+                                                </button>
+                                            </form>
+                                        </c:if>
+
+                                        <!-- CANCEL: only Pending + not paid -->
+                                        <c:if test="${o.orderStatus == 'Pending' && !o.isPaid}">
+                                            <form action="${pageContext.request.contextPath}/dashboard/order"
+                                                  method="POST" style="display:inline;"
+                                                  onsubmit="return confirm('Are you sure you want to cancel Order #O00${o.orderId}?');">
                                                 <input type="hidden" name="action" value="cancel">
-                                                <input type="hidden" name="orderId"
-                                                       value="${o.orderId}">
-                                                <button type="submit" class="btn-action btn-delete"
-                                                        title="Cancel Order">
-                                                    <i class="bi bi-trash"></i>
+                                                <input type="hidden" name="orderId" value="${o.orderId}">
+                                                <button type="submit" class="btn-action btn-delete" title="Cancel Order">
+                                                    <i class="bi bi-x-circle"></i>
                                                 </button>
                                             </form>
                                         </c:if>
@@ -174,12 +229,10 @@
                     1
                 </a>
 
-                <!-- ... trước -->
                 <c:if test="${currentPage > 3}">
                     <span class="page-btn">...</span>
                 </c:if>
 
-                <!-- Trang trước current -->
                 <c:if test="${currentPage - 1 > 1}">
                     <a href="${pageContext.request.contextPath}/dashboard/order?action=${qAction}${qKeyword}&page=${currentPage - 1}"
                        class="page-btn">
@@ -187,7 +240,6 @@
                     </a>
                 </c:if>
 
-                <!-- Current -->
                 <c:if test="${currentPage != 1 && currentPage != totalPages}">
                     <a href="${pageContext.request.contextPath}/dashboard/order?action=${qAction}${qKeyword}&page=${currentPage}"
                        class="page-btn active">
@@ -195,7 +247,6 @@
                     </a>
                 </c:if>
 
-                <!-- Trang sau current -->
                 <c:if test="${currentPage + 1 < totalPages}">
                     <a href="${pageContext.request.contextPath}/dashboard/order?action=${qAction}${qKeyword}&page=${currentPage + 1}"
                        class="page-btn">
@@ -203,12 +254,10 @@
                     </a>
                 </c:if>
 
-                <!-- ... sau -->
                 <c:if test="${currentPage < totalPages - 2}">
                     <span class="page-btn">...</span>
                 </c:if>
 
-                <!-- Last page -->
                 <c:if test="${totalPages > 1}">
                     <a href="${pageContext.request.contextPath}/dashboard/order?action=${qAction}${qKeyword}&page=${totalPages}"
                        class="page-btn ${currentPage == totalPages ? 'active' : ''}">
@@ -216,7 +265,6 @@
                     </a>
                 </c:if>
 
-                <!-- Next -->
                 <c:if test="${currentPage < totalPages}">
                     <a href="${pageContext.request.contextPath}/dashboard/order?action=${qAction}${qKeyword}&page=${currentPage + 1}" 
                        class="page-btn">»</a>
@@ -227,106 +275,11 @@
     </div>
 </div>
 
-<div id="editOrderPopup" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 600px;">
-        <div class="modal-header">
-            <h3>Edit Order</h3>
-            <p style="font-size: 12px; color: gray;">Update Orders information and settings</p>
-        </div>
-
-        <form action="${pageContext.request.contextPath}/dashboard/order" method="POST">
-            <input type="hidden" name="action" value="edit">
-            <input type="hidden" id="editOrderId" name="orderId">
-
-            <div style="display: flex; gap: 20px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>Order ID (Readonly)</label>
-                    <input type="text" id="editOrderDisplayId" class="form-control" readonly
-                           style="background-color: #dfdfdf; cursor: not-allowed;">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Order Date (Readonly)</label>
-                    <input type="text" id="editOrderDate" class="form-control" readonly
-                           style="background-color: #dfdfdf; cursor: not-allowed;">
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 20px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>Customer (Readonly)</label>
-                    <input type="text" id="editOrderCustomer" class="form-control" readonly
-                           style="background-color: #dfdfdf; cursor: not-allowed;">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Total Amount (Readonly)</label>
-                    <input type="text" id="editOrderTotal" class="form-control" readonly
-                           style="background-color: #dfdfdf; cursor: not-allowed;">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Payment Method (Readonly)</label>
-                <input type="text" id="editOrderPayment" class="form-control" readonly
-                       style="background-color: #dfdfdf; cursor: not-allowed;">
-            </div>
-
-            <div style="display: flex; gap: 20px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>Paid Status</label>
-                    <select id="editIsPaid" name="isPaid" class="form-control">
-                        <option value="1">Paid (Active)</option>
-                        <option value="0">Unpaid (Inactive)</option>
-                    </select>
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Order Status (Actions)</label>
-                    <select id="editOrderStatus" name="orderStatus" class="form-control">
-                        <option value="Pending">Pending</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="modal-footer" style="margin-top: 20px;">
-                <button type="button" class="btn-cancel" onclick="closeEditOrderPopup()">Cancel</button>
-                <button type="submit" class="btn-save"
-                        style="background-color: #6ea8fe; border: none; padding: 10px 20px; border-radius: 5px; color: white;">Save
-                    Changes</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
-    function openEditOrderPopup(id, customer, date, total, payment, isPaid, status) {
-        document.getElementById('editOrderId').value = id;
-        document.getElementById('editOrderDisplayId').value = "O00" + id;
-        document.getElementById('editOrderCustomer').value = customer;
-        document.getElementById('editOrderDate').value = date;
-        // Format số tiền (thêm dấu phẩy nếu muốn)
-        document.getElementById('editOrderTotal').value = Number(total).toLocaleString('en-US') + " VND";
-        document.getElementById('editOrderPayment').value = payment;
-
-        // Gán dropdown
-        document.getElementById('editIsPaid').value = isPaid;
-        document.getElementById('editOrderStatus').value = status;
-
-        document.getElementById('editOrderPopup').style.display = "flex";
-    }
-
-    function closeEditOrderPopup() {
-        document.getElementById('editOrderPopup').style.display = "none";
-    }
-
-    // Đóng modal khi bấm ra ngoài
+    // Close modal when clicking outside
     window.onclick = function (event) {
-        var modalEdit = document.getElementById("editOrderPopup");
         var modalDetail = document.getElementById("viewDetailOrderPopup");
-
-        if (event.target == modalEdit) {
-            closeEditOrderPopup();
-        } else if (event.target == modalDetail) {
+        if (event.target == modalDetail) {
             closeViewDetailOrderPopup();
         }
     }

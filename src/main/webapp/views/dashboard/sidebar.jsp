@@ -2,6 +2,7 @@
 
     <%@page contentType="text/html" pageEncoding="UTF-8" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/sidebar.css">
 
@@ -12,7 +13,7 @@
                 </div>
                 <div class="brand-text">
                     <h5>Bookverse</h5>
-                    <span>Admin Panel</span>
+                    <span>${fn:toUpperCase(fn:substring(sessionScope.role, 0, 1))}${fn:substring(sessionScope.role, 1, fn:length(sessionScope.role))} Panel</span>
                 </div>
             </div>
 

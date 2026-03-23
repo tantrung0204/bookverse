@@ -42,7 +42,7 @@ public class GenreService {
         if (status != 0 && status != 1) {
             error += "status must be 1 or 2.<br>";
         }
-        boolean checkExist = genreDAO.checkGenreExistByName(name);
+        boolean checkExist = checkGenreExistByName(name);
 
         if (checkExist) {
             return "Genre name already exists";
@@ -59,7 +59,7 @@ public class GenreService {
 
     public String editGenre(Genre genre) {
         String error = "";
-        boolean checkExist = genreDAO.checkGenreExist(genre.getGenreId(), genre.getGenreName());
+        boolean checkExist = checkGenreExist(genre.getGenreId(), genre.getGenreName());
         Genre old = genreDAO.findById(genre.getGenreId());
         if (checkExist) {
             return "Genre name already exist.";
@@ -128,5 +128,24 @@ public class GenreService {
     public int getTotalPagesByKeyword(String keyword, int pageSize) {
         long totalItems = genreDAO.countByKeyword(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
+    }
+    public boolean checkGenreExist(int id, String name) {
+        List<Genre> list = genreDAO.findAll();
+        for (Genre genre : list) {
+            if (genre.getGenreId() != id && genre.getGenreName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkGenreExistByName(String name) {
+        List<Genre> list = genreDAO.findAll();
+        for (Genre genre : list) {
+            if (genre.getGenreName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

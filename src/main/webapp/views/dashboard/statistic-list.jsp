@@ -18,32 +18,44 @@
             <p class="title">Statistics Dashboard</p>
             <p class="subtitle">Track your business performance</p>
         </div>
-        <button class="btn-filter" style="margin: 0;">
-            <i class="bi bi-download"></i> Export
-        </button>
     </div>
 
-    <div class="filter-buttons">
-        <button class="btn-filter active">Today</button>
-        <button class="btn-filter">This Week</button>
-        <button class="btn-filter">This Month</button>
+    <div class="filter-buttons" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px;">
+            <a href="?filter=week" class="btn-filter ${filter == 'week' ? 'active' : ''}">This Week</a>
+            <a href="?filter=month" class="btn-filter ${filter == 'month' ? 'active' : ''}">This Month</a>
+            <a href="?filter=year" class="btn-filter ${filter == 'year' ? 'active' : ''}">This Year</a>
+        </div>
+        <form action="" method="get" style="display: flex; gap: 10px; align-items: center; margin: 0;" onsubmit="return validateDateRange()">
+            <input type="hidden" name="filter" value="custom">
+            <input type="date" name="startDate" value="${startDate}" class="form-control" style="width: auto; padding: 6px 12px; height: 38px; border-radius: 6px;" required>
+            <span>-</span>
+            <input type="date" name="endDate" value="${endDate}" class="form-control" style="width: auto; padding: 6px 12px; height: 38px; border-radius: 6px;" required>
+            <button type="submit" class="btn-filter ${filter == 'custom' ? 'active' : ''}" style="height: 38px; line-height: 1; margin: 0;">Apply Range</button>
+        </form>
     </div>
 
     <div class="kpi-container">
         <div class="kpi-card">
             <div class="kpi-title">Total Revenue</div>
             <div class="kpi-value"><fmt:formatNumber value="${totalRevenue}" type="number" pattern="#,##0"/> đ</div>
-            <div class="kpi-trend up">↑ +12% vs last month</div>
+            <div class="kpi-trend ${fn:startsWith(revenueTrend, '+') ? 'up' : (fn:startsWith(revenueTrend, '-') ? 'down' : '')}">
+                ${fn:startsWith(revenueTrend, '+') ? '↑' : (fn:startsWith(revenueTrend, '-') ? '↓' : '')} ${revenueTrend} vs prev period
+            </div>
         </div>
         <div class="kpi-card">
             <div class="kpi-title">Total Orders</div>
             <div class="kpi-value">${totalOrders}</div>
-            <div class="kpi-trend down">↓ -5% vs last month</div>
+            <div class="kpi-trend ${fn:startsWith(orderTrend, '+') ? 'up' : (fn:startsWith(orderTrend, '-') ? 'down' : '')}">
+                ${fn:startsWith(orderTrend, '+') ? '↑' : (fn:startsWith(orderTrend, '-') ? '↓' : '')} ${orderTrend} vs prev period
+            </div>
         </div>
         <div class="kpi-card">
             <div class="kpi-title">Total Customers</div>
             <div class="kpi-value">${totalCustomers}</div>
-            <div class="kpi-trend up">↑ +18% vs last month</div>
+            <div class="kpi-trend ${fn:startsWith(customerTrend, '+') ? 'up' : (fn:startsWith(customerTrend, '-') ? 'down' : '')}">
+                ${fn:startsWith(customerTrend, '+') ? '↑' : (fn:startsWith(customerTrend, '-') ? '↓' : '')} ${customerTrend} vs prev period
+            </div>
         </div>
         <div class="kpi-card">
             <div class="kpi-title">Top Product</div>
@@ -69,61 +81,21 @@
         </div>
     </div>
 
-    <div class="content-card">
-        <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333;">Recent Orders</h4>
-
-        <c:choose>
-            <c:when test="${not empty recentOrders}">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th width="15%">Order ID</th>
-                            <th width="25%">Customer</th>
-                            <th width="20%">Date</th>
-                            <th width="20%">Total Amount</th>
-                            <th width="20%">Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <c:forEach var="ro" items="${recentOrders}">
-                            <tr>
-                                <td>${ro.orderId}</td>
-                                <td>${not empty ro.receiverName ? ro.receiverName : ro.customerId.fullName}</td>
-                                <td><fmt:formatDate value="${ro.createdAt}" pattern="yyyy-MM-dd"/></td>
-                                <td><fmt:formatNumber value="${ro.totalAmount}" type="number" pattern="#,##0"/> đ</td>
-                                <td>
-                                    <span class="badge-status ${ro.orderStatus == 'Completed' ? 'badge-active' : (ro.orderStatus == 'Pending' ? 'badge-warning' : 'badge-inactive')}">
-                                        ${ro.orderStatus}
-                                    </span>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-            </c:when>
-
-            <c:otherwise>
-                <div class="alert alert-warning" style="margin-top: 20px;">No recent orders found!</div>
-            </c:otherwise>
-        </c:choose>
     </div>
 </div>
 
 <script>
-    
-    
-        const filterBtns = document.querySelectorAll('.btn-filter');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-        
-                filterBtns.forEach(b => b.classList.remove('active'));
-              
-                this.classList.add('active');
-                
-                
-            });
-        });
+    function validateDateRange() {
+        const start = document.querySelector('input[name="startDate"]').value;
+        const end = document.querySelector('input[name="endDate"]').value;
+        if (start && end) {
+            if (new Date(start) > new Date(end)) {
+                alert("Start date must be less than or equal to End date.");
+                return false;
+            }
+        }
+        return true;
+    }
     
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -135,14 +107,49 @@
                 labels: [${statusLabels}],
                 datasets: [{
                         data: [${statusData}],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
+                        backgroundColor: [${statusLabels}].map(label => {
+                            if (label === 'Completed') return '#10b981'; // green
+                            if (label === 'Pending') return '#f59e0b';   // yellow
+                            if (label === 'Cancelled') return '#ef4444'; // red
+                            return '#3b82f6';
+                        }),
                         borderWidth: 0
                     }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: {legend: {position: 'bottom', labels: {usePointStyle: true, boxWidth: 8}}}
-            }
+            },
+            plugins: [{
+                id: 'customDataLabels',
+                afterDraw: function(chart) {
+                    var ctx = chart.ctx;
+                    chart.data.datasets.forEach(function(dataset, i) {
+                        var meta = chart.getDatasetMeta(i);
+                        if (!meta.hidden) {
+                            meta.data.forEach(function(element, index) {
+                                if (dataset.data[index] > 0) {
+                                    ctx.fillStyle = 'white';
+                                    ctx.font = 'bold 15px Arial, sans-serif';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'middle';
+                                    
+                                    var dataString = dataset.data[index].toString();
+                                    var position = element.tooltipPosition();
+                                    
+                                    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                                    ctx.shadowBlur = 3;
+                                    
+                                    ctx.fillText(dataString, position.x, position.y);
+                                    
+                                    ctx.shadowColor = 'transparent';
+                                    ctx.shadowBlur = 0;
+                                }
+                            });
+                        }
+                    });
+                }
+            }]
         });
 
         // ============================== Line Chart ==============================
@@ -151,10 +158,10 @@
             type: 'line',
             data: {
                 
-                labels: ['1', '5', '10', '15', '20', '25'],
+                labels: [${revLabels}],
                 datasets: [{
-                        label: 'Revenue ($)',
-                        data: [200, 1500, 2200, 1800, 2500, 3000], 
+                        label: 'Revenue (VND)',
+                        data: [${revData}], 
                         borderColor: '#2563eb',
                         backgroundColor: 'rgba(37, 99, 235, 0.05)',
                         borderWidth: 2,
@@ -174,7 +181,7 @@
                         beginAtZero: true,
                         grid: {borderDash: [5, 5], color: '#f0f0f0'},
                         border: {display: false},
-                        title: {display: true, text: 'Revenue ($)', color: '#777', font: {size: 13}} 
+                        title: {display: true, text: 'Revenue (VND)', color: '#777', font: {size: 13}} 
                     },
                     x: {
                         grid: {display: true, color: '#f9f9f9'},

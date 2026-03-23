@@ -15,8 +15,8 @@ import com.mycompany.bookverse.model.Customer;
 import com.mycompany.bookverse.model.Order;
 import com.mycompany.bookverse.model.OrderItem;
 import com.mycompany.bookverse.service.OrderService;
+import com.mycompany.bookverse.utils.VNPayConfig;
 import jakarta.servlet.http.*;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -109,6 +109,10 @@ public class OrderController extends HttpServlet {
                 confirmOrder(request, response);
                 break;
 
+            case "retryPayment":
+                retryPayment(request, response);
+                break;
+
             default:
                 response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
         }
@@ -174,8 +178,11 @@ public class OrderController extends HttpServlet {
             throws IOException {
 
         int orderId = Integer.parseInt(request.getParameter("orderId"));
+        String error = orderService.cancelOrder(orderId);
 
-        orderService.cancelOrder(orderId);
+        if (error != null) {
+            request.getSession().setAttribute("orderError", error);
+        }
 
         response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
     }
@@ -185,10 +192,45 @@ public class OrderController extends HttpServlet {
             throws IOException {
 
         int orderId = Integer.parseInt(request.getParameter("orderId"));
-
         orderService.confirmReceived(orderId);
 
         response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
+    }
+
+    /* ================= RETRY PAYMENT (ONLINE unpaid) ================= */
+    private void retryPayment(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        HttpSession session = request.getSession();
+        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        Order order = orderService.getOrderById(orderId);
+
+        if (order == null || !"ONLINE".equalsIgnoreCase(order.getPaymentMethod())
+                || (order.getIsPaid() != null && order.getIsPaid())
+                || !"Pending".equalsIgnoreCase(order.getOrderStatus())) {
+            session.setAttribute("orderError", "This order cannot be paid online.");
+            response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
+            return;
+        }
+
+        try {
+            String baseUrl = request.getScheme() + "://" + request.getServerName()
+                    + ":" + request.getServerPort() + request.getContextPath();
+            String returnUrl = baseUrl + VNPayConfig.VNP_RETURN_URL;
+            String ipAddress = VNPayConfig.getIpAddress(request);
+
+            String paymentUrl = VNPayConfig.createPaymentUrl(
+                    order.getOrderId(),
+                    order.getTotalAmount(),
+                    "BookVerse Order #" + order.getOrderId(),
+                    ipAddress,
+                    returnUrl);
+
+            response.sendRedirect(paymentUrl);
+        } catch (Exception e) {
+            session.setAttribute("orderError", "Failed to create payment: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/customer-order?action=list");
+        }
     }
 
     /**

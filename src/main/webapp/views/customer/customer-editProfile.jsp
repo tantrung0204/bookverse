@@ -25,7 +25,7 @@
                     <div class="mb-4 d-flex flex-column align-items-center">
 
                         <div class="avatar">
-                            <img src="${user.profileImageUrl}" alt="Avatar">
+                            <img src="${user.profileImageUrl}" alt="Avatar" onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
                         </div>
 
                         <button type="button"

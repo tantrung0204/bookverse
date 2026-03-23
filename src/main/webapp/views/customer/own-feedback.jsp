@@ -31,7 +31,7 @@
                 <div class="review-card">
 
                     <div class="book-image">
-                        <img src="${fb.productId.imageUrl}" alt="book">
+                        <img src="${fb.productId.imageUrl}" alt="book" onerror="this.src='${pageContext.request.contextPath}/assets/images/no-product-image.jpg';">
                     </div>
 
                     <div class="review-content">

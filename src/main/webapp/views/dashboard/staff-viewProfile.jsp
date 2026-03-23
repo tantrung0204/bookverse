@@ -1,10 +1,6 @@
-<%-- 
-    Document   : staff-viewProfile
-    Created on : Mar 14, 2026, 9:30:03 PM
-    Author     : LECOO
---%>
+<%-- Document : staff-viewProfile Created on : Mar 14, 2026, 9:30:03 PM Author : LECOO --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-md-9" style="margin-left: 100px">
     <div class="row justify-content-center">
@@ -18,14 +14,14 @@
                 </p>
 
                 <form id="avatarForm"
-                      action="${pageContext.request.contextPath}/profile?action=changeAvatar"
-                      method="post"
+                      action="${pageContext.request.contextPath}/profile?action=changeAvatar" method="post"
                       enctype="multipart/form-data">
 
                     <div class="mb-4 d-flex flex-column align-items-center">
 
                         <div class="avatar">
-                            <img src="${user.profileImageUrl}" alt="Avatar">
+                            <img src="${user.profileImageUrl}" alt="Avatar"
+                                 onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
                         </div>
 
                         <button type="button"
@@ -34,16 +30,10 @@
                             Change Avatar
                         </button>
                         <!-- thực hiện việc mở file và chọn những file là ảnh png, jpeg, sau đó gửi vào uploadavartar. -->
-                        <input type="file"
-                               id="fileInput"
-                               name="avatarFile"
-                               accept="image/png, image/jpeg"
-                               style="display:none"
-                               onchange="uploadAvatar(this)">
+                        <input type="file" id="fileInput" name="avatarFile" accept="image/png, image/jpeg"
+                               style="display:none" onchange="uploadAvatar(this)">
 
-                        <div id="fileSizeError"
-                             class="text-danger small mt-1"
-                             style="display:none">
+                        <div id="fileSizeError" class="text-danger small mt-1" style="display:none">
                             File is too large! Max 10MB.
                         </div>
 
@@ -51,12 +41,9 @@
 
                 </form>
 
-                <form 
-                    action="${pageContext.request.contextPath}/profile?action=editInfo"
-                    method="post"
-                    >
+                <form action="${pageContext.request.contextPath}/profile?action=editInfo" method="post">
                     <c:if test="${not empty error}">
-                        <div class="alert alert-danger" >
+                        <div class="alert alert-danger">
                             ${error}
                         </div>
                     </c:if>
@@ -67,44 +54,34 @@
                     </c:if>
                     <div class="mb-3">
                         <label class="form-label">Full name</label>
-                        <input type="text" class="form-control"
-                               placeholder="Enter your full name"
-                               value="${user.fullName}"
-                               name="fullName">
+                        <input type="text" class="form-control" placeholder="Enter your full name"
+                               value="${user.fullName}" name="fullName">
                     </div>
                     <div class="d-flex gap-3">
                         <button class="btn flex-fill saveChanges" type="submit">
                             Save Changes
-                        </button>                    
+                        </button>
                     </div>
 
                 </form>
-                <form 
-                    action="${pageContext.request.contextPath}/profile?action=changePassword"
-                    method="post"
-                    >
+                <form action="${pageContext.request.contextPath}/profile?action=changePassword"
+                      method="post">
                     <div class="mb-3">
                         <label class="form-label">Old Password</label>
-                        <input type="text" class="form-control"
-                               placeholder="Enter your old password"
-                               value="${oldPass}"
-                               name="oldPassword">
+                        <input type="text" class="form-control" placeholder="Enter your old password"
+                               value="${oldPass}" name="oldPassword">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">New Password</label>
-                        <input type="text" class="form-control"
-                               placeholder="Enter your new password"
-                               value="${newPass}"
-                               name="newPassword">
-                    </div>         
+                        <input type="text" class="form-control" placeholder="Enter your new password"
+                               value="${newPass}" name="newPassword">
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label">Re-New Password</label>
-                        <input type="text" class="form-control"
-                               placeholder="Enter your re-new password"
-                               value="${reNewPass}"
-                               name="reNewPassword">
-                    </div> 
+                        <input type="text" class="form-control" placeholder="Enter your re-new password"
+                               value="${reNewPass}" name="reNewPassword">
+                    </div>
 
                     <div class="d-flex gap-3">
                         <button class="btn flex-fill saveChanges" type="submit">

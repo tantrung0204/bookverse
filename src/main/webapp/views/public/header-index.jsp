@@ -41,7 +41,7 @@
                                    href="${pageContext.request.contextPath}/signin">Sign In</a>
                             </li>
                             <li class="nav-item d-flex align-items-center">
-                                <a class="btn-outline-brand-rounded px-4 py-2" href="${pageContext.request.contextPath}/register">Sign Up</a>
+                                <a class="btn-outline-brand-rounded px-4 py-2" href="${pageContext.request.contextPath}/signup">Sign Up</a>
                             </li>
                         </c:when>
 

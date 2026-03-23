@@ -76,22 +76,22 @@
                                         <!-- =============================================== View Detail Customer button ============================================== -->
                                         <button type="button" class="btn-action btn-detail"
                                                 title="Detail" onclick="openViewDetailCustomerPopup(
-                                                                                '${c.customerId}', '${c.fullName}', '${c.username}', '${c.email}',
-                                                                                '${c.phoneNumber}', '${c.status}',
-                                                                                '<fmt:formatDate value="${c.createdAt}"
+                                                                '${c.customerId}', '${c.fullName}', '${c.username}', '${c.email}',
+                                                                '${c.phoneNumber}', '${c.status}',
+                                                                '<fmt:formatDate value="${c.createdAt}"
                                                                 pattern="dd-MM-yyyy HH:mm" />',
-                                                                                '${c.address}',
-                                                                                '${c.profileImageUrl}')">
+                                                                '${c.address}',
+                                                                '${c.profileImageUrl}')">
                                             <i class="bi bi-eye"></i>
                                         </button>
                                         <!-- =============================================== Edit Customer button ============================================== -->
                                         <button type="button" class="btn-action btn-edit"
                                                 title="Edit" onclick="openEditCustomerPopup('${c.customerId}',
-                                                                                '${c.username}',
-                                                                                '${c.fullName}',
-                                                                                '${c.email}',
-                                                                                '${c.phoneNumber}',
-                                                                                '${c.address}')">
+                                                                '${c.username}',
+                                                                '${c.fullName}',
+                                                                '${c.email}',
+                                                                '${c.phoneNumber}',
+                                                                '${c.address}')">
                                             <i class="bi bi-pencil"></i>
                                         </button>
                                         <!-- =============================================== Delete Customer button ============================================== -->
@@ -406,7 +406,8 @@
             <img id="detailCustomerAvatar"
                  src="${pageContext.request.contextPath}/assets/images/default-avt.jpg" alt="Avatar"
                  class="rounded-circle shadow-sm"
-                 style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f8f9fa;">
+                 style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #f8f9fa;"
+                 onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
             <h4 id="detailCustomerFullNameTitle" style="margin-top: 15px; margin-bottom: 5px;"></h4>
             <p id="detailCustomerUsernameTitle" style="color: #777; margin-bottom: 0;"></p>
         </div>

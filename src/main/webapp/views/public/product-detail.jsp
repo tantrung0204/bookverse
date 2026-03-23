@@ -194,7 +194,7 @@
                                         <c:choose>
                                             <c:when test="${not empty fb.customerId.profileImageUrl}">
                                                 <img src="${fb.customerId.profileImageUrl}" alt="${fb.customerId.fullName}" class="reviewer-avatar"
-                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                     onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
                                                 <div class="reviewer-avatar-placeholder" style="display: none;">
                                                     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
                                                     ${fn:substring(fb.customerId.fullName, 0, 1)}

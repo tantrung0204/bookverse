@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center mb-4">
 
             <div class="avatar me-4">
-                <img src="${user.profileImageUrl}" alt="Avatar" >
+                <img src="${user.profileImageUrl}" alt="Avatar" onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
             </div>
 
             <div>

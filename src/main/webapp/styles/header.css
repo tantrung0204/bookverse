@@ -11,6 +11,11 @@
     font-size:28px;
 }
 
+.header-right {
+    font-size:1.1rem;
+    font-family: "Playfair Display", serif;
+}
+
 .user-profile-btn {
     cursor: pointer;
     transition: background-color 0.2s;
@@ -23,13 +28,45 @@
 }
 
 .header-avatar {
-    width: 40px;
-    height: 40px;
     object-fit: cover;
-    border: 2px solid #e9ecef;
+    border: 2px solid #8B6B4C;
+    padding: 1px;
 }
 
 .dropdown-toggle::after {
     vertical-align: middle;
     margin-left: 0.5em;
+}
+
+/* ================= USER ICONS & DROPDOWN (Copied from home) ================= */
+.user-dropdown-link {
+    color: #8B6B4C !important;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+.user-dropdown-link:hover {
+    color: #6e5238 !important;
+}
+
+.user-avatar {
+    object-fit: cover;
+    border: 2px solid #8B6B4C;
+    padding: 1px;
+}
+
+.brand-dropdown .dropdown-item {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif;
+    color: #2c2c2c;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.brand-dropdown .dropdown-item:hover {
+    background-color: rgba(139, 107, 76, 0.1);
+    color: #8B6B4C;
+}
+
+.brand-dropdown .dropdown-item i {
+    color: #8B6B4C;
+    opacity: 0.8;
 }

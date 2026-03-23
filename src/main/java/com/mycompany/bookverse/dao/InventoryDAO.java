@@ -271,6 +271,17 @@ public class InventoryDAO {
         try {
             em.getTransaction().begin();
             em.persist(importStockDetail);
+
+            // Update product stock quantity
+            if (importStockDetail.getProductId() != null && importStockDetail.getImportedQuantity() != null) {
+                Product product = em.find(Product.class, importStockDetail.getProductId().getProductId());
+                if (product != null) {
+                    int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
+                    product.setStockQuantity(currentStock + importStockDetail.getImportedQuantity());
+                    em.merge(product);
+                }
+            }
+
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {

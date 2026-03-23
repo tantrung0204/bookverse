@@ -60,7 +60,7 @@
                         <span class="meta-label">Availability:</span>
                         <c:choose>
                             <c:when test="${product.stockQuantity > 0}">
-                                <span class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock</span>
+                                <span class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock (${product.stockQuantity} available)</span>
                             </c:when>
                             <c:otherwise>
                                 <span class="stock-status out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>

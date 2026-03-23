@@ -226,9 +226,10 @@ public class Product implements Serializable {
         int totalSold = 0;
 
         for (OrderItem item : this.orderItemCollection) {
-            // Check điều kiện chỉ cộng khi đơn hàng không bị HỦY
-            // if (item.getOrder().getStatus() != 3)
-            if (item.getOrderQuantity() != null) {
+            // Only count items from Completed orders
+            if (item.getOrderQuantity() != null
+                    && item.getOrderId() != null
+                    && "Completed".equalsIgnoreCase(item.getOrderId().getOrderStatus())) {
                 totalSold += item.getOrderQuantity();
             }
         }

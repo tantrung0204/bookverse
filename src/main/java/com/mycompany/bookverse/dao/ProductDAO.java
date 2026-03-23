@@ -218,10 +218,10 @@ public class ProductDAO {
     public List<Book> findTopSellingBooks(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String sql = "SELECT b FROM Book b WHERE b.status = 1"
+            String sql = "SELECT b FROM Book b WHERE b.status = 1 "
                     + "ORDER BY (SELECT COALESCE(SUM(item.orderQuantity), 0) "
-                    + "          FROM OrderItem item "
-                    + "          WHERE item.productId = b) DESC";
+                    + "          FROM OrderItem item JOIN item.orderId o "
+                    + "          WHERE item.productId = b AND o.orderStatus = 'Completed') DESC";
             TypedQuery<Book> query = em.createQuery(sql, Book.class);
             query.setMaxResults(limit);
             List<Book> books = query.getResultList();
@@ -238,10 +238,10 @@ public class ProductDAO {
     public List<Stationery> findTopSellingStationery(int limit) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String sql = "SELECT s FROM Stationery s WHERE s.status = 1"
+            String sql = "SELECT s FROM Stationery s WHERE s.status = 1 "
                     + "ORDER BY (SELECT COALESCE(SUM(item.orderQuantity), 0) "
-                    + "          FROM OrderItem item "
-                    + "          WHERE item.productId = s) DESC";
+                    + "          FROM OrderItem item JOIN item.orderId o "
+                    + "          WHERE item.productId = s AND o.orderStatus = 'Completed') DESC";
 
             TypedQuery<Stationery> query = em.createQuery(sql, Stationery.class);
             query.setMaxResults(limit);

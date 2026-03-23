@@ -35,7 +35,7 @@ body{
 
 .review-card{
     display:flex;
-    background:#F4F4F4;
+    background: white;
     border-radius:10px;
     padding:20px;
     margin-bottom:18px;
@@ -129,14 +129,13 @@ body{
     color:#7c5b2e;
     text-decoration:none;
     font-size:14px;
-
 }
 
 /* delete */
 
 .btn-delete{
-    background:#E7B5B5;
-    color:#333;
+    background: #e12e2ea7 ;
+    color:white;
     padding:7px 14px;
     border-radius:6px;
     text-decoration:none;
@@ -145,11 +144,11 @@ body{
 }
 
 .btn-edit:hover{
-    background:#b0c4db;
+    background:#e7c98f;
 }
 
 .btn-delete:hover{
-    background:#de9e9e;
+    background:red;
 }
 
 /* ===== MODAL ===== */

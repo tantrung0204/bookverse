@@ -115,7 +115,7 @@ public class ProfileManagementController extends HttpServlet {
             }
             request.setAttribute("openStaffProfile", "yes");
             request.setAttribute("activeMenu", "staffView");
-            request.getRequestDispatcher("/views/public/profile.jsp")
+            request.getRequestDispatcher("/views/dashboard/dashboard.jsp")
                     .forward(request, response);
             return;
         }

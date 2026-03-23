@@ -1,0 +1,31 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 16, 2026, 10:42:10 AM
+    Author     : LECOO
+*/
+
+.date-filter-form{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.date-filter{
+    display:flex;
+    flex-direction:column;
+    font-size:13px;
+}
+
+.date-filter input{
+    padding:5px 8px;
+    border:1px solid #ddd;
+    border-radius:6px;
+}
+
+.btn-filter:hover{
+    background:#1a63d9;
+}

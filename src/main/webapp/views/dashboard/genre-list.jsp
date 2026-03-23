@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
 
 <div class="container-fluid">
 
@@ -52,7 +53,7 @@
 
                         <th width="20%">Genre name</th>
 
-                        <th width="35%">Description</th>
+                        <th width="25%">Description</th>
 
                         <th width="15%">Status</th>   
 
@@ -96,7 +97,7 @@
                                     </button>
 
                                     <%-- Delete Genre --%>
-                                    <form action="${pageContext.request.contextPath}/genre" method="post" style="display:inline;"
+                                    <form action="${pageContext.request.contextPath}/dashboard/genre" method="post" style="display:inline;"
                                           onsubmit="return confirmDelete('${g.genreId}', '${g.genreName}')">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="${g.genreId}">
@@ -130,55 +131,44 @@
         </c:if>
         <nav class="d-flex justify-content-center">
             <ul class="pagination">
-
-
-                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="genre?page=${currentPage - 1}">&laquo;</a>
-                </li>
-
-
-                <c:if test="${totalPages <= 5}">
+                <%-- Previous button --%>
+                <c:if test="${currentPage > 1}">
+                    <a class="page-btn ${currentPage == 1 ? 'disabled' : ''}" href="genre?page=${currentPage - 1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&laquo;</a>
+                </c:if>
+                    <c:if test="${not empty keyword}">
+                        
+                </c:if>
+                <%-- If the total <= 5, display all pages. --%>
+                <c:if test="${totalPages <= maxNode}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="genre?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
                 </c:if>
-
-
-                <c:if test="${totalPages > 5}">
-                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                        <a class="page-link" href="genre?page=1">1</a>
-                    </li>
-
+                <%-- If the total > 5 --%>
+                <c:if test="${totalPages > maxNode}">
+                    <%-- Page 1 always appears --%>                   
+                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="genre?page=1&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">1</a>
+                    <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
-
+                    <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="genre?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="genre?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
-
+                    <%-- The final ellipsis --%>
                     <c:if test="${endPage < totalPages - 1}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
-
-                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                        <a class="page-link" href="genre?page=${totalPages}">
-                            ${totalPages}
-                        </a>
-                    </li>
+                    <%-- The last page always appears --%>
+                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="author?page=${totalPages}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">
+                        ${totalPages}
+                    </a>
                 </c:if>
-
-                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="genre?page=${currentPage + 1}">&raquo;</a>
-                </li>
+                <%-- Next button --%>
+                <c:if test="${currentPage < totalPages}">
+                    <a class="page-btn ${currentPage == totalPages ? 'disabled' : ''}" href="genre?page=${currentPage+1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&raquo;</a>
+                </c:if>
             </ul>
         </nav>
     </div>
@@ -205,13 +195,18 @@
         document.getElementById("detailStatus").innerText = status == 1 ? "Active" : "Inactive";
         document.getElementById("detailQuantity").innerText = "Loading...";
 
-        fetch('${pageContext.request.contextPath}/genre?view=detail&id=' + id)
+        fetch('${pageContext.request.contextPath}/dashboard/genre?view=detail&id=' + id)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                    console.log(data.quantity);
+                        if (data.quantity > 1) {
+                            document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                        } else if (data.quantity <= 1) {
+                            document.getElementById("detailQuantity").innerText = data.quantity + " product";
+                        }
                 })
                 .catch(error => {
-                    document.getElementById("detailQuantity").innerText = "Error";
+                    document.getElementById("detailQuantity").innerText = "0 product";
                 });
         document.getElementById("detailPopup").style.display = "flex";
     }
@@ -290,7 +285,7 @@
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/genre" method="post">
+        <form action="${pageContext.request.contextPath}/dashboard/genre" method="post">
             <input type="hidden" name="action" value="create">
 
             <div class="form-group">
@@ -367,7 +362,7 @@
             </div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/genre" method="post">
+        <form action="${pageContext.request.contextPath}/dashboard/genre" method="post">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="genreId" id="editGenreId">
 

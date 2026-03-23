@@ -7,9 +7,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/voucher-list.css">
 
 <div class="container-fluid">
-
     <div class="page-header">
         <p class="title">Manage Author</p>
         <p class="subtitle">Create and manage author for your library</p>
@@ -90,7 +90,7 @@
                                         <i class="bi bi-pencil"></i>
                                     </button>
                                     <%-- Delete author --%>
-                                    <form action="${pageContext.request.contextPath}/author" method="post" style="display:inline;"
+                                    <form action="${pageContext.request.contextPath}/dashboard/author" method="post" style="display:inline;"
                                           onsubmit="return confirmDelete('${a.authorId}', '${a.authorName}')">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="${a.authorId}">                                       
@@ -125,52 +125,40 @@
         <nav class="d-flex justify-content-center">
             <ul class="pagination">
                 <%-- Previous button --%>
-                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="author?page=${currentPage - 1}">&laquo;</a>
-                </li>
+                <c:if test="${currentPage > 1}">
+                    <a class="page-btn" href="author?page=${currentPage - 1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&laquo;</a>
+                </c:if>
                 <%-- If the total <= 5, display all pages. --%>
-                <c:if test="${totalPages <= 5}">
+                <c:if test="${totalPages <= maxNode}">
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="author?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="author?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
                 </c:if>
                 <%-- If the total > 5 --%>
-                <c:if test="${totalPages > 5}">
-                    <%-- Page 1 always appears --%>
-                    <li class="page-item ${currentPage == 1 ? 'active' : ''}">
-                        <a class="page-link" href="author?page=1">1</a>
-                    </li>
+                <c:if test="${totalPages > maxNode}">
+                    <%-- Page 1 always appears --%>                   
+                    <a class="page-btn ${currentPage == 1 ? 'active' : ''}"href="author?page=1&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">1</a>
                     <%-- The ... mark at the beginning --%>
                     <c:if test="${startPage > 2}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- Middle page --%>
                     <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link" href="author?page=${i}">${i}</a>
-                        </li>
+                        <a class="page-btn ${currentPage == i ? 'active' : ''}" href="author?page=${i}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">${i}</a>
                     </c:forEach>
                     <%-- The final ellipsis --%>
                     <c:if test="${endPage < totalPages - 1}">
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
+                        <span class="page-btn disabled">...</span>
                     </c:if>
                     <%-- The last page always appears --%>
-                    <li class="page-item ${currentPage == totalPages ? 'active' : ''}">
-                        <a class="page-link" href="author?page=${totalPages}">
-                            ${totalPages}
-                        </a>
-                    </li>
+                    <a class="page-btn ${currentPage == totalPages ? 'active' : ''}" href="author?page=${totalPages}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">
+                        ${totalPages}
+                    </a>
                 </c:if>
                 <%-- Next button --%>
-                <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="author?page=${currentPage + 1}">&raquo;</a>
-                </li>
+                <c:if test="${currentPage < totalPages}">
+                    <a class="page-btn" href="author?page=${currentPage + 1}&keyword=${keyword}&view=${not empty keyword ?"search":"list"}">&raquo;</a>
+                </c:if>
             </ul>
         </nav>
     </div>
@@ -196,13 +184,18 @@
             document.getElementById("detailBio").innerText = bio;
             document.getElementById("detailQuantity").innerText = "Loading...";
 
-            fetch('${pageContext.request.contextPath}/author?view=detail&id=' + id)
+            fetch('${pageContext.request.contextPath}/dashboard/author?view=detail&id=' + id)
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                        console.log(data.quantity);
+                        if (data.quantity > 1) {
+                            document.getElementById("detailQuantity").innerText = data.quantity + " products";
+                        } else if (data.quantity <= 1) {
+                            document.getElementById("detailQuantity").innerText = data.quantity + " product";
+                        }
                     })
                     .catch(error => {
-                        document.getElementById("detailQuantity").innerText = "Error";
+                        document.getElementById("detailQuantity").innerText = "0 product";
                     });
             document.getElementById("detailPopup").style.display = "flex";
         }
@@ -283,7 +276,7 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/author" method="post">
+            <form action="${pageContext.request.contextPath}/dashboard/author" method="post">
                 <input type="hidden" name="action" value="create">
 
                 <div class="form-group">
@@ -366,7 +359,7 @@
                 </div>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/author" method="post">
+            <form action="${pageContext.request.contextPath}/dashboard/author" method="post">
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" name="authorId" id="editAuthorId">
 

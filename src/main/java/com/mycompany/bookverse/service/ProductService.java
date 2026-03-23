@@ -56,6 +56,14 @@ public class ProductService {
         if (productDao.isProductNameExists(newProduct.getName(), 0)) {
             throw new Exception("Product name already exists in the system.");
         }
+        
+        // Validate trùng ISBN
+        if (newProduct instanceof Book) {
+            Book b = (Book) newProduct;
+            if (b.getIsbn() != null && !b.getIsbn().isEmpty() && productDao.isIsbnExists(b.getIsbn(), 0)) {
+                throw new Exception("ISBN already exists in the system.");
+            }
+        }
 
         // 2. Gọi DAO thao tác với Database
         boolean isSuccess = productDao.createProduct(newProduct);
@@ -69,6 +77,14 @@ public class ProductService {
         // 1. Validate trùng tên
         if (productDao.isProductNameExists(updatedProduct.getName(), updatedProduct.getProductId())) {
             throw new Exception("Product name already exists in the system.");
+        }
+
+        // Validate trùng ISBN
+        if (updatedProduct instanceof Book) {
+            Book b = (Book) updatedProduct;
+            if (b.getIsbn() != null && !b.getIsbn().isEmpty() && productDao.isIsbnExists(b.getIsbn(), updatedProduct.getProductId())) {
+                throw new Exception("ISBN already exists in the system.");
+            }
         }
 
         // 2. Lấy sản phẩm hiện tại từ DB lên
@@ -97,6 +113,10 @@ public class ProductService {
 
             existingBook.setGenreId(updatedBook.getGenreId());
             existingBook.setAuthorCollection(updatedBook.getAuthorCollection());
+            existingBook.setIsbn(updatedBook.getIsbn());
+            existingBook.setPublisher(updatedBook.getPublisher());
+            existingBook.setTranslator(updatedBook.getTranslator());
+            existingBook.setPublishedYear(updatedBook.getPublishedYear());
 
         } else if (existingProduct instanceof Stationery && updatedProduct instanceof Stationery) {
             Stationery existingStat = (Stationery) existingProduct;
@@ -125,6 +145,11 @@ public class ProductService {
     // ==========================================
     public List<Book> getTopBestSellingBooks() {
         return productDao.findTopSellingBooks(5);
+    }
+    
+    public static void main(String[] args) {
+        ProductService service = new ProductService();
+        System.out.println(service.getProductDetail(3));
     }
 
     public List<Stationery> getTopBestSellingStationery() {

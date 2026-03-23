@@ -34,12 +34,12 @@ import java.util.Date;
 @Table(name = "[order]")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Order.findAll", query = "SELECT o FROM Order o"),
-    @NamedQuery(name = "Order.findByOrderId", query = "SELECT o FROM Order o WHERE o.orderId = :orderId"),
-    @NamedQuery(name = "Order.findByTotalAmount", query = "SELECT o FROM Order o WHERE o.totalAmount = :totalAmount"),
-    @NamedQuery(name = "Order.findByOrderStatus", query = "SELECT o FROM Order o WHERE o.orderStatus = :orderStatus"),
-    @NamedQuery(name = "Order.findByIsPaid", query = "SELECT o FROM Order o WHERE o.isPaid = :isPaid"),
-    @NamedQuery(name = "Order.findByCreatedAt", query = "SELECT o FROM Order o WHERE o.createdAt = :createdAt")})
+        @NamedQuery(name = "Order.findAll", query = "SELECT o FROM Order o"),
+        @NamedQuery(name = "Order.findByOrderId", query = "SELECT o FROM Order o WHERE o.orderId = :orderId"),
+        @NamedQuery(name = "Order.findByTotalAmount", query = "SELECT o FROM Order o WHERE o.totalAmount = :totalAmount"),
+        @NamedQuery(name = "Order.findByOrderStatus", query = "SELECT o FROM Order o WHERE o.orderStatus = :orderStatus"),
+        @NamedQuery(name = "Order.findByIsPaid", query = "SELECT o FROM Order o WHERE o.isPaid = :isPaid"),
+        @NamedQuery(name = "Order.findByCreatedAt", query = "SELECT o FROM Order o WHERE o.createdAt = :createdAt") })
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +61,7 @@ public class Order implements Serializable {
     private String orderStatus;
     @Size(max = 20)
     @Column(name = "payment_method")
-    private String paymentMethod;       // ONLINE, COD
+    private String paymentMethod; // ONLINE, COD
     @Column(name = "is_paid")
     private Boolean isPaid;
     @Size(max = 255)
@@ -208,7 +208,8 @@ public class Order implements Serializable {
             return false;
         }
         Order other = (Order) object;
-        if ((this.orderId == null && other.orderId != null) || (this.orderId != null && !this.orderId.equals(other.orderId))) {
+        if ((this.orderId == null && other.orderId != null)
+                || (this.orderId != null && !this.orderId.equals(other.orderId))) {
             return false;
         }
         return true;

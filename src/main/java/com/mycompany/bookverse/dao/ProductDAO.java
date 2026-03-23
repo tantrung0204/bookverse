@@ -122,6 +122,20 @@ public class ProductDAO {
         }
     }
 
+    public boolean isIsbnExists(String isbn, int excludeProductId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(b) FROM Book b WHERE LOWER(b.isbn) = LOWER(:isbn) AND b.productId != :id";
+            Long count = em.createQuery(jpql, Long.class)
+                    .setParameter("isbn", isbn.trim())
+                    .setParameter("id", excludeProductId)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
+
     public boolean createProduct(Product product) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

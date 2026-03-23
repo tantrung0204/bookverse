@@ -1,0 +1,45 @@
+/* Specific styles for order-list to enhance order details popup without touching category-list.css */
+
+.order-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.order-items-table th {
+    text-align: left;
+    color: #888;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 12px 15px;
+    border-bottom: 2px solid #eee;
+    background-color: #fafafa;
+}
+
+.order-items-table th.text-center {
+    text-align: center;
+}
+
+.order-items-table th.text-right {
+    text-align: right;
+}
+
+.order-items-table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.order-items-table td.text-center {
+    text-align: center;
+}
+
+.order-items-table td.text-right {
+    text-align: right;
+}
+
+.order-items-table tbody tr:hover td {
+    background-color: #fafafa;
+}

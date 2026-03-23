@@ -7,7 +7,6 @@ package com.mycompany.bookverse.dao;
 import com.mycompany.bookverse.model.Author;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -35,17 +34,6 @@ public class AuthorDAO {
                     .getSingleResult();
         } catch (Exception e) {
             return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    public List<Author> searchByName(String keyword) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createQuery("SELECT a FROM Author a WHERE a.authorName LIKE :kw", Author.class)
-                    .setParameter("kw", "%" + keyword + "%")
-                    .getResultList();
         } finally {
             em.close();
         }
@@ -85,27 +73,9 @@ public class AuthorDAO {
         }
     }
 
-    public boolean checkAuthorExist(int id, String name) {
-        List<Author> list = findAll();
-        for (Author author : list) {
-            if (author.getAuthorId() != id && author.getAuthorName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
+   
 
-    public boolean checkAuthorExistByName(String name) {
-        List<Author> list = findAll();
-        for (Author author : list) {
-            if (author.getAuthorName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Long countBooksByAuthorId(int authorId) {
+    public long countBooksByAuthorId(int authorId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             String jpql = "SELECT COUNT(b) FROM Author a JOIN a.bookCollection b WHERE a.authorId = :id";

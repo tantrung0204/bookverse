@@ -16,10 +16,6 @@ public class GenreService {
 
     private GenreDAO genreDAO = new GenreDAO();
 
-    public List<Genre> getAllGenres() {
-        return genreDAO.findAll();
-    }
-
     public Genre findGenreById(int id) {
         return genreDAO.findById(id);
     }
@@ -28,35 +24,30 @@ public class GenreService {
         return genreDAO.findActiveGenres();
     }
 
-    public List<Genre> searchGenres(String keyword) {
-        return genreDAO.searchByName(keyword);
-    }
-
-    public String insertGenre(String name, String des, int status) {
+    public String insertGenre(Genre genre) {
         String error = "";
+        String des = genre.getDescriptionText(),
+                name = genre.getGenreName();
+        int status = genre.getStatus();
         if (des == null || des.trim().isEmpty()) {
-            error += "Description can not be empty.\n";
+            error += "Description can not be empty.<br>";
         } else if (!des.matches("^[a-zA-ZÀ-ỹ0-9\\s]+$")) {
-            error += "Description contains invalid characters.\n";
+            error += "Description contains invalid characters.<br>";
         }
         if (name == null || name.trim().isEmpty()) {
-            error += "Name cannot be left blank.\n";
+            error += "Name cannot be left blank.<br>";
         } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s]+$")) {
-            error += "Name contains invalid characters.\n";
+            error += "Name contains invalid characters.<br>";
         }
         if (status != 0 && status != 1) {
-            error += "status must be 1 or 2.\n";
+            error += "status must be 1 or 2.<br>";
         }
-        boolean checkExist = genreDAO.checkGenreExistByName(name);
+        boolean checkExist = checkGenreExistByName(name);
 
         if (checkExist) {
             return "Genre name already exists";
         }
         if (error.isEmpty()) {
-            Genre genre = new Genre();
-            genre.setGenreName(name);
-            genre.setDescriptionText(des);
-            genre.setStatus(status);
             if (genreDAO.createGenre(genre)) {
                 return "Create genre successfully";
             } else {
@@ -66,32 +57,32 @@ public class GenreService {
         return error;
     }
 
-    public String editGenre(int id, String name, String description, int status) {
+    public String editGenre(Genre genre) {
         String error = "";
-        boolean checkExist = genreDAO.checkGenreExist(id, name);
-        Genre old = genreDAO.findById(id);
+        boolean checkExist = checkGenreExist(genre.getGenreId(), genre.getGenreName());
+        Genre old = genreDAO.findById(genre.getGenreId());
         if (checkExist) {
             return "Genre name already exist.";
         }
-        if (description == null || description.trim().isEmpty()) {
-            error += "Description can not be empty.\n";
-        } else if (!description.matches("^[a-zA-ZÀ-ỹ]+[.]?((\\s[a-zA-ZÀ-ỹ0-9]+)+\\s?[.,-]?)*$")) {
-            error += "Description contains invalid characters.\n";
+        if (genre.getDescriptionText() == null || genre.getDescriptionText().trim().isEmpty()) {
+            error += "Description can not be empty.<br>";
+        } else if (!genre.getDescriptionText().matches("^[a-zA-ZÀ-ỹ]+[.]?((\\s[a-zA-ZÀ-ỹ0-9]+)+\\s?[.,-]?)*$")) {
+            error += "Description contains invalid characters.<br>";
         }
-        if (name == null || name.trim().isEmpty()) {
-            error += "Name cannot be left blank.\n";
-        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
-            error += "Name contains invalid characters.\n";
+        if (genre.getGenreName() == null || genre.getGenreName().trim().isEmpty()) {
+            error += "Name cannot be left blank.<br>";
+        } else if (!genre.getGenreName().matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Name contains invalid characters.<br>";
         }
-        if (status != 0 && status != 1) {
-            error += "status must be 1 or 2.\n";
+        if (genre.getStatus() != 0 && genre.getStatus() != 1) {
+            error += "status must be 1 or 2.<br>";
         }
 
         if (error.isEmpty()) {
 
-            old.setGenreName(name);
-            old.setDescriptionText(description);
-            old.setStatus(status);
+            old.setGenreName(genre.getGenreName());
+            old.setDescriptionText(genre.getDescriptionText());
+            old.setStatus(genre.getStatus());
 
             if (genreDAO.update(old)) {
                 return "Update genre successfully";
@@ -137,5 +128,24 @@ public class GenreService {
     public int getTotalPagesByKeyword(String keyword, int pageSize) {
         long totalItems = genreDAO.countByKeyword(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
+    }
+    public boolean checkGenreExist(int id, String name) {
+        List<Genre> list = genreDAO.findAll();
+        for (Genre genre : list) {
+            if (genre.getGenreId() != id && genre.getGenreName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkGenreExistByName(String name) {
+        List<Genre> list = genreDAO.findAll();
+        for (Genre genre : list) {
+            if (genre.getGenreName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -6,6 +6,7 @@ package com.mycompany.bookverse.controller;
 
 import com.mycompany.bookverse.service.*;
 import com.mycompany.bookverse.model.*;
+import com.mycompany.bookverse.utils.PaginationConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @author TrungNT - CE200064
  */
-@WebServlet(name = "ProductManagementController", urlPatterns = {"/product"})
+@WebServlet(name = "ProductManagementController", urlPatterns = {"/dashboard/product"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2,
         maxFileSize = 1024 * 1024 * 10,
@@ -122,6 +123,7 @@ public class ProductManagementController extends HttpServlet {
         request.setAttribute("currentTab", tab);
         request.setAttribute("currentKeyword", keyword);
         request.setAttribute("currentPage", page);
+        request.setAttribute("maxNode", PaginationConfig.MAX_PAGE_NODES);
 
         // 4. Dữ liệu phụ trợ cho Modal Create/Edit
         request.setAttribute("bookCategories", categoryService.getActiveSubCategoriesByParentId(1));
@@ -233,11 +235,24 @@ public class ProductManagementController extends HttpServlet {
             String translator = request.getParameter("translator");
             String publishedYearStr = request.getParameter("publishedYear");
             b.setTranslator(translator);
-            try {
-                if (publishedYearStr != null && !publishedYearStr.isEmpty()) {
-                    b.setPublishedYear(Integer.parseInt(publishedYearStr));
+            if (publishedYearStr != null && !publishedYearStr.trim().isEmpty()) {
+                try {
+                    int py = Integer.parseInt(publishedYearStr.trim());
+                    int currentYear = java.time.Year.now().getValue();
+                    if (py < 0 || py > currentYear) {
+                        returnToCreateFormWithError(request, response, b, type, "Published Year must be between 0 and current year.");
+                        return;
+                    }
+                    b.setPublishedYear(py);
+                } catch (NumberFormatException e) {
+                    returnToCreateFormWithError(request, response, b, type, "Published Year must be a valid number.");
+                    return;
                 }
-            } catch (Exception e) {
+            }
+
+            if (isbn == null || isbn.trim().isEmpty()) {
+                returnToCreateFormWithError(request, response, b, type, "ISBN is required for books.");
+                return;
             }
             tempProduct = b;
         }
@@ -309,7 +324,7 @@ public class ProductManagementController extends HttpServlet {
 
             // 5. Thành công
             request.getSession().setAttribute("successMsg", "Product added successfully.");
-            response.sendRedirect(request.getContextPath() + "/product?tab=" + type.toLowerCase());
+            response.sendRedirect(request.getContextPath() + "/dashboard/product?tab=" + type.toLowerCase());
             
         } catch (Exception e) {
             returnToCreateFormWithError(request, response, tempProduct, type, e.getMessage());
@@ -389,12 +404,45 @@ public class ProductManagementController extends HttpServlet {
             List<Author> tempAuthors = new ArrayList<>();
             if (authorIds != null) {
                 for (String aId : authorIds) {
-                    Author a = new Author();
-                    a.setAuthorId(Integer.parseInt(aId));
-                    tempAuthors.add(a);
+                    try {
+                        Author a = new Author();
+                        a.setAuthorId(Integer.parseInt(aId));
+                        tempAuthors.add(a);
+                    } catch (NumberFormatException e) {
+                    }
                 }
             }
             b.setAuthorCollection(tempAuthors);
+            
+            String isbn = request.getParameter("isbn");
+            String publisher = request.getParameter("publisher");
+            String translator = request.getParameter("translator");
+            String publishedYearStr = request.getParameter("publishedYear");
+
+            b.setIsbn(isbn);
+            b.setPublisher(publisher);
+            b.setTranslator(translator);
+
+            if (publishedYearStr != null && !publishedYearStr.trim().isEmpty()) {
+                try {
+                    int py = Integer.parseInt(publishedYearStr.trim());
+                    int currentYear = java.time.Year.now().getValue();
+                    if (py < 0 || py > currentYear) {
+                        returnToEditFormWithError(request, response, b, type, "Published Year must be between 0 and current year.");
+                        return;
+                    }
+                    b.setPublishedYear(py);
+                } catch (NumberFormatException e) {
+                    returnToEditFormWithError(request, response, b, type, "Published Year must be a valid number.");
+                    return;
+                }
+            }
+
+            if (isbn == null || isbn.trim().isEmpty()) {
+                returnToEditFormWithError(request, response, b, type, "ISBN is required for books.");
+                return;
+            }
+
             tempProduct = b;
         }
         
@@ -463,7 +511,7 @@ public class ProductManagementController extends HttpServlet {
 
             // 5. Thành công
             request.getSession().setAttribute("successMsg", "Product updated successfully.");
-            response.sendRedirect(request.getContextPath() + "/product?tab=" + tab);
+            response.sendRedirect(request.getContextPath() + "/dashboard/product?tab=" + tab);
             
         } catch (Exception e) {
             // Bắt lỗi trùng tên từ Service ném ra
@@ -515,7 +563,7 @@ public class ProductManagementController extends HttpServlet {
         } catch (Exception e) {
             request.getSession().setAttribute("errorMsg", "Cannot delete the product.");
         }
-        response.sendRedirect(request.getContextPath() + "/product?tab=" + tab);
+        response.sendRedirect(request.getContextPath() + "/dashboard/product?tab=" + tab);
     }
     
     @Override

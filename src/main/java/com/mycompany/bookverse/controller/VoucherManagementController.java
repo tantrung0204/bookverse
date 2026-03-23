@@ -27,8 +27,9 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name = "VoucherController", urlPatterns = { "/voucher" })
-public class VoucherController extends HttpServlet {
+
+@WebServlet(name = "VoucherController", urlPatterns = {"/dashboard/voucher"})
+public class VoucherManagementController extends HttpServlet {
 
     private VoucherService voucherService = new VoucherService();
 
@@ -160,7 +161,7 @@ public class VoucherController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            response.sendRedirect(request.getContextPath() + "/voucher");
+            response.sendRedirect(request.getContextPath() + "/dashboard/voucher");
             return;
         }
         switch (action) {
@@ -224,7 +225,7 @@ public class VoucherController extends HttpServlet {
                     }
 
                     request.getSession().setAttribute("successMessage", msg);
-                    response.sendRedirect(request.getContextPath() + "/voucher");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/voucher");
 
                 } catch (Exception e) {
                     int page = 1;
@@ -250,7 +251,7 @@ public class VoucherController extends HttpServlet {
 
                     if (old == null) {
                         request.getSession().setAttribute("message", "Voucher not found");
-                        response.sendRedirect(request.getContextPath() + "/voucher");
+                        response.sendRedirect(request.getContextPath() + "/dashboard/voucher");
                         return;
                     }
 
@@ -304,7 +305,7 @@ public class VoucherController extends HttpServlet {
                         return;
                     }
                     request.getSession().setAttribute("successMessage", msg);
-                    response.sendRedirect(request.getContextPath() + "/voucher?action=list");
+                    response.sendRedirect(request.getContextPath() + "/dashboard/voucher?action=list");
 
                 } catch (Exception e) {
 
@@ -339,7 +340,7 @@ public class VoucherController extends HttpServlet {
                     request.getSession().setAttribute("errorMessage", "Cannot delete this voucher !");
                 }
 
-                response.sendRedirect(request.getContextPath() + "/voucher");
+                response.sendRedirect(request.getContextPath() + "/dashboard/voucher");
                 break;
         }
     }

@@ -25,8 +25,8 @@
             <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
                 <h5>Quick Links</h5>
                 <p><a href="${pageContext.request.contextPath}/home">Home</a></p>
-                <p><a href="${pageContext.request.contextPath}/books">Books</a></p>
-                <p><a href="${pageContext.request.contextPath}/series">Stationery</a></p>
+                <p><a href="${pageContext.request.contextPath}/shop?type=book">Books</a></p>
+                <p><a href="${pageContext.request.contextPath}/shop?type=stationery">Stationery</a></p>
             </div>
 
             <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">

@@ -22,7 +22,7 @@
 
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="profileDropdown">
                     <li>
-                        <a class="dropdown-item py-2" href="#">
+                        <a class="dropdown-item py-2" href="${pageContext.request.contextPath}/profile">
                             <i class="bi bi-person me-2"></i> View Profile
                         </a>
                     </li>
@@ -30,7 +30,7 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li>
-                        <a class="dropdown-item py-2 text-danger" href="#">
+                        <a class="dropdown-item py-2 text-danger" href="${pageContext.request.contextPath}/signout">
                             <i class="bi bi-box-arrow-right me-2"></i> Logout
                         </a>
                     </li>

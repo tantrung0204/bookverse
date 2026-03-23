@@ -6,6 +6,7 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.AuthorDAO;
 import com.mycompany.bookverse.model.Author;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -23,46 +24,37 @@ public class AuthorService {
     public Author findAuthorById(int id) {
         return authorDAO.findById(id);
     }
-    public String insertAuthor(String name, String birth, String nat, String bio) {
+
+    public String insertAuthor(Author author) {
         String error = "";
+        String nat = author.getNationality(),
+                name = author.getAuthorName(),
+                bio = author.getBiographyText();
+        Integer birth = author.getBirthYear();
         if (nat == null || nat.trim().isEmpty()) {
-            error += "Nationality can not be empty.\n";
+            error += "Nationality can not be empty.<br>";
         } else if (!nat.matches("^[a-zA-ZÀ-ỹ\\s\\-_&.]+$")) {
-            error += "Nationality contains invalid characters.\n";
+            error += "Nationality contains invalid characters.<br>";
         }
         if (name == null || name.trim().isEmpty()) {
-            error += "Name cannot be left blank.\n";
+            error += "Name cannot be left blank.<br>";
         } else if (!name.matches("^[a-zA-ZÀ-ỹ\\s\\-_&.]+$")) {
-            error += "Name contains invalid characters.\n";
+            error += "Name contains invalid characters.<br>";
         }
         if (bio == null || bio.trim().isEmpty()) {
-            error += "Biography cannot be left blank.\n";
+            error += "Biography cannot be left blank.<br>";
         } else if (!bio.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
-            error += "Biography contains invalid characters.\n";
+            error += "Biography contains invalid characters.<br>";
         }
-        if (birth == null || birth.trim().isEmpty()) {
-            error += "Birth year cannot be empty.\n";
-        } else if (!birth.matches("\\d{4}")) {
-            error += "Birth year must be a four-digit number.\n";
-        } else {
-            int birthYear = Integer.parseInt(birth);
-            int currentYear = java.time.Year.now().getValue();
-
-            if (birthYear > currentYear) {
-                error += "Birth year cannot be in the future.\n";
-            }
+        if (null == birth) {
+            error += "Birth year cannot be empty.<br>";
+        } else if (!(birth > 0 && birth < LocalDate.now().getYear())) {
+            error += "Year of birth must be between 1 and the current year.<br>";
         }
-
         if (error.isEmpty()) {
-            boolean checkExist = authorDAO.checkAuthorExistByName(name);
+            boolean checkExist = checkAuthorExistByName(name);
             if (!checkExist) {
-                Author Author = new Author();
-                Author.setAuthorName(name);
-                Integer birthDay = Integer.valueOf(birth);
-                Author.setBirthYear(birthDay);
-                Author.setNationality(nat);
-                Author.setBiographyText(bio);
-                if (authorDAO.createAuthor(Author)) {
+                if (authorDAO.createAuthor(author)) {
                     return "Create Author successfully";
                 } else {
                     return "Create Author false";
@@ -74,39 +66,38 @@ public class AuthorService {
         return error;
     }
 
-    public String editAuthor(int id, String name, String birth, String nationality, String biography) {
+    public String editAuthor(Author author) {
         String error = "";
-        if (nationality == null || nationality.trim().isEmpty()) {
-            error += "Nationality can not be empty.\n";
-        } else if (!nationality.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
-            error += "Nationality contains invalid characters.\n";
+        if (author.getNationality() == null || author.getNationality().trim().isEmpty()) {
+            error += "Nationality can not be empty.<br>";
+        } else if (!author.getNationality().matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Nationality contains invalid characters.<br>";
         }
-        if (name == null || name.trim().isEmpty()) {
-            error += "Name cannot be left blank.\n";
-        } else if (!name.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
-            error += "Name contains invalid characters.\n";
+        if (author.getAuthorName() == null || author.getAuthorName().trim().isEmpty()) {
+            error += "Name cannot be left blank.<br>";
+        } else if (!author.getAuthorName().matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Name contains invalid characters.<br>";
         }
-        if (biography == null || biography.trim().isEmpty()) {
-            error += "Biography cannot be left blank.\n";
-        } else if (!biography.matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
-            error += "Biography contains invalid characters.\n";
+        if (author.getBiographyText() == null || author.getBiographyText().trim().isEmpty()) {
+            error += "Biography cannot be left blank.<br>";
+        } else if (!author.getBiographyText().matches("^[a-zA-ZÀ-ỹ0-9\\s\\-_&.]+$")) {
+            error += "Biography contains invalid characters.<br>";
         }
-        if (birth == null || birth.trim().isEmpty()) {
-            error += "Birth can not be empty.\n";
-        } else if (!birth.matches("\\d{4}")) {
-            error += "Birth day must be a number.\n";
+        if (null == author.getBirthYear()) {
+            error += "Birth can not be empty.<br>";
+        } else if (!(author.getBirthYear() > 0 && author.getBirthYear() < LocalDate.now().getYear())) {
+            error += "Year of birth must be between 1 and the current year.<br>";
         }
-        boolean checkExist = authorDAO.checkAuthorExist(id, name);
-        Author old = authorDAO.findById(id);
+        boolean checkExist = checkAuthorExist(author.getAuthorId(), author.getAuthorName());
+        Author old = authorDAO.findById(author.getAuthorId());
         if (checkExist) {
             return "Author name already exist.";
         }
         if (error.isEmpty()) {
-            Integer birthDay = Integer.valueOf(birth);
-            old.setAuthorName(name);
-            old.setNationality(nationality);
-            old.setBiographyText(biography);
-            old.setBirthYear(birthDay);
+            old.setAuthorName(author.getAuthorName());
+            old.setNationality(author.getNationality());
+            old.setBiographyText(author.getBiographyText());
+            old.setBirthYear(author.getBirthYear());
             if (authorDAO.update(old)) {
                 return "Update Author successfully";
             }
@@ -129,7 +120,7 @@ public class AuthorService {
         }
     }
 
-    public Long countBooksByAuthorId(int authorId) {
+    public long countBooksByAuthorId(int authorId) {
         return authorDAO.countBooksByAuthorId(authorId);
     }
 
@@ -151,5 +142,24 @@ public class AuthorService {
     public int getTotalPagesByKeyword(String keyword, int pageSize) {
         long totalItems = authorDAO.countByKeyword(keyword);
         return (int) Math.ceil((double) totalItems / pageSize);
+    }
+     public boolean checkAuthorExist(int id, String name) {
+        List<Author> list = authorDAO.findAll();
+        for (Author author : list) {
+            if (author.getAuthorId() != id && author.getAuthorName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAuthorExistByName(String name) {
+        List<Author> list = authorDAO.findAll();
+        for (Author author : list) {
+            if (author.getAuthorName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

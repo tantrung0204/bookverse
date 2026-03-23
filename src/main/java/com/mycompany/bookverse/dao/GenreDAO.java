@@ -7,7 +7,6 @@ package com.mycompany.bookverse.dao;
 import com.mycompany.bookverse.model.Genre;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -50,16 +49,6 @@ public class GenreDAO {
         }
     }
 
-    public List<Genre> searchByName(String keyword) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createQuery("SELECT g FROM Genre g WHERE g.genreName LIKE :kw", Genre.class)
-                    .setParameter("kw", "%" + keyword + "%")
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
 
     public boolean createGenre(Genre genre) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -93,26 +82,6 @@ public class GenreDAO {
         } finally {
             em.close();
         }
-    }
-
-    public boolean checkGenreExist(int id, String name) {
-        List<Genre> list = findAll();
-        for (Genre genre : list) {
-            if (genre.getGenreId() != id && genre.getGenreName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkGenreExistByName(String name) {
-        List<Genre> list = findAll();
-        for (Genre genre : list) {
-            if (genre.getGenreName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public long checkGenreInUse(int id) {

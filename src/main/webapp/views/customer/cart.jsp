@@ -173,7 +173,7 @@
                                                 </span> đ
                                             </span>
                                             <br><br>
-                                            <a href="checkout"
+                                            <a href="${pageContext.request.contextPath}/checkout?action=fromCart"
                                                 class="btn-brand-solid btn-lg px-5 ${validItemCount == 0 ? 'disabled' : ''}">
                                                 Place Order
                                             </a>

@@ -20,7 +20,7 @@
         <button class="tab" onclick="filterOrder('confirmed')">Confirmed</button>
         <button class="tab" onclick="filterOrder('shipping')">Shipping</button>
         <button class="tab" onclick="filterOrder('completed')">Completed</button>
-        <button class="tab" onclick="filterOrder('canceled')">Canceled</button>
+        <button class="tab" onclick="filterOrder('cancelled')">Cancelled</button>
     </div>
 
     <!-- ORDER LIST -->
@@ -50,38 +50,40 @@
                         View Detail
                     </a>
 
-                    <!-- CANCEL -->
-                    <c:if test="${o.orderStatus == 'Pending'}">
-
+                    <!-- PAY NOW: only for ONLINE + unpaid + Pending orders -->
+                    <c:if test="${o.orderStatus == 'Pending' && o.paymentMethod == 'ONLINE' && !o.isPaid}">
                         <form method="post" action="${pageContext.request.contextPath}/customer-order">
+                            <input type="hidden" name="action" value="retryPayment">
+                            <input type="hidden" name="orderId" value="${o.orderId}">
+                            <button class="btn-confirm"
+                                    onclick="return confirm('Proceed to online payment?')">
+                                Pay Now
+                            </button>
+                        </form>
+                    </c:if>
 
+                    <!-- CANCEL: only Pending AND not paid -->
+                    <c:if test="${o.orderStatus == 'Pending' && !o.isPaid}">
+                        <form method="post" action="${pageContext.request.contextPath}/customer-order">
                             <input type="hidden" name="action" value="cancel">
                             <input type="hidden" name="orderId" value="${o.orderId}">
-
                             <button class="btn-cancel"
                                     onclick="return confirm('Are you sure you want to cancel this order?')">
                                 Cancel Order
                             </button>
-
                         </form>
-
                     </c:if>
 
-                    <!-- CONFIRM RECEIVED -->
+                    <!-- CONFIRM RECEIVED: only Shipping -->
                     <c:if test="${o.orderStatus == 'Shipping'}">
-
                         <form method="post" action="${pageContext.request.contextPath}/customer-order">
-
                             <input type="hidden" name="action" value="confirm">
                             <input type="hidden" name="orderId" value="${o.orderId}">
-
                             <button class="btn-confirm"
                                     onclick="return confirm('Confirmation that the order has been received?')">
                                 Received
                             </button>
-
                         </form>
-
                     </c:if>
 
                 </div>
@@ -91,21 +93,20 @@
             <div class="order-body">
 
                 <div class="order-block">
-
                     <span>Order Date</span>
-
                     <p>
                         <fmt:formatDate value="${o.createdAt}" pattern="MMM dd, yyyy" />
                     </p>
-
                 </div>
 
                 <div class="order-block">
-
                     <span>Total Amount</span>
+                    <p><fmt:formatNumber value="${o.totalAmount}" type="number" pattern="#,##0" /> VND</p>
+                </div>
 
-                    <p>${o.totalAmount}</p>
-
+                <div class="order-block">
+                    <span>Payment</span>
+                    <p>${o.paymentMethod} - ${o.isPaid ? 'Paid' : 'Unpaid'}</p>
                 </div>
 
             </div>

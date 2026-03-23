@@ -8,6 +8,7 @@ import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 /**
  *
@@ -15,41 +16,76 @@ import java.util.List;
  */
 public class StatisticDAO {
 
-    public BigDecimal getTotalRevenue() {
+    public BigDecimal getTotalRevenue(Date startDate, Date endDate) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            BigDecimal total = em.createQuery("SELECT SUM(o.totalAmount) FROM Order o WHERE o.orderStatus = 'Completed'", BigDecimal.class).getSingleResult();
+            String jpql = "SELECT SUM(o.totalAmount) FROM Order o WHERE o.orderStatus = 'Completed'";
+            if (startDate != null && endDate != null) {
+                jpql += " AND o.createdAt >= :startDate AND o.createdAt <= :endDate";
+            }
+            TypedQuery<BigDecimal> query = em.createQuery(jpql, BigDecimal.class);
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
+            BigDecimal total = query.getSingleResult();
             return total != null ? total : BigDecimal.ZERO;
         } finally {
             em.close();
         }
     }
 
-    public long getTotalOrders() {
+    public long getTotalOrders(Date startDate, Date endDate) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT COUNT(o) FROM Order o", Long.class).getSingleResult();
+            String jpql = "SELECT COUNT(o) FROM Order o";
+            if (startDate != null && endDate != null) {
+                jpql += " WHERE o.createdAt >= :startDate AND o.createdAt <= :endDate";
+            }
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
+            return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public long getTotalCustomers() {
+    public long getTotalCustomers(Date startDate, Date endDate) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT COUNT(c) FROM Customer c", Long.class).getSingleResult();
+            String jpql = "SELECT COUNT(c) FROM Customer c";
+            if (startDate != null && endDate != null) {
+                jpql += " WHERE c.createdAt >= :startDate AND c.createdAt <= :endDate";
+            }
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
+            return query.getSingleResult();
         } finally {
             em.close();
         }
     }
 
-    public Object[] getTopProduct() {
+    public Object[] getTopProduct(Date startDate, Date endDate) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-
             String jpql = "SELECT p.name, SUM(oi.orderQuantity) FROM OrderItem oi JOIN oi.productId p JOIN oi.orderId o "
-                    + "WHERE o.orderStatus = 'Completed' GROUP BY p.name ORDER BY SUM(oi.orderQuantity) DESC";
+                    + "WHERE o.orderStatus = 'Completed'";
+            if (startDate != null && endDate != null) {
+                jpql += " AND o.createdAt >= :startDate AND o.createdAt <= :endDate";
+            }
+            jpql += " GROUP BY p.name ORDER BY SUM(oi.orderQuantity) DESC";
+            
             TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
             query.setMaxResults(1);
             List<Object[]> result = query.getResultList();
 
@@ -64,29 +100,40 @@ public class StatisticDAO {
         }
     }
 
-    public List<Object[]> getOrdersByStatus() {
+    public List<Object[]> getOrdersByStatus(Date startDate, Date endDate) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT o.orderStatus, COUNT(o) FROM Order o GROUP BY o.orderStatus", Object[].class).getResultList();
+            String jpql = "SELECT o.orderStatus, COUNT(o) FROM Order o";
+            if (startDate != null && endDate != null) {
+                jpql += " WHERE o.createdAt >= :startDate AND o.createdAt <= :endDate";
+            }
+            jpql += " GROUP BY o.orderStatus";
+            
+            TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
+            return query.getResultList();
         } finally {
             em.close();
         }
     }
 
-    public List<Order> getCompletedOrders() {
+    public List<Order> getCompletedOrders(Date startDate, Date endDate) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT o FROM Order o WHERE o.orderStatus = 'Completed' ORDER BY o.createdAt ASC", Order.class).getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    public List<Order> getRecentOrders() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o ORDER BY o.createdAt DESC", Order.class);
-            query.setMaxResults(5);
+            String jpql = "SELECT o FROM Order o WHERE o.orderStatus = 'Completed'";
+            if (startDate != null && endDate != null) {
+                jpql += " AND o.createdAt >= :startDate AND o.createdAt <= :endDate";
+            }
+            jpql += " ORDER BY o.createdAt ASC";
+            
+            TypedQuery<Order> query = em.createQuery(jpql, Order.class);
+            if (startDate != null && endDate != null) {
+                query.setParameter("startDate", startDate);
+                query.setParameter("endDate", endDate);
+            }
             return query.getResultList();
         } finally {
             em.close();

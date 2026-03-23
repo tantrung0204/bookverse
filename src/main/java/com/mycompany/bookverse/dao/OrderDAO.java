@@ -265,6 +265,52 @@ public class OrderDAO {
     }
 
     /**
+     * Increment voucher's availableQuantity by 1 (restore on order cancel).
+     */
+    public void incrementVoucherQuantity(int voucherId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Voucher v = em.find(Voucher.class, voucherId);
+            if (v != null) {
+                v.setAvailableQuantity(v.getAvailableQuantity() + 1);
+                em.merge(v);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Restore stock quantity for a product (on cancel after confirmed).
+     */
+    public void restoreProductStock(int productId, int quantityToRestore) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Product product = em.find(Product.class, productId);
+            if (product != null) {
+                product.setStockQuantity(product.getStockQuantity() + quantityToRestore);
+                em.merge(product);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
      * Delete cart items for a customer (after successful checkout from cart).
      */
     public void clearCart(int customerId) {

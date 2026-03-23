@@ -5,8 +5,10 @@
 package com.mycompany.bookverse.dao;
 
 import com.mycompany.bookverse.model.Customer;
+import com.mycompany.bookverse.model.Staff;
 import com.mycompany.bookverse.utils.JPAUtil;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 
 /**
  *
@@ -41,4 +43,47 @@ public class ProfileDAO {
         em.close();
     }
 }
+    public boolean updateStaff(Staff staff) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(staff);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+    public boolean updateCustomer(Customer customer) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(customer);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+    public List<Customer> getAllCustomer(){
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createNamedQuery("Customer.findAll", Customer.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

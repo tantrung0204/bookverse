@@ -22,7 +22,17 @@ public class OrderDAO {
             TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o ORDER BY o.orderId DESC", Order.class);
             query.setFirstResult((page - 1) * pageSize);
             query.setMaxResults(pageSize);
-            return query.getResultList();
+            List<Order> orders = query.getResultList();
+            for (Order o : orders) {
+                if (o.getOrderItemCollection() != null) {
+                    for (OrderItem item : o.getOrderItemCollection()) {
+                        if (item.getProductId() != null) {
+                            item.getProductId().getName(); // force initialization
+                        }
+                    }
+                }
+            }
+            return orders;
         } finally {
             em.close();
         }
@@ -58,7 +68,17 @@ public class OrderDAO {
             query.setParameter("kw", "%" + keyword.toLowerCase() + "%");
             query.setFirstResult((page - 1) * pageSize);
             query.setMaxResults(pageSize);
-            return query.getResultList();
+            List<Order> orders = query.getResultList();
+            for (Order o : orders) {
+                if (o.getOrderItemCollection() != null) {
+                    for (OrderItem item : o.getOrderItemCollection()) {
+                        if (item.getProductId() != null) {
+                            item.getProductId().getName(); // force initialization
+                        }
+                    }
+                }
+            }
+            return orders;
         } finally {
             em.close();
         }

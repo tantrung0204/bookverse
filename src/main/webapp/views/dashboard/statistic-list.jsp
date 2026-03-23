@@ -88,7 +88,7 @@
                     <tbody>
                         <c:forEach var="ro" items="${recentOrders}">
                             <tr>
-                                <td><strong>#O00${ro.orderId}</strong></td>
+                                <td>${ro.orderId}</td>
                                 <td>${not empty ro.receiverName ? ro.receiverName : ro.customerId.fullName}</td>
                                 <td><fmt:formatDate value="${ro.createdAt}" pattern="yyyy-MM-dd"/></td>
                                 <td><fmt:formatNumber value="${ro.totalAmount}" type="number" pattern="#,##0"/> đ</td>

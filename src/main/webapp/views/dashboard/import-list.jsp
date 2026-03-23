@@ -390,7 +390,7 @@
     </c:if>
     <!-- ================= CREATE POPUP ================= -->
     <div id="createPopup" class="modal-overlay">
-        <div class="modal-content" style="width: 900px">
+        <div class="modal-content" style="width: 1000px">
             <div class="modal-header">
                 <h3>Add New Import Stock</h3>
             </div>

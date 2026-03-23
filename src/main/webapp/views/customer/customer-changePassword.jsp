@@ -20,7 +20,7 @@
                 <div class="mb-4 d-flex flex-column align-items-center">
 
                     <div class="avatar">
-                        <img src="${user.profileImageUrl}" alt="Avatar">
+                        <img src="${user.profileImageUrl}" alt="Avatar" onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
                     </div>
 
                 </div>
@@ -65,10 +65,10 @@
                     </div> 
                     <div class="d-flex gap-3">
                         <button class="btn btn-success flex-fill" type="submit">
-                             Save Changes
+                            Save Changes
                         </button>
 
-                       
+
                     </div>
 
                 </form>

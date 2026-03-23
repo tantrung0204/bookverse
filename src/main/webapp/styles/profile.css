@@ -1,122 +1,137 @@
 /* sidebar */
-.account-sidebar{
-    background:white;
-    padding:25px;
-    border-radius:10px;
+.account-sidebar {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
 }
-.btn flex-fill{
-    background:#a68a6d;
+
+.btn flex-fill {
+    background: #a68a6d;
 }
-.account-sidebar h4{
-    font-weight:600;
-    margin-bottom:20px;
+
+.account-sidebar h4 {
+    font-weight: 600;
+    margin-bottom: 20px;
 }
 
 .container {
     position: relative;
     z-index: 1;
 }
-.account-sidebar a{
-    display:block;
-    padding:10px 15px;
-    margin-bottom:8px;
-    border-radius:8px;
-    text-decoration:none;
-    color:#333;
+
+.account-sidebar a {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
 }
 
-.account-sidebar a.active{
-    background:#b7cbc7;
-    font-weight:600;
+.account-sidebar a.active {
+    background: #b7cbc7;
+    font-weight: 600;
 }
 
-.account-sidebar a:hover{
-    background:#eee;
+.account-sidebar a:hover {
+    background: #eee;
 }
 
 /* profile card */
 
-.profile-card{
+.profile-card {
     margin-left: 200px;
-    background:white;
-    padding:30px;
-    border-radius:12px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
     width: 600px;
 }
-.editProfile{
+
+.editProfile {
     background: #a68a6d;
     color: white;
     padding: 5px 15px;
 }
-.editProfile:hover{
+
+.editProfile:hover {
     background: #735c45;
     color: white;
 }
 
-.changeAvatar{
+.changeAvatar {
     background: #8B6B4C;
     color: white;
     padding: 5px 15px;
 }
-.changeAvatar:hover{
+
+.changeAvatar:hover {
     background: #735c45;
     color: white;
 }
-.saveChanges{
-    background: #a68a6d; 
+
+.saveChanges {
+    background: #8B6B4C;
     color: white;
 }
+
+.saveChanges:hover {
+    background: #735c45;
+    color: white;
+}
+
 body {
     font-family: 'Playfair Display', serif;
-    background:  #f9f9f9;
+    background: #f9f9f9;
 }
+
 /* stat box */
 
-.stat-box{
-    padding:25px;
-    border-radius:10px;
-    text-align:center;
+.stat-box {
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
 }
 
-.stat-orders{
-    background:#e7e3c8;
+.stat-orders {
+    background: #e7e3c8;
 }
 
-.stat-books{
-    background:#c8dcd8;
+.stat-books {
+    background: #c8dcd8;
 }
 
-.stat-reviews{
-    background:#cfd8e6;
+.stat-reviews {
+    background: #cfd8e6;
 }
 
-.stat-box h4{
-    margin-bottom:10px;
+.stat-box h4 {
+    margin-bottom: 10px;
 }
 
-.stat-number{
-    font-weight:700;
-}
-.edit-profile-card{
-    background:white;
-    padding:35px;
-    border-radius:12px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.08);
-
+.stat-number {
+    font-weight: 700;
 }
 
+.edit-profile-card {
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 
-.avatar{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    overflow:hidden;
-    border:4px solid white;
-    box-shadow:0 2px 8px rgba(0,0,0,0.15);
 }
 
-.avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

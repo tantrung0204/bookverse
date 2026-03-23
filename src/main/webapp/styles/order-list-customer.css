@@ -140,22 +140,34 @@ body {
     text-decoration: none;
 }
 
+.btn-view:hover {
+    background:#e7c98f;
+}
+
 .btn-cancel {
     padding: 7px 14px;
     border-radius: 7px;
     border: none;
-    background: #e3a1a1;
+    background: #e12e2ea7 ;
     color: white;
     text-decoration: none;
+}
+
+.btn-cancel:hover {
+    background: red;
 }
 
 .btn-confirm {
     padding: 7px 14px;
     border-radius: 7px;
     border: none;
-    background: #7dbb8f;
+    background: #4CAF50;
     color: white;
     text-decoration: none;
+}
+
+.btn-confirm:hover {
+    background: green;
 }
 
 .btn-review {

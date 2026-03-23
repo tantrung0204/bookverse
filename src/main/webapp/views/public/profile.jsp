@@ -14,7 +14,6 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header-index.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/navbar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/footer-index.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link href="${pageContext.request.contextPath}/boostrap/bootstrap.min.css" rel="stylesheet"
               type="text/css" />
@@ -23,14 +22,6 @@
     <body class="d-flex flex-column min-vh-100">
         <c:if test="${not empty openCustomerProfile}">
             <jsp:include page="header-index.jsp" />
-        </c:if>
-        <c:if test="${not empty openStaffProfile}">
-            <jsp:include page="../dashboard/header.jsp" />
-        </c:if>
-        <c:if test="${empty openStaffProfile}">
-            <jsp:include page="../public/navbar.jsp">
-                <jsp:param name="activePage" value="" />
-            </jsp:include>
         </c:if>
         <main class="flex-grow-1">
             <div class="container mt-5">
@@ -78,9 +69,7 @@
                     <c:if test="${not empty openCustomerViewProfile}">
                         <jsp:include page="../customer/customer-viewProfile.jsp"/>
                     </c:if>
-                    <c:if test="${not empty openStaffProfile}">
-                        <jsp:include page="../dashboard/staff-viewProfile.jsp"/>
-                    </c:if>
+
                     <c:if test="${not empty openOrderHistory}">
                         <jsp:include page="../customer/order-list.jsp"/>
                     </c:if>
@@ -98,6 +87,7 @@
         </c:if> 
         <script src="${pageContext.request.contextPath}/boostrap/bootstrap.bundle.min.js"
         type="text/javascript"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
 
     </body>
 </html>

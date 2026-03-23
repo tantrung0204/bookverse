@@ -5,13 +5,13 @@ package com.mycompany.bookverse.service;
 
 import com.mycompany.bookverse.dao.FeedbackDAO;
 import com.mycompany.bookverse.dao.OrderDAO;
+import com.mycompany.bookverse.dao.OrderItemDAO;
 import com.mycompany.bookverse.model.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import com.mycompany.bookverse.dao.OrderItemDAO;
 
 /**
  * @author TrungNT - CE200064
@@ -36,17 +36,7 @@ public class OrderService {
         return orderDAO.getTotalSearchOrders(keyword);
     }
 
-    public String editOrder(int id, boolean isPaid, String orderStatus) {
-        Order oldOrder = orderDAO.findById(id);
-        if (oldOrder != null) {
-            oldOrder.setIsPaid(isPaid);
-            oldOrder.setOrderStatus(orderStatus);
 
-            boolean result = orderDAO.update(oldOrder);
-            return result ? "Edit successfully" : "Edit false";
-        }
-        return "Order not found";
-    }
 
     // =============================================
     // VALIDATION METHODS
@@ -271,7 +261,7 @@ public class OrderService {
         // 5. Persist Order
         order = orderDAO.createOrder(order);
 
-        // 6. Create OrderItems + deduct stock
+        // 6. Create OrderItems (NO stock deduction here — stock is deducted on Confirm)
         for (int i = 0; i < productIds.size(); i++) {
             int pid = productIds.get(i);
             int qty = quantities.get(i);
@@ -281,9 +271,6 @@ public class OrderService {
             item.setProductId(new Product(pid));
             item.setOrderQuantity(qty);
             orderDAO.createOrderItem(item);
-
-            // Deduct stock
-            orderDAO.updateProductStock(pid, qty);
         }
 
         // 7. Decrement voucher quantity
@@ -325,34 +312,131 @@ public class OrderService {
         return orderDAO.findById(orderId);
     }
 
-    public boolean cancelOrder(int orderId) {
-
+    // =============================================
+    // CANCEL ORDER (Customer or Staff)
+    // Only allowed when Pending AND not paid.
+    // Restores voucher quantity if used.
+    // =============================================
+    public String cancelOrder(int orderId) {
         Order order = orderDAO.findById(orderId);
-
-        if (order != null && "Pending".equalsIgnoreCase(order.getOrderStatus())) {
-
-            order.setOrderStatus("Canceled");
-            orderDAO.update(order);
-            return true;
+        if (order == null) {
+            return "Order not found.";
+        }
+        if (!"Pending".equalsIgnoreCase(order.getOrderStatus())) {
+            return "Only Pending orders can be cancelled.";
+        }
+        if (order.getIsPaid() != null && order.getIsPaid()) {
+            return "Paid orders cannot be cancelled.";
         }
 
-        return false;
+        order.setOrderStatus("Cancelled");
+        orderDAO.update(order);
+
+        // Restore voucher quantity if the order used a voucher
+        if (order.getVoucherId() != null && order.getVoucherId().getVoucherId() != null) {
+            orderDAO.incrementVoucherQuantity(order.getVoucherId().getVoucherId());
+        }
+
+        return null; // null means success
     }
 
+    // =============================================
+    // CONFIRM RECEIVED (Customer)
+    // Only when Shipping. Also sets isPaid = true.
+    // =============================================
     public boolean confirmReceived(int orderId) {
-
         Order order = orderDAO.findById(orderId);
-
         if (order != null && "Shipping".equalsIgnoreCase(order.getOrderStatus())) {
-
             order.setOrderStatus("Completed");
+            order.setIsPaid(true);
             orderDAO.update(order);
             return true;
         }
-
         return false;
     }
 
+    // =============================================
+    // STAFF: CONFIRM ORDER (Pending → Confirmed)
+    // Checks: ONLINE must be paid, stock must be sufficient.
+    // Deducts stock and assigns staff ID.
+    // =============================================
+    public String confirmOrderByStaff(int orderId, Staff staff) {
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            return "Order not found.";
+        }
+        if (!"Pending".equalsIgnoreCase(order.getOrderStatus())) {
+            return "Only Pending orders can be confirmed.";
+        }
+        // If ONLINE payment, must be paid first
+        if ("ONLINE".equalsIgnoreCase(order.getPaymentMethod())
+                && (order.getIsPaid() == null || !order.getIsPaid())) {
+            return "Online payment orders must be paid before confirmation.";
+        }
+
+        // Check stock availability for all items
+        List<OrderItem> items = orderItemDAO.getByOrder(orderId);
+        for (OrderItem item : items) {
+            Product product = orderDAO.findProductById(item.getProductId().getProductId());
+            if (product == null) {
+                return "Product no longer exists: ID " + item.getProductId().getProductId();
+            }
+            if (product.getStockQuantity() == null || product.getStockQuantity() < item.getOrderQuantity()) {
+                return "Insufficient stock for \"" + product.getName() + "\". Available: "
+                        + (product.getStockQuantity() == null ? 0 : product.getStockQuantity())
+                        + ", required: " + item.getOrderQuantity();
+            }
+        }
+
+        // Deduct stock for all items
+        for (OrderItem item : items) {
+            orderDAO.updateProductStock(item.getProductId().getProductId(), item.getOrderQuantity());
+        }
+
+        // Update order status and assign staff
+        order.setOrderStatus("Confirmed");
+        order.setStaffId(staff);
+        orderDAO.update(order);
+
+        return null; // null means success
+    }
+
+    // =============================================
+    // STAFF: SHIP ORDER (Confirmed → Shipping)
+    // =============================================
+    public String shipOrder(int orderId) {
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            return "Order not found.";
+        }
+        if (!"Confirmed".equalsIgnoreCase(order.getOrderStatus())) {
+            return "Only Confirmed orders can be shipped.";
+        }
+        order.setOrderStatus("Shipping");
+        orderDAO.update(order);
+        return null;
+    }
+
+    // =============================================
+    // STAFF: COMPLETE ORDER (Shipping → Completed)
+    // =============================================
+    public String completeOrder(int orderId) {
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            return "Order not found.";
+        }
+        if (!"Shipping".equalsIgnoreCase(order.getOrderStatus())) {
+            return "Only Shipping orders can be completed.";
+        }
+        order.setOrderStatus("Completed");
+        order.setIsPaid(true);
+        orderDAO.update(order);
+        return null;
+    }
+
+    // =============================================
+    // UTILITY METHODS
+    // =============================================
     private OrderItemDAO orderItemDAO = new OrderItemDAO();
 
     public List<OrderItem> getOrderItems(int orderId) {

@@ -213,8 +213,8 @@
         document.getElementById('editStaffId').value = id;
         document.getElementById('editStaffUsername').value = username || '';
         document.getElementById('editStaffFullName').value = fullName || '';
-        if (role) {
-            document.getElementById('editStaffRole').value = role;
+        if (roleName) {
+            document.getElementById('editStaffRole').value = roleName;
         }
         const err = document.getElementById("editErrorMsg");
         if (err)

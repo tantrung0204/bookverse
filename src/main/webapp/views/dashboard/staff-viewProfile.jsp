@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<div class="col-md-9">
+<div class="col-md-9" style="margin-left: 100px">
     <div class="row justify-content-center">
         <div class="col-md-7">
 
@@ -29,7 +29,7 @@
                         </div>
 
                         <button type="button"
-                                class="btn btn-outline-secondary mt-2"
+                                class="btn btn-sm mt-2 changeAvatar"
                                 onclick="document.getElementById('fileInput').click()"><!-- giả lập việc click vào input có id là fileInput -->
                             Change Avatar
                         </button>
@@ -73,7 +73,7 @@
                                name="fullName">
                     </div>
                     <div class="d-flex gap-3">
-                        <button class="btn btn-success flex-fill" type="submit">
+                        <button class="btn flex-fill saveChanges" type="submit">
                             Save Changes
                         </button>                    
                     </div>
@@ -107,8 +107,8 @@
                     </div> 
 
                     <div class="d-flex gap-3">
-                        <button class="btn btn-success flex-fill" type="submit">
-                            change password
+                        <button class="btn flex-fill saveChanges" type="submit">
+                            Change password
                         </button>                    
                     </div>
                 </form>

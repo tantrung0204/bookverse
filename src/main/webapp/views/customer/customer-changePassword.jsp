@@ -64,7 +64,7 @@
                                name="reNewPassword">
                     </div> 
                     <div class="d-flex gap-3">
-                        <button class="btn btn-success flex-fill" type="submit">
+                        <button class="btn flex-fill saveChanges" type="submit">
                              Save Changes
                         </button>
 
@@ -78,6 +78,7 @@
         </div>
     </div>
 </div>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/profile.css">
 
 <script>
     function uploadAvatar(input) {

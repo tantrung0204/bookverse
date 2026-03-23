@@ -29,7 +29,7 @@
                         </div>
 
                         <button type="button"
-                                class="btn btn-outline-secondary mt-2"
+                                class="btn btn-sm mt-2 changeAvatar"
                                 onclick="document.getElementById('fileInput').click()"><!-- giả lập việc click vào input có id là fileInput -->
                             Change Avatar
                         </button>
@@ -88,7 +88,7 @@
                                name="address">
                     </div> 
                     <div class="d-flex gap-3">
-                        <button class="btn btn-success flex-fill" type="submit">
+                        <button class="btn flex-fill saveChanges" type="submit">
                             Save Changes
                         </button>
 

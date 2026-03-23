@@ -4,9 +4,8 @@
     padding:25px;
     border-radius:10px;
 }
-body{
-    background-color: #fcffef;
-    font-family: 'Playfair Display', serif;
+.btn flex-fill{
+    background:#a68a6d;
 }
 .account-sidebar h4{
     font-weight:600;
@@ -38,12 +37,39 @@ body{
 /* profile card */
 
 .profile-card{
+    margin-left: 200px;
     background:white;
     padding:30px;
     border-radius:12px;
+    width: 600px;
+}
+.editProfile{
+    background: #a68a6d;
+    color: white;
+    padding: 5px 15px;
+}
+.editProfile:hover{
+    background: #735c45;
+    color: white;
 }
 
-
+.changeAvatar{
+    background: #8B6B4C;
+    color: white;
+    padding: 5px 15px;
+}
+.changeAvatar:hover{
+    background: #735c45;
+    color: white;
+}
+.saveChanges{
+    background: #a68a6d; 
+    color: white;
+}
+body {
+    font-family: 'Playfair Display', serif;
+    background:  #f9f9f9;
+}
 /* stat box */
 
 .stat-box{
@@ -72,11 +98,11 @@ body{
     font-weight:700;
 }
 .edit-profile-card{
-    background:#e9e6cf;
+    background:white;
     padding:35px;
     border-radius:12px;
     box-shadow:0 4px 15px rgba(0,0,0,0.08);
-    
+
 }
 
 

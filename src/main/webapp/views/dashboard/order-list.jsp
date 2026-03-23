@@ -6,6 +6,21 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/category-list.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/order-list.css">
 
+<style>
+/* Synchronize order status colors with customer side */
+.badge-order-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+.badge-order-status.Pending { background: #f5e6bf; color: #9a6a00; } /* vàng */
+.badge-order-status.Confirmed, .badge-order-status.Completed { background: #dbeee5; color: #2c7a63; } /* xanh lá */
+.badge-order-status.Shipping { background: #e0d4f5; color: #5a3c87; } /* tím xanh */
+.badge-order-status.Cancelled { background: #f5d6d6; color: #9a3333; } /* đỏ */
+</style>
+
 <div class="container-fluid">
     <div class="page-header">
         <p class="title">Manage Orders</p>
@@ -29,9 +44,13 @@
             <div class="alert alert-success">${sessionScope.success}</div>
             <c:remove var="success" scope="session" />
         </c:if>
-        <c:if test="${not empty sessionScope.deleteError}">
-            <div class="alert alert-danger">${sessionScope.deleteError}</div>
-            <c:remove var="deleteError" scope="session" />
+        <c:if test="${not empty sessionScope.error_edit}">
+            <div class="alert alert-danger">${sessionScope.error_edit}</div>
+            <c:remove var="error_edit" scope="session" />
+        </c:if>
+        <c:if test="${not empty sessionScope.success_edit}">
+            <div class="alert alert-success">${sessionScope.success_edit}</div>
+            <c:remove var="success_edit" scope="session" />
         </c:if>
 
         <c:choose>
@@ -69,8 +88,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        style="font-weight: bold; color: ${o.orderStatus == 'Completed' ? '#28a745' : (o.orderStatus == 'Pending' ? '#ffc107' : '#dc3545')};">
+                                    <span class="badge-order-status ${o.orderStatus}">
                                         ${o.orderStatus}
                                     </span>
                                 </td>

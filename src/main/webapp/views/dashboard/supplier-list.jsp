@@ -56,6 +56,7 @@
                             <th width="15%">Supplier Email</th>
                             <th width="15%">Supplier Phone</th>
                             <th width="35%">Supplier Address</th>
+                            <th width="15%">Status</th>
                             <th width="20%">Actions</th>
                         </tr>
                     </thead>

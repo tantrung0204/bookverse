@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center mb-4">
 
             <div class="avatar me-4">
-                <img src="${user.profileImageUrl}" alt="Avatar" >
+                <img src="${user.profileImageUrl}" alt="Avatar" onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
             </div>
 
             <div>
@@ -20,7 +20,7 @@
                 <p class="mb-1 text-muted">${user.email}</p>
                 <p class="text-muted mb-2">${user.address}</p> 
 
-                <a class="btn btn-warning btn-sm" href="${pageContext.request.contextPath}/profile?view=edit"> 
+                <a class="btn btn-sm editProfile" href="${pageContext.request.contextPath}/profile?view=edit"> 
                     Edit Profile
                 </a>
 
@@ -32,7 +32,7 @@
         <!-- stats -->
         <div class="row g-3">
 
-            <a class="col-md-4" href="#" style=" text-decoration: none;  color: inherit;">
+            <a class="col-md-6" style=" text-decoration: none;  color: inherit;">
                 <div class="stat-box stat-orders" >
 
                     <h5>Total Orders</h5>
@@ -41,7 +41,7 @@
                 </div>
             </a>                               
 
-            <a class="col-md-4" href="#" style=" text-decoration: none;  color: inherit;">
+            <a class="col-md-6" style=" text-decoration: none;  color: inherit;">
                 <div class="stat-box stat-reviews" href="#">
 
                     <h5>Reviews Written</h5>

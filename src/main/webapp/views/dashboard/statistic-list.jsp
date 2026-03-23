@@ -119,7 +119,37 @@
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: {legend: {position: 'bottom', labels: {usePointStyle: true, boxWidth: 8}}}
-            }
+            },
+            plugins: [{
+                id: 'customDataLabels',
+                afterDraw: function(chart) {
+                    var ctx = chart.ctx;
+                    chart.data.datasets.forEach(function(dataset, i) {
+                        var meta = chart.getDatasetMeta(i);
+                        if (!meta.hidden) {
+                            meta.data.forEach(function(element, index) {
+                                if (dataset.data[index] > 0) {
+                                    ctx.fillStyle = 'white';
+                                    ctx.font = 'bold 15px Arial, sans-serif';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'middle';
+                                    
+                                    var dataString = dataset.data[index].toString();
+                                    var position = element.tooltipPosition();
+                                    
+                                    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                                    ctx.shadowBlur = 3;
+                                    
+                                    ctx.fillText(dataString, position.x, position.y);
+                                    
+                                    ctx.shadowColor = 'transparent';
+                                    ctx.shadowBlur = 0;
+                                }
+                            });
+                        }
+                    });
+                }
+            }]
         });
 
         // ============================== Line Chart ==============================

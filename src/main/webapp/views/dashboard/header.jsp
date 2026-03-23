@@ -1,7 +1,7 @@
 <%-- Document : header.jsp Created on : Feb 19, 2026, 9:07:38 PM Author : TrungNT - CE200064 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/header.css">
 
@@ -12,35 +12,35 @@
     </div>
 
     <div class="header-right dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center user-dropdown-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="user-profile-btn d-flex align-items-center gap-2 dropdown-toggle user-dropdown-link" id="profileDropdown"
+             data-bs-toggle="dropdown" aria-expanded="false" style="border: none; background: transparent;">
             <c:choose>
                 <c:when test="${not empty sessionScope.user.profileImageUrl}">
                     <img src="${sessionScope.user.profileImageUrl}" alt="${sessionScope.user.username}" width="35" height="35" 
-                         class="rounded-circle me-2 user-avatar border border-brand"
+                         class="rounded-circle header-avatar"
                          onerror="this.src='${pageContext.request.contextPath}/assets/images/default-avt.jpg';">
                 </c:when>
                 <c:otherwise>
-                    <i class="fas fa-user-circle fa-2x me-2 brand-color"></i>
+                    <i class="fas fa-user-circle fa-2x brand-color"></i>
                 </c:otherwise>
             </c:choose>
-
-            <span class="fw-bold brand-color d-none d-sm-inline-block">
-                <c:out value="${sessionScope.user.username}" default="User" />
+            <span class="fw-bold d-none d-sm-inline-block">
+                <c:out value="${sessionScope.user.username}" default="Staff" />
             </span>
-        </a>
+        </div>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="profileDropdown">
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 brand-dropdown" aria-labelledby="profileDropdown">
             <li>
                 <a class="dropdown-item py-2" href="${pageContext.request.contextPath}/profile">
-                    <i class="bi bi-person me-2"></i> View Profile
+                    <i class="far fa-user me-2"></i> Profile
                 </a>
             </li>
             <li>
                 <hr class="dropdown-divider">
             </li>
             <li>
-                <a class="dropdown-item py-2 text-danger" href="${pageContext.request.contextPath}/signout">
-                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                <a class="dropdown-item py-2" href="${pageContext.request.contextPath}/signout">
+                    <i class="fas fa-sign-out-alt me-2"></i> Sign Out
                 </a>
             </li>
         </ul>

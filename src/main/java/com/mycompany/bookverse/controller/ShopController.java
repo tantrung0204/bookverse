@@ -67,80 +67,86 @@ public class ShopController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lấy các tham số từ URL
-        String type = request.getParameter("type");
-        if (type == null) {
-            type = "book";
-        }
-
-        String pageStr = request.getParameter("page");
-        int page = 1;
-        if (pageStr != null && !pageStr.isEmpty()) {
-            try {
-                page = Integer.parseInt(pageStr);
-            } catch (NumberFormatException e) {
-                page = 1;
+        try {
+            // Lấy các tham số từ URL
+            String type = request.getParameter("type");
+            if (type == null) {
+                type = "book";
             }
-        }
 
-        String sort = request.getParameter("sort");
-
-        // Xử lý mảng Genre IDs
-        String[] genreParams = request.getParameterValues("genre");
-        List<Integer> genreIds = new ArrayList<>();
-        if (genreParams != null) {
-            for (String g : genreParams) {
+            String pageStr = request.getParameter("page");
+            int page = 1;
+            if (pageStr != null && !pageStr.isEmpty()) {
                 try {
-                    genreIds.add(Integer.parseInt(g));
+                    page = Integer.parseInt(pageStr);
                 } catch (NumberFormatException e) {
+                    page = 1;
                 }
             }
-        }
 
-        String keyword = request.getParameter("keyword");
-        if (keyword != null) {
-            keyword = keyword.trim();
-        }
+            String sort = request.getParameter("sort");
 
-        String categoryIdStr = request.getParameter("categoryId");
-        Integer categoryId = null;
-        if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-            try {
-                categoryId = Integer.parseInt(categoryIdStr);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            // Xử lý mảng Genre IDs
+            String[] genreParams = request.getParameterValues("genre");
+            List<Integer> genreIds = new ArrayList<>();
+            if (genreParams != null) {
+                for (String g : genreParams) {
+                    try {
+                        genreIds.add(Integer.parseInt(g));
+                    } catch (NumberFormatException e) {
+                    }
+                }
             }
-        }
 
-        // Lấy danh sách sản phẩm
-        List<? extends Product> productList = productService.getFilteredProducts(type, genreIds, sort, keyword, categoryId, page);
-        // Lấy tổng số lượng để tính phân trang
-        long totalItems = productService.getTotalCount(type, genreIds, keyword, categoryId);
-        // Tính toán tổng số trang
-        int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE;
-        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+            String keyword = request.getParameter("keyword");
+            if (keyword != null) {
+                keyword = keyword.trim();
+            }
 
-        // Lấy danh sách Genre cho filter
-        List<Genre> allGenres = productService.getAllActiveGenre();
-        List<Category> categories = categoryService.getActiveSubCategories();
+            String categoryIdStr = request.getParameter("categoryId");
+            Integer categoryId = null;
+            if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+                try {
+                    categoryId = Integer.parseInt(categoryIdStr);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        // Đẩy dữ liệu sang JSP
-        request.setAttribute("categories", categories);
-        request.setAttribute("productList", productList);
-        request.setAttribute("totalProducts", totalItems);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("allGenres", allGenres);
+            // Lấy danh sách sản phẩm
+            List<? extends Product> productList = productService.getFilteredProducts(type, genreIds, sort, keyword, categoryId, page);
+            // Lấy tổng số lượng để tính phân trang
+            long totalItems = productService.getTotalCount(type, genreIds, keyword, categoryId);
+            // Tính toán tổng số trang
+            int pageSize = PaginationConfig.HOMEPAGE_ITEMS_PER_PAGE;
+            int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
-        // Giữ lại trạng thái bộ lọc
-        request.setAttribute("selectedType", type);
-        request.setAttribute("selectedSort", sort);
-        request.setAttribute("selectedGenres", genreIds);
-        request.setAttribute("searchKeyword", keyword);
+            // Lấy danh sách Genre cho filter
+            List<Genre> allGenres = productService.getAllActiveGenre();
+            List<Category> categories = categoryService.getActiveSubCategories();
+
+            // Đẩy dữ liệu sang JSP
+            request.setAttribute("categories", categories);
+            request.setAttribute("productList", productList);
+            request.setAttribute("totalProducts", totalItems);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("allGenres", allGenres);
+
+            // Giữ lại trạng thái bộ lọc
+            request.setAttribute("selectedType", type);
+            request.setAttribute("selectedSort", sort);
+            request.setAttribute("selectedGenres", genreIds);
+            request.setAttribute("searchKeyword", keyword);
         
-        request.setAttribute("selectedCategoryId", categoryId);
+            request.setAttribute("selectedCategoryId", categoryId);
 
-        request.getRequestDispatcher("/views/public/shop.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/public/shop.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "An error occurred while loading products. Please try again.");
+            request.getRequestDispatcher("/views/public/shop.jsp").forward(request, response);
+        }
     }
 
     /**

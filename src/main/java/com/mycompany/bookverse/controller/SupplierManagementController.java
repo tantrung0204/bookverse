@@ -110,7 +110,7 @@ public class SupplierManagementController extends HttpServlet {
 
         List<Supplier> list = supplierService.getAllSuppliers(page);
         long totalPages = supplierService.getTotalPages();
-
+        
         request.setAttribute("suppliers", list);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);

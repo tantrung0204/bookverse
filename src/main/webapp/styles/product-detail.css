@@ -185,6 +185,7 @@ body {
 .btn-buy:hover:not(:disabled) {
     background-color: #6e5238;
     border-color: #6e5238;
+    color: #ffffff;
 }
 
 .btn-cart:disabled, .btn-buy:disabled {

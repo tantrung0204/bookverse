@@ -27,14 +27,12 @@ public class SignUpController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-
         String username = request.getParameter("username");
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-
 
         if (!password.equals(confirmPassword)) {
             request.setAttribute("errorMsg", "Passwords do not match!");
@@ -46,13 +44,11 @@ public class SignUpController extends HttpServlet {
             return;
         }
 
-
         String result = signUpService.register(username, fullName, email, phone, password);
 
         if ("Success".equals(result)) {
-
-            request.getSession().setAttribute("successMsg", "Account created successfully! Please login.");
-            response.sendRedirect(request.getContextPath() + "/login"); 
+            request.getSession().setAttribute("successMessage", "Account created successfully! Please sign in.");
+            response.sendRedirect(request.getContextPath() + "/signin");
         } else {
 
             request.setAttribute("errorMsg", result);

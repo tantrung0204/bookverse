@@ -106,18 +106,6 @@ public class StaffService {
 
     }
 
-    public int editStaff(Staff staff) {
-        if (staff.getFullName() == null || staff.getFullName().trim().isEmpty()) {
-            return 2;
-        }
-
-        boolean success = staffDAO.update(staff);
-        if (success) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
 
     public boolean deleteStaff(int id) {
         return staffDAO.delete(id);

@@ -1,0 +1,192 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 20, 2026, 7:35:31 PM
+    Author     : huyqu
+*/
+
+body {
+    background-color: #f9f9f9;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', Times, serif !important;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header-logo {
+    text-align: center;
+    padding: 40px 0 20px 0;
+}
+
+.header-logo img {
+    max-width: 180px;
+    height: auto;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto 40px auto;
+    padding: 35px;
+    background-color: rgba(255, 255, 255, 0.98);
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+h2 {
+    color: #8B6B4C;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    color: #5d4a35;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1c7bc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    margin-top: 5px;
+}
+
+input:focus {
+    outline: none;
+    border-color: #8B6B4C;
+}
+
+.role-selection {
+    display: flex;
+    gap: 30px;
+    margin: 10px 0 25px 0;
+    align-items: center;
+}
+
+.role-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.role-item input[type="radio"] {
+    margin-right: 8px;
+    accent-color: #8B6B4C;
+    width: 18px;
+    height: 18px;
+}
+
+/* Button Group */
+.button-group button {
+    background-color: #8B6B4C;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+button[type="submit"] {
+    flex: 2;
+    background-color: #8B6B4C;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #6b523a;
+}
+
+.signup-btn {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #8B6B4C;
+    border: 2px solid #8B6B4C;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.signup-btn:hover {
+    background-color: #8B6B4C;
+    color: white;
+}
+
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 16px 20px;
+    position: fixed;
+    z-index: 9999;
+    right: 30px;
+    top: 100px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+#toast.toast-error {
+    background-color: #e74c3c;
+}
+#toast.toast-success {
+    background-color: #27ae60;
+}
+#toast.show {
+    visibility: visible;
+    -webkit-animation: slidein 0.5s, slideout 0.5s 2.5s;
+    animation: slidein 0.5s, slideout 0.5s 2.5s;
+}
+@keyframes slidein {
+    from {
+        right: -50px;
+        opacity: 0;
+    }
+    to {
+        right: 30px;
+        opacity: 1;
+    }
+}
+@keyframes slideout {
+    from {
+        right: 30px;
+        opacity: 1;
+    }
+    to {
+        right: -50px;
+        opacity: 0;
+    }
+}
+

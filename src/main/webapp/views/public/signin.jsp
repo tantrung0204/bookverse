@@ -45,8 +45,8 @@
                     <div style="text-align: right; margin-top: 6px;">
                         <a href="${pageContext.request.contextPath}/forgot-password" 
                            style="color: #8B6B4C; font-size: 13px; text-decoration: none; font-weight: 500;"
-                           onmouseover="this.style.textDecoration='underline'" 
-                           onmouseout="this.style.textDecoration='none'">Forgot Password?</a>
+                           onmouseover="this.style.textDecoration = 'underline'" 
+                           onmouseout="this.style.textDecoration = 'none'">Forgot Password?</a>
                     </div>
                 </div>
 
@@ -67,7 +67,7 @@
 
                 <div class="button-group">
                     <button id="signin-btn" type="submit">Sign In</button>
-                    <a href="signup.jsp" class="signup-btn">Sign Up</a>
+                    <a href="${pageContext.request.contextPath}/signup" class="signup-btn">Sign Up</a>
                 </div>
             </form>
         </div>

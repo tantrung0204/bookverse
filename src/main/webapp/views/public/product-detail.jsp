@@ -139,13 +139,22 @@
                         <%-- Sync quantity input with hidden fields --%>
                         <script>
                             document.getElementById('quantity').addEventListener('change', function() {
-                                document.getElementById('cartQuantity').value = this.value;
-                                document.getElementById('buyNowQuantity').value = this.value;
+                                var val = parseInt(this.value);
+                                if (isNaN(val) || val < 1) {
+                                    this.value = 1;
+                                    val = 1;
+                                }
+                                document.getElementById('cartQuantity').value = val;
+                                document.getElementById('buyNowQuantity').value = val;
                             });
                             // Also sync on stepUp/stepDown
                             document.getElementById('quantity').addEventListener('input', function() {
-                                document.getElementById('cartQuantity').value = this.value;
-                                document.getElementById('buyNowQuantity').value = this.value;
+                                var val = parseInt(this.value);
+                                if (isNaN(val) || val < 1) {
+                                    val = 1; // Do not rewrite the input while typing, just protect hidden values
+                                }
+                                document.getElementById('cartQuantity').value = val;
+                                document.getElementById('buyNowQuantity').value = val;
                             });
                         </script>
                     </div>

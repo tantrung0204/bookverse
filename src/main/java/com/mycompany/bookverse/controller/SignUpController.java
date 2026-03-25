@@ -19,7 +19,6 @@ public class SignUpController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         request.getRequestDispatcher("/views/public/signup.jsp").forward(request, response);
     }
 
@@ -27,14 +26,22 @@ public class SignUpController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-
         String username = request.getParameter("username");
         String fullName = request.getParameter("fullName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
+        String genderStr = request.getParameter("gender");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
+        Integer gender = 1; // Default to Male
+        if (genderStr != null && !genderStr.trim().isEmpty()) {
+            try {
+                gender = Integer.parseInt(genderStr);
+            } catch (NumberFormatException e) {
+                gender = 1;
+            }
+        }
 
         if (!password.equals(confirmPassword)) {
             request.setAttribute("errorMsg", "Passwords do not match!");
@@ -42,17 +49,17 @@ public class SignUpController extends HttpServlet {
             request.setAttribute("fullName", fullName);
             request.setAttribute("email", email);
             request.setAttribute("phone", phone);
+            request.setAttribute("gender", genderStr);
             request.getRequestDispatcher("/views/public/signup.jsp").forward(request, response);
             return;
         }
 
-
-        String result = signUpService.register(username, fullName, email, phone, password);
+        String result = signUpService.register(username, fullName, email, phone, gender, password);
 
         if ("Success".equals(result)) {
 
             request.getSession().setAttribute("successMsg", "Account created successfully! Please login.");
-            response.sendRedirect(request.getContextPath() + "/login"); 
+            response.sendRedirect(request.getContextPath() + "/signin");
         } else {
 
             request.setAttribute("errorMsg", result);
@@ -60,6 +67,7 @@ public class SignUpController extends HttpServlet {
             request.setAttribute("fullName", fullName);
             request.setAttribute("email", email);
             request.setAttribute("phone", phone);
+            request.setAttribute("gender", genderStr);
             request.getRequestDispatcher("/views/public/signup.jsp").forward(request, response);
         }
     }

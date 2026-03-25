@@ -104,7 +104,7 @@ public class ProfileManagementController extends HttpServlet {
                     return;
                 }
                 Customer customer = (Customer) session.getAttribute("user");
-                request.setAttribute("countOrder", profileService.CountOder(customer));
+                request.setAttribute("countOrder", profileService.countOder(customer));
                 request.setAttribute("countFeedback", profileService.countFeedback(customer));
                 request.setAttribute("openCustomerProfile", "yes");
                 request.setAttribute("openCustomerViewProfile", "yes");
@@ -186,7 +186,7 @@ public class ProfileManagementController extends HttpServlet {
 
                     if ("customer".equals(role)) {
                         Customer customer = (Customer) session.getAttribute("user");
-                        error = profileService.CheckValidEditInformation(fullName, phoneNumber, address, role, customer.getCustomerId());
+                        error = profileService.checkValidEditInformation(fullName, phoneNumber, address, role, customer.getCustomerId());
                         if (error.isEmpty()) {
                             customer.setFullName(fullName);
                             customer.setPhoneNumber(phoneNumber);
@@ -195,7 +195,7 @@ public class ProfileManagementController extends HttpServlet {
                         }
                     } else {
                         Staff staff = (Staff) session.getAttribute("user");
-                        error = profileService.CheckValidEditInformation(fullName, phoneNumber, address, role, 0);
+                        error = profileService.checkValidEditInformation(fullName, phoneNumber, address, role, 0);
                         if (error.isEmpty()) {
                             staff.setFullName(fullName);
                             profileService.updateInforForStaff(staff);
@@ -216,14 +216,14 @@ public class ProfileManagementController extends HttpServlet {
 
                     if ("customer".equals(role)) {
                         Customer customer = (Customer) session.getAttribute("user");
-                        error = profileService.CheckValidChangePassword(oldPass, newPass, reNewPass, customer, null);
+                        error = profileService.checkValidChangePassword(oldPass, newPass, reNewPass, customer, null);
                         if (error.isEmpty()) {
                             customer.setPasswordHash(hashedNewPassword);
                             profileService.updateInforForCustomer(customer);
                         }
                     } else {
                         Staff staff = (Staff) session.getAttribute("user");
-                        error = profileService.CheckValidChangePassword(oldPass, newPass, reNewPass, null, staff);
+                        error = profileService.checkValidChangePassword(oldPass, newPass, reNewPass, null, staff);
                         if (error.isEmpty()) {
                             staff.setPasswordHash(hashedNewPassword);
                             profileService.updateInforForStaff(staff);

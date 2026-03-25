@@ -17,7 +17,7 @@ public class ProfileService {
 
     private ProfileDAO profileDAO = new ProfileDAO();
 
-    public long CountOder(Customer customer) {
+    public long countOder(Customer customer) {
         return profileDAO.countOderByCustomer(customer);
     }
 
@@ -33,7 +33,7 @@ public class ProfileService {
         return profileDAO.updateCustomer(customer);
     }
 
-    public String CheckValidEditInformation(String fullName, String phoneNumber, String address, String role, int id) {
+    public String checkValidEditInformation(String fullName, String phoneNumber, String address, String role, int id) {
         if (fullName == null || fullName.trim().isEmpty()) {
             return "Full name can't be empty.";
         }
@@ -63,7 +63,7 @@ public class ProfileService {
         return "";
     }
 
-    public String CheckValidChangePassword(String oldPass, String newPass, String reNewPass, Customer customer, Staff staff) {
+    public String checkValidChangePassword(String oldPass, String newPass, String reNewPass, Customer customer, Staff staff) {
         if (oldPass == null || oldPass.trim().isEmpty()) {
             return "Old password can't be empty.<br>";
         }

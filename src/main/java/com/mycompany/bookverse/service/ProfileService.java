@@ -85,13 +85,15 @@ public class ProfileService {
         if (!newPass.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
             return "New password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
         }
+        if(newPass.equalsIgnoreCase(oldPass)){
+            return"The new password must not be the same as the old password, please re-enter it.";
+        }
         if (reNewPass == null || reNewPass.trim().isEmpty()) {
             return "Confirm password can't be empty.<br>";
         }
         if (!reNewPass.matches("^[a-zA-Z0-9!@#$%^&*]{8,20}$")) {
             return "Confirm password must be 8–16 characters and only contain letters, numbers or !@#$%^&*<br>";
         }
-
         if (!newPass.equals(reNewPass)) {
             return "New password and confirm password do not match.<br>";
         }

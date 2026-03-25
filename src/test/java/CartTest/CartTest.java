@@ -1,4 +1,4 @@
-package CartTest;
+    package CartTest;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
@@ -41,20 +41,21 @@ public class CartTest {
     }
 
     /**
-     * Helper method: Đăng nhập bằng tài khoản Customer
+     * Đăng nhập bằng tài khoản Customer
      */
     private void loginAsCustomer() {
         driver.get(BASE_URL + "/signin");
         WebElement usernameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-        usernameInput.sendKeys("user1"); 
-        driver.findElement(By.name("password")).sendKeys("123456789");
+        usernameInput.sendKeys("user1");
+        WebElement passwordInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));
+        passwordInput.sendKeys("123456789");
         driver.findElement(By.id("signin-btn")).click();
-        
+
         wait.until(ExpectedConditions.urlContains("/home"));
     }
 
     /**
-     * Helper method: Thêm sản phẩm vào giỏ
+     * Thêm sản phẩm vào giỏ
      */
     private void addItemToCart(String productId) throws InterruptedException {
         driver.get(BASE_URL + "/product-detail?id=" + productId);
@@ -62,25 +63,24 @@ public class CartTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addBtn);
         Thread.sleep(500); // Đợi scroll
         addBtn.click();
-        Thread.sleep(1500); // Chờ load/thêm vào db
+        Thread.sleep(1500); // Chờ insert vào db
     }
 
     // ==========================================
     // CÁC TEST CASES: ĐÚNG, SAI, LỖI
     // ==========================================
-
     /**
-     * 1. TRƯỜNG HỢP LỖI: Cố tình truy cập giỏ hàng khi chưa đăng nhập.
-     * Bị chặn bởi logic phân quyền, phải bị điều hướng về signin.
+     * 1. TRƯỜNG HỢP LỖI: Cố tình truy cập giỏ hàng khi chưa đăng nhập. Bị chặn
+     * bởi logic phân quyền, phải bị điều hướng về signin.
      */
     @Test
     @Order(1)
     public void testAccessCartWithoutLogin_ShouldRedirectToSignin() {
-        System.out.println("--- Test 1: Truy cập giỏ hàng không login ---");
+        System.out.println("--- Test 1: Access Cart Without Login ---");
         driver.get(BASE_URL + "/cart");
-        
+
         wait.until(ExpectedConditions.urlContains("/signin"));
-        assertTrue(driver.getCurrentUrl().contains("/signin"), "Phải chuyển hướng đến trang đăng nhập khi chưa có session.");
+        assertTrue(driver.getCurrentUrl().contains("/signin"), "User is redirected to the login page when no active session exists.");
     }
 
     /**
@@ -89,31 +89,32 @@ public class CartTest {
     @Test
     @Order(2)
     public void testAddToCart_Success() throws InterruptedException {
-        System.out.println("--- Test 2: Thêm giỏ hàng hợp lệ ---");
+        System.out.println("--- Test 2: Valid Add to Cart ---");
         loginAsCustomer();
-        
+
         addItemToCart("5");
-        
+
         driver.get(BASE_URL + "/cart");
-        
+
         boolean isCartTablePresent = driver.findElements(By.cssSelector(".cart-table")).size() > 0;
-        assertTrue(isCartTablePresent, "Thêm sản phẩm thành công thì bảng giỏ hàng phải hiển thị.");
+        assertTrue(isCartTablePresent, "Product added successfully. Cart table is displayed.");
     }
 
     /**
-     * 3. TRƯỜNG HỢP ĐÚNG: Cập nhật số lượng sản phẩm (+1) và kiểm tra tổng tiền đổi.
+     * 3. TRƯỜNG HỢP ĐÚNG: Cập nhật số lượng sản phẩm (+1) và kiểm tra tổng tiền
+     * đổi.
      */
     @Test
     @Order(3)
     public void testUpdateQuantity_Valid() throws InterruptedException {
-        System.out.println("--- Test 3: Cập nhật số lượng đúng ---");
+        System.out.println("--- Test 3: Update Quantity Correctly ---");
         loginAsCustomer();
         addItemToCart("5"); // Thêm để đảm bảo có hàng
-        
+
         driver.get(BASE_URL + "/cart");
-        
+
         if (driver.findElements(By.cssSelector(".cart-table")).isEmpty()) {
-            fail("Không có sản phẩm trong giỏ để kiểm tra cập nhật.");
+            fail("No items in the cart to test quantity update.");
         }
 
         // Lưu tổng tiền ban đầu lại
@@ -130,44 +131,44 @@ public class CartTest {
         Thread.sleep(2000);
         String newTotal = driver.findElement(By.id("grand-total")).getText();
 
-        assertNotEquals(oldTotal, newTotal, "Sau khi tăng số lượng, tổng thanh toán (grand-total) phải thay đổi.");
+        assertNotEquals(oldTotal, newTotal, "After increasing the quantity, the grand total must be updated");
     }
 
     /**
-     * 4. TRƯỜNG HỢP SAI/LỖI: Nhập số lượng vượt tồn kho.
-     * UI sẽ validate và hiển thị Toast nhắc nhở.
+     * 4. TRƯỜNG HỢP SAI/LỖI: Nhập số lượng vượt tồn kho. UI sẽ validate và hiển
+     * thị Toast nhắc nhở.
      */
     @Test
     @Order(4)
     public void testUpdateQuantity_ExceedStockLimits() throws InterruptedException {
-        System.out.println("--- Test 4: Cập nhật vượt tồn kho ---");
+        System.out.println("--- Test 4: Update Quantity Exceeding Stock ---");
         loginAsCustomer();
         addItemToCart("5");
-        
+
         driver.get(BASE_URL + "/cart");
-        
+
         if (driver.findElements(By.cssSelector(".cart-table")).isEmpty()) {
-            fail("Không có sản phẩm trong giỏ để kiểm tra lỗi.");
+            fail("Cart is empty. Cannot test stock validation.");
         }
 
         // Cố tình gõ số lượng siêu lớn
         WebElement qtyInput = driver.findElement(By.cssSelector(".qty-input-custom"));
         qtyInput.clear();
         qtyInput.sendKeys("999999");
-        
-        // Trigger Javascript onchange (đảm bảo nó nhận thay đổi) thay vì chỉ dùng phím TAB
+
+        // Trigger Javascript onchange thay vì chỉ dùng phím TAB
         qtyInput.sendKeys(Keys.ENTER);
         ((JavascriptExecutor) driver).executeScript("arguments[0].dispatchEvent(new Event('change'));", qtyInput);
-        
-        // Tăng thời gian chờ xử lý Toast của JS và Ajax (do server bạn load chậm hơn)
+
+        // Tăng thời gian chờ xử lý Toast của JS và Ajax
         Thread.sleep(3000);
-        
-        // Dò xem khối toast có hiện lên không (kể cả thông thường hoặc .show)
+
+        // Dò xem khối toast có hiện lên không
         boolean notificationTriggered = driver.getPageSource().contains("Only");
         if (!notificationTriggered) {
-             notificationTriggered = !driver.findElements(By.cssSelector(".toast-error")).isEmpty();
+            notificationTriggered = !driver.findElements(By.cssSelector(".toast-error")).isEmpty();
         }
-        assertTrue(notificationTriggered, "Hệ thống phải báo lỗi khi số lượng vượt tồn kho.");
+        assertTrue(notificationTriggered, "Quantity exceeds stock → Error displayed.");
     }
 
     /**
@@ -176,15 +177,15 @@ public class CartTest {
     @Test
     @Order(5)
     public void testRemoveItem_Success() throws InterruptedException {
-        System.out.println("--- Test 5: Xóa sản phẩm khỏi giỏ ---");
+        System.out.println("--- Test 5: Remove Items from Cart ---");
         loginAsCustomer();
         // Đảm bảo có sẵn đồ để xóa
         addItemToCart("5");
-        
+
         driver.get(BASE_URL + "/cart");
 
         if (driver.findElements(By.cssSelector(".cart-table")).isEmpty()) {
-            fail("Không có đồ trong giỏ để xóa.");
+            fail("Cart is empty. Nothing to remove.");
         }
 
         // Nhấn nút xóa
@@ -192,20 +193,19 @@ public class CartTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", removeBtn);
         Thread.sleep(500);
         removeBtn.click();
-        
-        // Cấp quyền Alert (Native Confirm box)
+
+        // Cấp quyền Alert
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         alert.accept();
 
         // Đợi tải lại trang giỏ hàng
         Thread.sleep(2000);
 
-        // Giỏ trống sẽ hiện "Your cart is currently empty." (theo thiết kế HTML của bạn) 
+        // Giỏ trống sẽ hiện "Your cart is currently empty."
         // Hoặc tối thiểu là bảng `cart-table` biến mất / có phần tử giảm
-        boolean isCartEmpty = driver.getPageSource().contains("Your cart is currently empty.") ||
-                              driver.findElements(By.cssSelector(".cart-table")).isEmpty();
-                              
-        assertTrue(isCartEmpty, "Sau khi xóa tất cả, giỏ hàng phải báo rỗng hoặc mất bảng danh sách.");
+        boolean isCartEmpty = driver.getPageSource().contains("Your cart is currently empty.")
+                || driver.findElements(By.cssSelector(".cart-table")).isEmpty();
+
+        assertTrue(isCartEmpty, "All items removed → Cart is empty / table hidden.");
     }
 }
-

@@ -183,6 +183,10 @@ public class CartController extends HttpServlet {
             String quantityRaw = request.getParameter("quantity");
             int quantity = (quantityRaw == null || quantityRaw.isEmpty()) ? 1 : Integer.parseInt(quantityRaw);
 
+            if (quantity <= 0) {
+                throw new Exception("Quantity must be greater than zero.");
+            }
+
             cartService.addToCart(customerId, productId, quantity);
 
             session.setAttribute("cartMessage", "Product added to cart successfully!");
@@ -220,6 +224,12 @@ public class CartController extends HttpServlet {
         try {
             int cartId = Integer.parseInt(request.getParameter("cartId"));
             int newQuantity = Integer.parseInt(request.getParameter("quantity"));
+
+            if (newQuantity <= 0) {
+                out.print("{\"status\": \"error\", \"message\": \"Quantity must be greater than zero!\"}");
+                out.flush();
+                return;
+            }
 
             try {
                 cartService.updateCartQuantity(cartId, newQuantity);

@@ -291,16 +291,16 @@ public class CustomerManagementController extends HttpServlet {
                                 .toString();
 
                         String uploadPath = getServletContext().getRealPath("") + java.io.File.separator + "assets"
-                                + java.io.File.separator + "images";
+                                + java.io.File.separator + "images" + java.io.File.separator + "avatars";
                         java.io.File uploadDir = new java.io.File(uploadPath);
                         if (!uploadDir.exists()) {
-                            uploadDir.mkdir();
+                            uploadDir.mkdirs();
                         }
 
                         String newFileName = System.currentTimeMillis() + "_" + fileName;
                         filePart.write(uploadPath + java.io.File.separator + newFileName);
 
-                        profileImageUrl = "assets/images/" + newFileName;
+                        profileImageUrl = request.getContextPath() + "/assets/images/avatars/" + newFileName;
                     }
 
                     String msg = customerService.editCustomer(customerId, fullName, email, phone, address, password,

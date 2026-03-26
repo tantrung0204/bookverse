@@ -132,7 +132,12 @@ public class OrderManagementController extends HttpServlet {
             case "ship": {
                 try {
                     int orderId = Integer.parseInt(request.getParameter("orderId"));
-                    String error = orderService.shipOrder(orderId);
+                    Staff staff = (Staff) session.getAttribute("user");
+                    if (staff == null) {
+                        session.setAttribute("error_edit", "Staff session expired. Please login again.");
+                        break;
+                    }
+                    String error = orderService.shipOrder(orderId, staff);
                     if (error == null) {
                         session.setAttribute("success_edit",
                                 "Order #O00" + orderId + " is now Shipping!");
@@ -149,7 +154,12 @@ public class OrderManagementController extends HttpServlet {
             case "complete": {
                 try {
                     int orderId = Integer.parseInt(request.getParameter("orderId"));
-                    String error = orderService.completeOrder(orderId);
+                    Staff staff = (Staff) session.getAttribute("user");
+                    if (staff == null) {
+                        session.setAttribute("error_edit", "Staff session expired. Please login again.");
+                        break;
+                    }
+                    String error = orderService.completeOrder(orderId, staff);
                     if (error == null) {
                         session.setAttribute("success_edit",
                                 "Order #O00" + orderId + " has been completed!");
@@ -166,7 +176,12 @@ public class OrderManagementController extends HttpServlet {
             case "cancel": {
                 try {
                     int orderId = Integer.parseInt(request.getParameter("orderId"));
-                    String error = orderService.cancelOrder(orderId);
+                    Staff staff = (Staff) session.getAttribute("user");
+                    if (staff == null) {
+                        session.setAttribute("error_edit", "Staff session expired. Please login again.");
+                        break;
+                    }
+                    String error = orderService.cancelOrderByStaff(orderId, staff);
                     if (error == null) {
                         session.setAttribute("success_edit",
                                 "Order #O00" + orderId + " has been cancelled!");

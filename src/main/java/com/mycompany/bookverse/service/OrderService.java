@@ -404,7 +404,7 @@ public class OrderService {
     // =============================================
     // STAFF: SHIP ORDER (Confirmed → Shipping)
     // =============================================
-    public String shipOrder(int orderId) {
+    public String shipOrder(int orderId, Staff staff) {
         Order order = orderDAO.findById(orderId);
         if (order == null) {
             return "Order not found.";
@@ -413,6 +413,7 @@ public class OrderService {
             return "Only Confirmed orders can be shipped.";
         }
         order.setOrderStatus("Shipping");
+        order.setStaffId(staff);
         orderDAO.update(order);
         return null;
     }
@@ -420,7 +421,7 @@ public class OrderService {
     // =============================================
     // STAFF: COMPLETE ORDER (Shipping → Completed)
     // =============================================
-    public String completeOrder(int orderId) {
+    public String completeOrder(int orderId, Staff staff) {
         Order order = orderDAO.findById(orderId);
         if (order == null) {
             return "Order not found.";
@@ -430,8 +431,26 @@ public class OrderService {
         }
         order.setOrderStatus("Completed");
         order.setIsPaid(true);
+        order.setStaffId(staff);
         orderDAO.update(order);
         return null;
+    }
+
+    // =============================================
+    // STAFF: CANCEL ORDER (Pending + unpaid)
+    // Sets staffId on cancellation.
+    // =============================================
+    public String cancelOrderByStaff(int orderId, Staff staff) {
+        String error = cancelOrder(orderId);
+        if (error == null) {
+            // cancelOrder succeeded, now set staffId
+            Order order = orderDAO.findById(orderId);
+            if (order != null) {
+                order.setStaffId(staff);
+                orderDAO.update(order);
+            }
+        }
+        return error;
     }
 
     // =============================================

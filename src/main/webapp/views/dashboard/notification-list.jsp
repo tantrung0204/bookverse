@@ -76,7 +76,7 @@
                                 <td>${n.contentText}</td>
                                 <td>
                                     <c:if test="${not empty n.imageUrl}">
-                                        <img src="${pageContext.request.contextPath}/${n.imageUrl}"
+                                        <img src="${n.imageUrl}"
                                              alt="Notification Image"
                                              class="notification-img">
                                     </c:if>
@@ -347,7 +347,7 @@
                 const noImgText = document.getElementById("noDetailImage");
 
                 if (image && image !== "") {
-                    imgTag.src = "${pageContext.request.contextPath}/" + image;
+                    imgTag.src = image;
                     imgTag.style.display = "block";
                     noImgText.style.display = "none";
                 } else {

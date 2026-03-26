@@ -197,10 +197,8 @@
                 '<span class="badge-status badge-active">Active</span>' :
                 '<span class="badge-status badge-inactive">Blocked</span>';
         let avatarImg = document.getElementById('detailStaffAvatar');
-        if (avatarUrl && avatarUrl.startsWith('http')) {
+        if (avatarUrl && avatarUrl.trim() !== '') {
             avatarImg.src = avatarUrl;
-        } else if (avatarUrl && avatarUrl.trim() !== '') {
-            avatarImg.src = '${pageContext.request.contextPath}/' + avatarUrl;
         } else {
             avatarImg.src = '${pageContext.request.contextPath}/assets/images/default-avt.jpg';
         }

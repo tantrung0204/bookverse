@@ -236,7 +236,7 @@ Author : NganTTK-CE190411 --%>
                     <option value="">-- Select Parent Category --</option>
 
                     <option value="1" ${createParent == 1 ? "selected" : ""}>Book</option>
-                    <option value="2" ${createParent == 2 ? "selected" : ""}>Văn phòng phẩm</option>
+                    <option value="2" ${createParent == 2 ? "selected" : ""}>Stationery</option>
                 </select>
             </div>
 

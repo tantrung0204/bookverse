@@ -162,15 +162,16 @@ public class NotificationManagementController extends HttpServlet {
 
                 if (fileName != null && !fileName.isEmpty()) {
 
-                    String uploadPath = getServletContext().getRealPath("") + "uploads";
+                    String uploadPath = getServletContext().getRealPath("") + "assets"
+                            + java.io.File.separator + "images" + java.io.File.separator + "notifications";
                     java.io.File uploadDir = new java.io.File(uploadPath);
                     if (!uploadDir.exists()) {
-                        uploadDir.mkdir();
+                        uploadDir.mkdirs();
                     }
 
                     filePart.write(uploadPath + java.io.File.separator + fileName);
 
-                    imagePath = "uploads/" + fileName;
+                    imagePath = request.getContextPath() + "/assets/images/notifications/" + fileName;
                 }
 
                 nCreate.setImageUrl(imagePath);

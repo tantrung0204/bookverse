@@ -164,7 +164,7 @@ public class ProfileManagementController extends HttpServlet {
 
                     filePart.write(uploadPath + File.separator + fileName);
 
-                    String imagePath = "assets/images/avatars/" + fileName;
+                    String imagePath = request.getContextPath() + "/assets/images/avatars/" + fileName;
 
                     if ("customer".equals(role)) {
                         Customer customer = (Customer) session.getAttribute("user");

@@ -41,7 +41,7 @@
             <!-- RIGHT -->
             <c:if test="${not empty notification.imageUrl}">
                 <div class="right-column">
-                    <img src="${pageContext.request.contextPath}/${notification.imageUrl}"
+                    <img src="${notification.imageUrl}"
                          alt="Notification Image">
                 </div>
             </c:if>

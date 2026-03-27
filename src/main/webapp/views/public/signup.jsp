@@ -35,17 +35,17 @@
 
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="${username}" required />
+                <input type="text" id="username" name="username" value="${username}" pattern="[a-zA-Z0-9][a-zA-Z0-9._\-]{4,}" required />
             </div>
 
             <div class="form-group">
                 <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" value="${fullName}" required />
+                <input type="text" id="fullName" name="fullName" value="${fullName}" pattern="[a-zA-Zà-ỹ][a-zA-Zà-ỹ\s]*" required />
             </div>
 
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" value="${email}" required />
+                <input type="email" id="email" name="email" value="${email}" pattern="[a-zA-Z0-9][a-zA-Z0-9._\-]*@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" required />
             </div>
 
             <div class="form-group">
@@ -67,12 +67,12 @@
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" minlength="8" required />
+                <input type="password" id="password" name="password" minlength="8" pattern="^[a-zA-Z0-9!@#$%^&*]{8,20}$" required />
             </div>
 
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" minlength="8" required />
+                <input type="password" id="confirmPassword" name="confirmPassword" minlength="8" pattern="^[a-zA-Z0-9!@#$%^&*]{8,20}$" required />
             </div>
 
             <div class="button-group" style="margin-top: 30px;">

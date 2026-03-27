@@ -27,6 +27,10 @@ public class VoucherService {
             return "Quantity cannot be less than 0";
         }
 
+        if (voucher.getMinOrderValue().compareTo(BigDecimal.ZERO) < 0) {
+            return "Minimum Order Value cannot be less than 0";
+        }
+
         if (voucher.getDiscountType() == 1) {
 
             if (voucher.getDiscountValue() == null
@@ -87,6 +91,10 @@ public class VoucherService {
 
         if (voucher.getAvailableQuantity() < 0) {
             return "Quantity cannot be less than 0";
+        }
+
+        if (voucher.getMinOrderValue().compareTo(BigDecimal.ZERO) < 0) {
+            return "Minimum Order Value cannot be less than 0";
         }
 
         if (voucher.getDiscountType() == 1) {
